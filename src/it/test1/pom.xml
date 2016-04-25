@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.dentrassi.maven.rpm.test</groupId>
+	<artifactId>emptyTest1</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Test Package #1</name>
+	<description>
+	This is some long long text about foo bar and all the rest.
+	</description>
+
+	<url>http://dentrassi.de</url>
+
+	<organization>
+		<name>Jens Reimann</name>
+		<url>http://dentrassi.de</url>
+	</organization>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>de.dentrassi.maven</groupId>
+				<artifactId>rpm</artifactId>
+				<version>@project.version@</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+						<configuration>
+							<attach>false</attach>
+							<group>Application/Misc</group>
+
+							<rulesets>
+								<ruleset>
+									<id>default</id>
+									<rules>
+										<rule>
+											<when>
+												<type>directory</type>
+											</when>
+											<mode>0750</mode>
+										</rule>
+										<rule>
+											<when>
+												<prefix>/etc/</prefix>
+											</when>
+											<configuration>true</configuration>
+										</rule>
+										<rule>
+											<when>
+												<type>file</type>
+												<prefix>/usr/lib/foobar/lib/dir1</prefix>
+											</when>
+											<user>foo</user>
+											<group>bar</group>
+										</rule>
+									</rules>
+								</ruleset>
+							</rulesets>
+
+							<entries>
+								<entry>
+									<name>/etc/foo</name>
+									<directory>true</directory>
+									<user>root</user>
+									<group>root</group>
+									<mode>0755</mode>
+								</entry>
+								<entry>
+									<name>/etc/foo/bar.txt</name>
+									<file>src/main/resources/bar.txt</file>
+									<user>root</user>
+									<group>root</group>
+									<mode>0600</mode>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/usr/lib/foobar</name>
+									<collect>
+										<from>target/classes</from>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/etc</name>
+									<collect>
+										<from>src/main/resources/etc</from>
+										<directories>true</directories>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/usr/lib</name>
+									<collect>
+										<from>src/main/resources/lib</from>
+										<directories>true</directories>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+							</entries>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
