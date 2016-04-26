@@ -124,9 +124,20 @@ public class RpmMojo extends AbstractMojo
     @Parameter ( property = "description", defaultValue = "${project.description}" )
     private String description;
 
+    /**
+     * The RPM group
+     * <p>
+     * See also
+     * <a href="https://fedoraproject.org/wiki/RPMGroups">https://fedoraproject.
+     * org/wiki/RPMGroups</a>
+     * </p>
+     */
     @Parameter ( property = "group", defaultValue = "Unspecified" )
     private String group;
 
+    /**
+     * The "distribution" field in the RPM file
+     */
     @Parameter ( property = "distribution" )
     private String distribution;
 
@@ -164,6 +175,12 @@ public class RpmMojo extends AbstractMojo
      * <p>
      * This defaults to {@code ${project.organization.name}
      * <${project.organization.url}>} if both values are set.
+     * </p>
+     * <p>
+     * See also <a href=
+     * "http://www.rpm.org/max-rpm/s1-rpm-inside-tags.html#S3-RPM-INSIDE-PACKAGER-TAG">
+     * http://www.rpm.org/max-rpm/s1-rpm-inside-tags.html#S3-RPM-INSIDE-PACKAGER
+     * -TAG</a>
      * </p>
      */
     @Parameter ( property = "packager" )
