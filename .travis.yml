@@ -26,3 +26,8 @@ before_script:
  - hash -r
 
 script: travis_retry mvn integration-test -Pits
+
+addons:
+   apt:
+      packages:
+         - rpm
