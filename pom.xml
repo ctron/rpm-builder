@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.dentrassi.maven</groupId>
@@ -10,7 +11,7 @@
 	<name>Plain Java RPM builder</name>
 	<description>Build RPM packages using plain Java on any platform</description>
 
-	<url>https://github.com/ctron/rpm-builder</url>
+	<url>https://ctron.github.io/rpm-builder</url>
 
 	<inceptionYear>2016</inceptionYear>
 
@@ -27,8 +28,8 @@
 		<url>https://github.com/ctron/rpm-builder</url>
 		<connection>scm:git:git://github.com/ctron/rpm-builder.git</connection>
 		<developerConnection>scm:git:git@github.com:ctron/rpm-builder.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<issueManagement>
 		<url>https://github.com/ctron/rpm-builder/issues</url>
@@ -43,7 +44,7 @@
 	</properties>
 
 	<prerequisites>
-		<maven>${maven.version}</maven>
+		<maven>3.3</maven>
 	</prerequisites>
 
 	<distributionManagement>
@@ -96,6 +97,7 @@
 		</dependency>
 
 		<!-- transient dependencies -->
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
@@ -116,6 +118,7 @@
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
 		</dependency>
+
 		<!-- EOTD -->
 
 		<dependency>
@@ -205,10 +208,28 @@
 						<dependency>
 							<groupId>org.apache.maven.wagon</groupId>
 							<artifactId>wagon-ssh</artifactId>
-							<version>2.6</version>
+							<version>2.10</version>
 						</dependency>
 					</dependencies>
 
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.6</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>2.0.0</version>
+				</plugin>
+
+				<plugin>
+					<groupId>com.github.github</groupId>
+					<artifactId>site-maven-plugin</artifactId>
+					<version>0.12</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -318,7 +339,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -346,7 +366,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
-						<version>2.0.0</version>
 						<configuration>
 							<debug>true</debug>
 							<projectsDirectory>src/it</projectsDirectory>
@@ -385,7 +404,6 @@
 					<plugin>
 						<groupId>com.github.github</groupId>
 						<artifactId>site-maven-plugin</artifactId>
-						<version>0.12</version>
 						<configuration>
 							<message>Creating site for ${project.version}</message>
 						</configuration>
