@@ -281,8 +281,8 @@
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
-					<releaseProfiles>release</releaseProfiles>
-					<goals>deploy</goals>
+					<releaseProfiles>release pages</releaseProfiles>
+					<goals>deploy site</goals>
 				</configuration>
 			</plugin>
 
