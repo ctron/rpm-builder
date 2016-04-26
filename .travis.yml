@@ -25,6 +25,8 @@ before_script:
  - export PATH=$PWD/maven/bin:${PATH}
  - hash -r
 
+install:
+
 script: travis_retry mvn integration-test -Pits
 
 addons:
