@@ -1,0 +1,28 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+cache:
+  directories:
+    - $HOME/.m2
+
+sudo: false
+
+# maven 3.3 workaround for travis-ci
+
+before_install:
+ - wget -O maven.tar.gz http://www-eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+ - mkdir maven
+ - cd maven ; tar --strip-components 1 -xzf ../maven.tar.gz ; cd ..
+ - chmod a+x maven/bin/mvn
+ - export M2_HOME=$PWD/maven
+ - export PATH=$PWD/maven/bin:${PATH}
+ - hash -r
+
+before_script:
+ - export M2_HOME=$PWD/maven
+ - export PATH=$PWD/maven/bin:${PATH}
+ - hash -r
+
+script: travis_retry mvn integration-test -Pits
