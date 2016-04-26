@@ -301,7 +301,7 @@
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
-					<releaseProfiles>release pages</releaseProfiles>
+					<releaseProfiles>release, pages</releaseProfiles>
 					<goals>deploy site</goals>
 				</configuration>
 			</plugin>
