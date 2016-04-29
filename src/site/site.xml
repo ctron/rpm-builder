@@ -9,6 +9,12 @@
 			<item name="Usage" href="usage.html" />
 			<item name="Example" href="example.html" />
 		</menu>
+		
+		<menu name="Configuration">
+            <item name="Payload Entries" href="entry.html" />
+            <item name="Rulesets" href="rulesets.html" />
+            <item name="Payload information" href="payload_information.html"/>
+		</menu>
 
 		<menu ref="reports" />
 	</body>
