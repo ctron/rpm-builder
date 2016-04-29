@@ -15,10 +15,10 @@
 -docencoding
 'UTF-8'
 -doctitle
-'Java RPM builder 0.2.0 API'
+'Java RPM builder 0.3.0 API'
 -linkoffline
 'http://docs.oracle.com/javase/8/docs/api' '/home/jens/Development/workspace_opm_jenkins/rpm-builder.git/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'Java RPM builder 0.2.0 API'
+'Java RPM builder 0.3.0 API'
