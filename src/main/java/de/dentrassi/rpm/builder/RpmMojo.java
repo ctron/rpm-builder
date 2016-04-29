@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBH SYSTEMS GmbH - initial API and implementation
+ *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
 import static com.google.common.io.Files.readFirstLine;
@@ -188,12 +198,39 @@ public class RpmMojo extends AbstractMojo
 
     /**
      * The actual payload/file entries
+     * <p>
+     * Also see <a href="entry.html">entries</a>
+     * </p>
+     * <p>
+     * This is a list of {@code <entry>} elements with additional information:
+     * </p>
+     *
+     * <pre>
+     * &lt;entries&gt;
+     *   &lt;entry&gt;
+     *     &lt;!-- target name --&gt;
+     *     &lt;name&gt;/etc/foo/bar.conf&lt;/name&gt;
+     *
+     *     &lt;!-- either one of:
+     *       &lt;file&gt;src/main/resources/bar.conf&lt;/file&gt;
+     *       &lt;directory&gt;true&lt;/directory&gt;
+     *       &lt;collect&gt;
+     *         &lt;from&gt;src/main/resources/dir&lt;/from&gt;
+     *       &lt;/collect&gt;
+     *     -->
+     *
+     *   &lt;/entry&gt;
+     * &lt;/entries&gt;
+     * </pre>
      */
     @Parameter ( property = "entries" )
     private final List<PackageEntry> entries = new LinkedList<> ();
 
     /**
      * Rulesets to configure the file information like "user", "modes", etc.
+     * <p>
+     * Also see <a href="rulesets.html">rulesets</a>
+     * </p>
      */
     @Parameter ( property = "rulesets" )
     private final List<Ruleset> rulesets = new LinkedList<> ();
@@ -282,7 +319,7 @@ public class RpmMojo extends AbstractMojo
         else if ( entry.getFile () != null )
         {
             this.logger.debug ( "    as file:" );
-            final Path source = new File ( entry.getFile () ).toPath ().toAbsolutePath ();
+            final Path source = entry.getFile ().toPath ().toAbsolutePath ();
             this.logger.debug ( "      - source: %s", source );
 
             ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
@@ -297,7 +334,7 @@ public class RpmMojo extends AbstractMojo
 
             final String padding = "          ";
 
-            final Path from = new File ( collector.getFrom () ).toPath ();
+            final Path from = collector.getFrom ().toPath ();
             final String targetPrefix = entry.getName ().endsWith ( "/" ) ? entry.getName () : entry.getName () + "/";
 
             this.logger.debug ( "      - files:" );

@@ -1,9 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBH SYSTEMS GmbH - initial API and implementation
+ *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.packagedrone.utils.rpm.build.FileInformation;
 import org.eclipse.packagedrone.utils.rpm.build.PayloadEntryType;
@@ -29,8 +42,15 @@ public class RulesetEvaluator
             this.parentRuleset = parentRuleset;
         }
 
-        public void eval ( final Object object, final PayloadEntryType type, final String targetName, final FileInformation info )
+        private void eval ( final Object object, final PayloadEntryType type, final String targetName, final FileInformation info, final Set<String> knownSets )
         {
+            if ( knownSets.contains ( this.id ) )
+            {
+                throw new IllegalStateException ( String.format ( "Recursive calling of rulesets is not allowed- current: %s, previous: %s", this.id, knownSets.stream ().collect ( Collectors.joining ( ", " ) ) ) );
+            }
+
+            knownSets.add ( this.id );
+
             for ( final Rule rule : this.rules )
             {
                 logger.debug ( "Testing rule {}", rule );
@@ -55,6 +75,11 @@ public class RulesetEvaluator
                 logger.debug ( "Running parent ruleset: '{}'", this.parentRuleset );
                 RulesetEvaluator.this.eval ( this.parentRuleset, object, type, targetName, info );
             }
+        }
+
+        public void eval ( final Object object, final PayloadEntryType type, final String targetName, final FileInformation info )
+        {
+            eval ( object, type, targetName, info, new LinkedHashSet<> () );
         }
     }
 

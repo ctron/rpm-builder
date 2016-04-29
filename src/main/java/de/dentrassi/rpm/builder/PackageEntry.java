@@ -1,19 +1,31 @@
+/*******************************************************************************
+ * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBH SYSTEMS GmbH - initial API and implementation
+ *******************************************************************************/
 package de.dentrassi.rpm.builder;
+
+import java.io.File;
 
 public class PackageEntry extends EntryDetails
 {
     public static class Collector
     {
-        private String from;
+        private File from;
 
         private boolean directories = true;
 
-        public String getFrom ()
+        public File getFrom ()
         {
             return this.from;
         }
 
-        public void setFrom ( final String from )
+        public void setFrom ( final File from )
         {
             this.from = from;
         }
@@ -39,7 +51,7 @@ public class PackageEntry extends EntryDetails
 
     private Boolean directory;
 
-    private String file;
+    private File file;
 
     private Collector collect;
 
@@ -65,12 +77,12 @@ public class PackageEntry extends EntryDetails
         this.directory = directory;
     }
 
-    public String getFile ()
+    public File getFile ()
     {
         return this.file;
     }
 
-    public void setFile ( final String file )
+    public void setFile ( final File file )
     {
         this.file = file;
     }
