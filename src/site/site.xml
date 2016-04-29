@@ -15,6 +15,7 @@
             <item name="Rulesets" href="rulesets.html" />
             <item name="Payload information" href="payload_information.html"/>
             <item name="Scripts" href="scripts.html"/>
+            <item name="Dependencies" href="deps.html"/>
 		</menu>
 
 		<menu ref="reports" />

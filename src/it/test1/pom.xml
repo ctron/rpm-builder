@@ -20,13 +20,13 @@
 		<url>http://dentrassi.de</url>
 	</organization>
 
-    <licenses>
-        <license>
-            <name>Eclipse Public License - v 1.0</name>
-            <distribution>repo</distribution>
-            <url>https://www.eclipse.org/legal/epl-v10.html</url>
-        </license>
-    </licenses>
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<distribution>repo</distribution>
+			<url>https://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+	</licenses>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -138,6 +138,46 @@
 									echo "After removal"
 								</script>
 							</afterRemoval>
+
+                            <prequisites>
+                                <prequisite>findutils</prequisite>
+                                <prequisite>
+                                    gzip >= 1.0
+                                </prequisite>
+                            </prequisites>
+
+							<requires>
+								<require>
+									<name>grep</name>
+									<pre />
+								</require>
+								<require>
+									<name>acl</name>
+									<version>2.2.0</version>
+									<greaterOrEqual />
+								</require>
+								<require>
+									<name>at</name>
+									<version>3.0.0</version>
+									<greaterOrEqual />
+									<flags>PREREQ</flags>
+								</require>
+								<require>file &gt;= 5.0</require>
+							</requires>
+
+							<conflicts>
+								<conflict>broken-package</conflict>
+								<conflict>foo lt 1.0</conflict>
+							</conflicts>
+
+							<obsoletes>
+								<obsolete>old-package &lt; 1.0</obsolete>
+								<obsolete>older-package lt 1.0</obsolete>
+							</obsoletes>
+
+							<provides>
+								<provide>foo-bar</provide>
+							</provides>
 
 						</configuration>
 					</execution>

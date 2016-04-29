@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ import org.eclipse.packagedrone.utils.rpm.RpmVersion;
 import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
+import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
 
 import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
@@ -291,6 +293,51 @@ public class RpmMojo extends AbstractMojo
     @Parameter ( property = "defaultScriptInterpreter", defaultValue = "/bin/sh" )
     private final String defaultScriptInterpreter = "/bin/sh";
 
+    /**
+     * RPM package requirements
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter ( property = "requires" )
+    private final List<Dependency> requires = new LinkedList<> ();
+
+    /**
+     * RPM provides information
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter ( property = "provides" )
+    private final List<SimpleDependency> provides = new LinkedList<> ();
+
+    /**
+     * RPM package conflicts
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter ( property = "conflicts" )
+    private final List<SimpleDependency> conflicts = new LinkedList<> ();
+
+    /**
+     * RPM obsoletes information
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter ( property = "obsoletes" )
+    private final List<SimpleDependency> obsoletes = new LinkedList<> ();
+
+    /**
+     * RPM package requirements needed before the installation starts
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter ( property = "prerequisites" )
+    private final List<SimpleDependency> prerequisites = new LinkedList<> ();
+
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
@@ -301,6 +348,8 @@ public class RpmMojo extends AbstractMojo
         final Path targetDir = Paths.get ( this.project.getBuild ().getDirectory () );
 
         this.logger.info ( "Writing to target to: %s", targetDir );
+        this.logger.debug ( "Default script interpreter: %s", this.defaultScriptInterpreter );
+        this.logger.debug ( "Default ruleset: %s", this.defaultRuleset );
 
         final String packageName = makePackageName ();
         final RpmVersion version = makeVersion ();
@@ -313,6 +362,7 @@ public class RpmMojo extends AbstractMojo
 
             fillPackageInformation ( builder );
             fillScripts ( builder );
+            fillDependencies ( builder );
             fillPayload ( builder );
 
             builder.build ();
@@ -325,6 +375,63 @@ public class RpmMojo extends AbstractMojo
         catch ( final IOException e )
         {
             throw new MojoExecutionException ( "Failed to write RPM", e );
+        }
+    }
+
+    @FunctionalInterface
+    private interface DependencyAdder
+    {
+        public void add ( String name, String version, RpmDependencyFlags[] flags );
+    }
+
+    private void fillDependencies ( final RpmBuilder builder )
+    {
+        addAllDependencies ( "require", this.requires, builder::addRequirement, RpmMojo::validateName, null );
+        addAllDependencies ( "prerequire", this.prerequisites, builder::addRequirement, RpmMojo::validateName, flags -> flags.add ( RpmDependencyFlags.PREREQ ) );
+        addAllDependencies ( "provide", this.provides, builder::addProvides, ( (Consumer<SimpleDependency>)RpmMojo::validateName ).andThen ( this::validateNoVersion ), null );
+        addAllDependencies ( "conflict", this.conflicts, builder::addConflicts, RpmMojo::validateName, null );
+        addAllDependencies ( "obsolete", this.obsoletes, builder::addObsoletes, RpmMojo::validateName, null );
+    }
+
+    private static void validateName ( final SimpleDependency dep )
+    {
+        if ( Strings.isNullOrEmpty ( dep.getName () ) )
+        {
+            throw new IllegalStateException ( "'name' of dependency must be set" );
+        }
+    }
+
+    private void validateNoVersion ( final SimpleDependency dep )
+    {
+        if ( !Strings.isNullOrEmpty ( dep.getVersion () ) )
+        {
+            getLog ().warn ( String.format ( "Provides should not have a version: %s : %s. Use at your own risk!", dep.getName (), dep.getVersion () ) );
+        }
+    }
+
+    private <T extends SimpleDependency> void addAllDependencies ( final String depName, final List<T> deps, final DependencyAdder adder, final Consumer<T> validator, final Consumer<Set<RpmDependencyFlags>> flagsCustomizer )
+    {
+        if ( deps == null )
+        {
+            return;
+        }
+
+        for ( final T dep : deps )
+        {
+            validator.accept ( dep );
+
+            final String name = dep.getName ();
+            final String version = dep.getVersion ();
+            final Set<RpmDependencyFlags> flags = dep.getFlags ();
+
+            if ( flagsCustomizer != null )
+            {
+                flagsCustomizer.accept ( flags );
+            }
+
+            this.logger.info ( "Adding dependency [%s]: name = %s, version = %s, flags = %s", depName, name, version, flags );
+
+            adder.add ( name, version, flags.toArray ( new RpmDependencyFlags[0] ) );
         }
     }
 
