@@ -5,7 +5,7 @@ the "requires" one, which declares that this packages requires another one.
 
 Also see:
 
- * <https://docs.fedoraproject.org/ro/Fedora_Draft_Documentation/0.1/html/RPM_Guide/ch-dependencies.html>
+ * <https://docs.fedoraproject.org/en-US/Fedora_Draft_Documentation/0.1/html/RPM_Guide/ch-dependencies.html>
  * <http://www.rpm.org/max-rpm/s1-rpm-depend-manual-dependencies.html>
 
 ## Dependency types
