@@ -535,6 +535,12 @@ public class RpmMojo extends AbstractMojo
 
             ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
         }
+        else if ( entry.getLinkTo () != null )
+        {
+            this.logger.debug ( "    as symbolic link:" );
+            this.logger.debug ( "      - linkTo: %s", entry.getLinkTo () );
+            ctx.addSymbolicLink ( entry.getName (), entry.getLinkTo (), makeProvider ( entry, "      - " ) );
+        }
         else if ( entry.getCollect () != null )
         {
             this.logger.debug ( "    as collector:" );
@@ -556,14 +562,31 @@ public class RpmMojo extends AbstractMojo
                 @Override
                 public FileVisitResult visitFile ( final Path file, final BasicFileAttributes attrs ) throws IOException
                 {
-                    RpmMojo.this.logger.debug ( "%s%s (file)", padding, file );
-
                     final Path relative = from.relativize ( file );
                     final String targetName = targetPrefix + relative.toString ();
 
-                    RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
+                    if ( java.nio.file.Files.isSymbolicLink ( file ) )
+                    {
+                        RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
+                        if ( collector.isSymbolicLinks () )
+                        {
+                            final Path sym = java.nio.file.Files.readSymbolicLink ( file );
+                            RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
+                            RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
+                            RpmMojo.this.logger.debug ( "%s  - linkTo: %s", padding, sym.toString () );
+                        }
+                        else
+                        {
+                            RpmMojo.this.logger.debug ( "%s%s (symlink) - ignoring symbolic links", padding, file );
+                        }
+                    }
+                    else
+                    {
+                        RpmMojo.this.logger.debug ( "%s%s (file)", padding, file );
+                        RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
 
-                    ctx.addFile ( targetName, file, provider );
+                        ctx.addFile ( targetName, file, provider );
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 

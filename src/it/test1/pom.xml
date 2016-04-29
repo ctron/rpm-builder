@@ -116,6 +116,14 @@
 									</collect>
 									<ruleset>default</ruleset>
 								</entry>
+								<entry>
+								    <name>/usr/lib/dir3</name>
+								    <linkTo>dir2</linkTo>
+								</entry>
+								<entry>
+                                    <name>/usr/lib/dir4</name>
+                                    <linkTo>/usr/lib/dir2</linkTo>
+                                </entry>
 							</entries>
 
 							<beforeInstallation>

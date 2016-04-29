@@ -36,13 +36,23 @@ There is no need for additional source information.
 Adding a single file is done by: `<file>path/to/file</file>`. The path to the file is relative
 to the Maven project.
 
+### Symbolic link
+
+Adding a single file is done by: `<linkTo>link/target</linkTo>`. The path where the
+symbolic link points to. If this link to path is relative, then it is relative on the target system.
+
 ### File system collector
 
 In order to walk through a directory tree and add all files use: `<collect>…</collect>`.
 
 The collect elements requires one additional element: `<from>` which defines the base path. In addition
 there is the optional element `<directories>`, which can be set to `false` in order to not record
-directories explicitly. **Note:** the `<from>` directory itself will never be added as explicit directory. This can be done using an additional `<entry>` element. 
+directories explicitly. **Note:** the `<from>` directory itself will never be added as explicit directory. This can be done using an additional `<entry>` element.
+
+**Note:** By default symbolic links in the file system will be ignored. Since not all platforms support
+symbolic links in the same way. It is recommended to create the manually using a `<linkTo>` style
+entry. This behavior can be changed by changed by adding `<symbolicLinks>true</symbolicLinks>` to the
+collector configuration.  
 
 The target file names will be constructed out the entry name, as base prefix, and the relative
 filename of the file found.
@@ -53,6 +63,7 @@ Assuming you have the following director tree in the file system:
     src/main/resources/dir1/foo2.txt
     src/main/resources/dir2/foo3.txt
     src/main/resources/dir2/foo4.txt
+    src/main/resources/dir2/foo5.txt -> foo4.txt (symlink)
     
 Using the collector configuration:
 

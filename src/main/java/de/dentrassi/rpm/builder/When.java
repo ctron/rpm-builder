@@ -73,6 +73,12 @@ public class When
                         return false;
                     }
                     break;
+                case "link":
+                    if ( type != PayloadEntryType.SYMBOLIC_LINK )
+                    {
+                        return false;
+                    }
+                    break;
                 default:
                     throw new IllegalStateException ( String.format ( "Unknown match type: '%s'", this.type ) );
             }

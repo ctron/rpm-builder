@@ -20,6 +20,8 @@ public class PackageEntry extends EntryDetails
 
         private boolean directories = true;
 
+        private boolean symbolicLinks = false;
+
         public File getFrom ()
         {
             return this.from;
@@ -40,10 +42,20 @@ public class PackageEntry extends EntryDetails
             return this.directories;
         }
 
+        public void setSymbolicLinks ( final boolean symbolicLinks )
+        {
+            this.symbolicLinks = symbolicLinks;
+        }
+
+        public boolean isSymbolicLinks ()
+        {
+            return this.symbolicLinks;
+        }
+
         @Override
         public String toString ()
         {
-            return String.format ( "[collector - from: %s,  directories: %s]", this.from, this.directories );
+            return String.format ( "[collector - from: %s,  directories: %s, symLinks: %s]", this.from, this.directories, this.symbolicLinks );
         }
     }
 
@@ -54,6 +66,8 @@ public class PackageEntry extends EntryDetails
     private File file;
 
     private Collector collect;
+
+    private String linkTo;
 
     private String ruleset;
 
@@ -97,6 +111,16 @@ public class PackageEntry extends EntryDetails
         this.collect = collect;
     }
 
+    public void setLinkTo ( final String linkTo )
+    {
+        this.linkTo = linkTo;
+    }
+
+    public String getLinkTo ()
+    {
+        return this.linkTo;
+    }
+
     public void setRuleset ( final String ruleset )
     {
         this.ruleset = ruleset;
@@ -120,10 +144,11 @@ public class PackageEntry extends EntryDetails
         sources += this.directory != null && this.directory ? 1 : 0;
         sources += this.file != null ? 1 : 0;
         sources += this.collect != null ? 1 : 0;
+        sources += this.linkTo != null ? 1 : 0;
 
         if ( sources != 1 )
         {
-            throw new IllegalStateException ( "Exactly one of 'file', 'directory' or 'collect' must be specified." );
+            throw new IllegalStateException ( "Exactly one of 'file', 'directory', 'linkTo' or 'collect' must be specified." );
         }
 
         super.validate ();
