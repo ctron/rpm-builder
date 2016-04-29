@@ -14,6 +14,7 @@
             <item name="Payload Entries" href="entry.html" />
             <item name="Rulesets" href="rulesets.html" />
             <item name="Payload information" href="payload_information.html"/>
+            <item name="Scripts" href="scripts.html"/>
 		</menu>
 
 		<menu ref="reports" />

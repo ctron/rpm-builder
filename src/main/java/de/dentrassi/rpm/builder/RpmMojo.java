@@ -251,10 +251,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * A script which is run before the installation takes place
      * <p>
-     * Also see
-     * <a href=
-     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
-     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
     @Parameter ( property = "beforeInstallation" )
@@ -263,10 +260,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * A script which is run after the installation took place
      * <p>
-     * Also see
-     * <a href=
-     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
-     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
     @Parameter ( property = "afterInstallation" )
@@ -275,10 +269,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * A script which is run before the removal takes place
      * <p>
-     * Also see
-     * <a href=
-     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
-     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
     @Parameter ( property = "beforeRemoval" )
@@ -287,10 +278,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * A script which is run after the removal took place
      * <p>
-     * Also see
-     * <a href=
-     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
-     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
     @Parameter ( property = "afterRemoval" )
