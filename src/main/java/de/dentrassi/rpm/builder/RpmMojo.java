@@ -391,7 +391,7 @@ public class RpmMojo extends AbstractMojo
 
         if ( firstLine.startsWith ( "#!" ) && firstLine.length () > 2 )
         {
-            return firstLine.substring ( 3 );
+            return firstLine.substring ( 2 );
         }
 
         return null;
@@ -475,7 +475,8 @@ public class RpmMojo extends AbstractMojo
                 @Override
                 public FileVisitResult preVisitDirectory ( final Path dir, final BasicFileAttributes attrs ) throws IOException
                 {
-                    if ( collector.isDirectories () )
+                    // only add when we add directories and it is not be base
+                    if ( collector.isDirectories () && !dir.equals ( from ) )
                     {
                         RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
                         final Path relative = from.relativize ( dir );
