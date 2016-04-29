@@ -48,6 +48,9 @@ import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
 
+import com.google.common.base.Strings;
+import com.google.common.io.CharSource;
+
 import de.dentrassi.rpm.builder.PackageEntry.Collector;
 
 /**
@@ -245,6 +248,61 @@ public class RpmMojo extends AbstractMojo
 
     private RulesetEvaluator eval;
 
+    /**
+     * A script which is run before the installation takes place
+     * <p>
+     * Also see
+     * <a href=
+     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
+     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * </p>
+     */
+    @Parameter ( property = "beforeInstallation" )
+    private Script beforeInstallation;
+
+    /**
+     * A script which is run after the installation took place
+     * <p>
+     * Also see
+     * <a href=
+     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
+     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * </p>
+     */
+    @Parameter ( property = "afterInstallation" )
+    private Script afterInstallation;
+
+    /**
+     * A script which is run before the removal takes place
+     * <p>
+     * Also see
+     * <a href=
+     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
+     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * </p>
+     */
+    @Parameter ( property = "beforeRemoval" )
+    private Script beforeRemoval;
+
+    /**
+     * A script which is run after the removal took place
+     * <p>
+     * Also see
+     * <a href=
+     * "http://www.rpm.org/max-rpm/s1-rpm-inside-scripts.html#S2-RPM-INSIDE-ERASE
+     * -TIME-SCRIPTS">Install/Erase-time Scripts</a>
+     * </p>
+     */
+    @Parameter ( property = "afterRemoval" )
+    private Script afterRemoval;
+
+    /**
+     * The default script interpreter which is used if neither the script has
+     * one set explicitly, nor one could be detected
+     */
+    @Parameter ( property = "defaultScriptInterpreter", defaultValue = "/bin/sh" )
+    private final String defaultScriptInterpreter = "/bin/sh";
+
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
@@ -266,6 +324,7 @@ public class RpmMojo extends AbstractMojo
             this.logger.info ( "Writing target file: %s", builder.getTargetFile () );
 
             fillPackageInformation ( builder );
+            fillScripts ( builder );
             fillPayload ( builder );
 
             builder.build ();
@@ -279,6 +338,63 @@ public class RpmMojo extends AbstractMojo
         {
             throw new MojoExecutionException ( "Failed to write RPM", e );
         }
+    }
+
+    private void fillScripts ( final RpmBuilder builder ) throws IOException
+    {
+        setScript ( "prein", this.beforeInstallation, builder::setPreInstallationScript );
+        setScript ( "postin", this.afterInstallation, builder::setPostInstallationScript );
+        setScript ( "prerm", this.beforeRemoval, builder::setPreRemoveScript );
+        setScript ( "postrm", this.afterRemoval, builder::setPostRemoveScript );
+    }
+
+    private void setScript ( final String scriptName, final Script script, final ScriptSetter setter ) throws IOException
+    {
+        if ( script == null )
+        {
+            return;
+        }
+
+        final String scriptContent = script.makeScriptContent ();
+
+        if ( Strings.isNullOrEmpty ( scriptContent ) )
+        {
+            return;
+        }
+
+        String interpreter = script.getInterpreter ();
+        this.logger.debug ( "[script %s:]: explicit interpreter: %s", scriptName, interpreter );
+
+        if ( Strings.isNullOrEmpty ( interpreter ) )
+        {
+            interpreter = detectInterpreter ( scriptContent );
+            this.logger.debug ( "[script %s:]: detected interpreter: %s", scriptName, interpreter );
+        }
+        if ( Strings.isNullOrEmpty ( interpreter ) )
+        {
+            interpreter = this.defaultScriptInterpreter;
+            this.logger.debug ( "[script %s:]: default interpreter: %s", scriptName, interpreter );
+        }
+        this.logger.info ( "[script %s]: Using script interpreter: %s", scriptName, interpreter );
+        this.logger.debug ( "[script %s]: %s", scriptName, scriptContent );
+
+        setter.accept ( interpreter, scriptContent );
+    }
+
+    private String detectInterpreter ( final String scriptContent ) throws IOException
+    {
+        final String firstLine = CharSource.wrap ( scriptContent ).readFirstLine ();
+        if ( Strings.isNullOrEmpty ( firstLine ) )
+        {
+            return null;
+        }
+
+        if ( firstLine.startsWith ( "#!" ) && firstLine.length () > 2 )
+        {
+            return firstLine.substring ( 3 );
+        }
+
+        return null;
     }
 
     protected void fillPayload ( final RpmBuilder builder ) throws MojoFailureException, IOException

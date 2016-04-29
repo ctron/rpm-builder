@@ -20,6 +20,14 @@
 		<url>http://dentrassi.de</url>
 	</organization>
 
+    <licenses>
+        <license>
+            <name>Eclipse Public License - v 1.0</name>
+            <distribution>repo</distribution>
+            <url>https://www.eclipse.org/legal/epl-v10.html</url>
+        </license>
+    </licenses>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -109,6 +117,28 @@
 									<ruleset>default</ruleset>
 								</entry>
 							</entries>
+
+							<beforeInstallation>
+								set -e
+								echo "Before installation"
+							</beforeInstallation>
+							<afterInstallation>
+								<file>src/main/resources/afterInstall.sh</file>
+							</afterInstallation>
+							<beforeRemoval>
+								<interpreter>/bin/bash</interpreter>
+								<script>
+									set -e
+									echo "Before removal"
+								</script>
+							</beforeRemoval>
+							<afterRemoval>
+								<script>#!/bin/bash
+									set -e
+									echo "After removal"
+								</script>
+							</afterRemoval>
+
 						</configuration>
 					</execution>
 				</executions>
