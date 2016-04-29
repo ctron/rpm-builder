@@ -1,0 +1,7 @@
+org.eclipse.packagedrone.utils.rpm
+org.eclipse.packagedrone.utils.rpm.app
+org.eclipse.packagedrone.utils.rpm.header
+org.eclipse.packagedrone.utils.rpm.build
+org.eclipse.packagedrone.utils.rpm.deps
+org.eclipse.packagedrone.utils.rpm.parse
+de.dentrassi.rpm.builder
