@@ -7,7 +7,7 @@
 
 	<packaging>maven-plugin</packaging>
 
-	<name>Plain Java RPM builder</name>
+	<name>Java RPM builder</name>
 	<description>Build RPM packages using plain Java on any platform</description>
 
 	<url>https://ctron.github.io/rpm-builder</url>
