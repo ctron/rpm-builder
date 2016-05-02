@@ -2,7 +2,7 @@
 # Introduction
 
 The RPM builder Maven plugin allows one to create RPM files without the use of the
-`rpmbuild` command line tool. It does work on Linux, Windows, Mac OS X and any other
+`rpmbuild` command line tool, in pure Java. It does work on Linux, Windows, Mac OS X and any other
 platform running at least Java 8.
   
 ## Features

@@ -31,6 +31,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<skipSigning>true</skipSigning>
 	</properties>
 
 	<build>
@@ -48,6 +49,14 @@
 						<configuration>
 							<attach>false</attach>
 							<group>Application/Misc</group>
+
+							<signature>
+								<keyId>${keyId}</keyId>
+								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
+								<passphrase>${passphrase}</passphrase>
+								<hashAlgorithm>SHA1</hashAlgorithm>
+								<skip>${skipSigning}</skip>
+							</signature>
 
 							<rulesets>
 								<ruleset>
@@ -117,13 +126,13 @@
 									<ruleset>default</ruleset>
 								</entry>
 								<entry>
-								    <name>/usr/lib/dir3</name>
-								    <linkTo>dir2</linkTo>
+									<name>/usr/lib/dir3</name>
+									<linkTo>dir2</linkTo>
 								</entry>
 								<entry>
-                                    <name>/usr/lib/dir4</name>
-                                    <linkTo>/usr/lib/dir2</linkTo>
-                                </entry>
+									<name>/usr/lib/dir4</name>
+									<linkTo>/usr/lib/dir2</linkTo>
+								</entry>
 							</entries>
 
 							<beforeInstallation>
@@ -147,12 +156,12 @@
 								</script>
 							</afterRemoval>
 
-                            <prequisites>
-                                <prequisite>findutils</prequisite>
-                                <prequisite>
-                                    gzip >= 1.0
-                                </prequisite>
-                            </prequisites>
+							<prequisites>
+								<prequisite>findutils</prequisite>
+								<prequisite>
+									gzip >= 1.0
+								</prequisite>
+							</prequisites>
 
 							<requires>
 								<require>
@@ -193,4 +202,17 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skipSigning>false</skipSigning>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>

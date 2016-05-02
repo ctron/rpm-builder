@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.dentrassi.maven</groupId>
@@ -40,7 +41,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<maven.version>3.2.5</maven.version>
-		
+
 		<org.bouncycastle.version>1.54</org.bouncycastle.version>
 	</properties>
 
@@ -399,6 +400,14 @@
 							<pomIncludes>
 								<pomInclude>*/pom.xml</pomInclude>
 							</pomIncludes>
+                            <profiles>
+                                <profile>sign</profile>
+                            </profiles>
+							<properties>
+								<!-- forward properties -->
+								<keyId>${keyId}</keyId>
+								<passphrase>${passphrase}</passphrase>
+							</properties>
 						</configuration>
 						<executions>
 							<execution>

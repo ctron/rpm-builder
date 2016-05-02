@@ -16,6 +16,7 @@
             <item name="Payload information" href="payload_information.html"/>
             <item name="Scripts" href="scripts.html"/>
             <item name="Dependencies" href="deps.html"/>
+            <item name="Signing" href="signing.html"/>
 		</menu>
 
 		<menu ref="reports" />
