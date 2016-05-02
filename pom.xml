@@ -40,6 +40,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<maven.version>3.2.5</maven.version>
+		
+		<org.bouncycastle.version>1.54</org.bouncycastle.version>
 	</properties>
 
 	<prerequisites>
@@ -86,6 +88,17 @@
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-artifact</artifactId>
 			<version>${maven.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpg-jdk15on</artifactId>
+			<version>${org.bouncycastle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>${org.bouncycastle.version}</version>
 		</dependency>
 
 		<dependency>
