@@ -1,9 +1,0 @@
-org.eclipse.packagedrone.utils.rpm
-org.eclipse.packagedrone.utils.rpm.app
-org.eclipse.packagedrone.utils.rpm.header
-org.eclipse.packagedrone.utils.rpm.build
-org.eclipse.packagedrone.utils.rpm.deps
-org.eclipse.packagedrone.utils.rpm.signature
-org.eclipse.packagedrone.utils.rpm.parse
-org.eclipse.packagedrone.repo.signing.pgp
-de.dentrassi.rpm.builder
