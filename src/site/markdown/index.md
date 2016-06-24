@@ -19,18 +19,22 @@ The default way this plugin creates an RPM version from a Maven versions is as f
   
  * Non-SNAPSHOT versions are taken as is an get the release `1` assigned.
   
- * The Non-SNAPSHOT release value can be overridden using the parameter `release`
+ * The Non-SNAPSHOT release value can be overridden using the parameter `release`.
   
- * SNAPSHOT versions will get the `-SNAPSHOT` removed and get a generated release identifier assigned
+ * SNAPSHOT versions will get the `-SNAPSHOT` removed and get a generated release identifier assigned.
   
- * The release identifier is a combination of the parameter "snapshotReleasePrefix" (defaults to `0.`)
-   and the current timestamp in the format `yyyyMMddHHmm`
+ * The release identifier is a combination of the parameter `snapshotReleasePrefix` (defaults to `0.`)
+   and the value of the parameter `snapshotBuildId` (defaults to the current timestamp in the format `yyyyMMddHHmm`).
     
- * The parameter "release" has no effect for "-SNAPSHOT" versions
+ * The parameter "release" has no effect for "-SNAPSHOT" versions. Unless the
+   parameter `forceRelease` is set to `true`, in which case the build will always fall back to
+   the Non-SNAPSHOT behavior and use the `release` field as it is. 
   
 For example will the RPM version for the Maven version `1.0.0` be `1.0.0-1`. And the Maven version
 of `1.0.0-SNAPSHOT` will result in `1.0.0-0.201604250101` (depending on the actual date and time).
-The result is a SNAPSHOT release which is always lower than the final release. 
+
+The result of these rules are  SNAPSHOT releases which is always lower than the final release.
+Unless you override using `forceRelease` and and `snapshotBuildId`. 
 
 ## Contributing
 

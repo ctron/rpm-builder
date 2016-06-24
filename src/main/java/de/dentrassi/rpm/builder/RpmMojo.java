@@ -71,6 +71,8 @@ import de.dentrassi.rpm.builder.PackageEntry.Collector;
 @Mojo ( name = "rpm", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false )
 public class RpmMojo extends AbstractMojo
 {
+    private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+
     /**
      * The maven project
      */
@@ -95,38 +97,66 @@ public class RpmMojo extends AbstractMojo
     /**
      * The architecture
      */
-    @Parameter ( defaultValue = "noarch", property = "architecture" )
+    @Parameter ( defaultValue = "noarch", property = "rpm.architecture" )
     private final String architecture = "noarch";
 
     /**
      * The prefix of the release if this is a snapshot build, will be suffixed
-     * with the build timestamp
+     * with the snapshot build id
+     * <p>
+     * Also see: {@link #snapshotBuildId}
+     * </p>
      */
-    @Parameter ( property = "snapshotReleasePrefix", defaultValue = "0." )
+    @Parameter ( defaultValue = "0.", property = "rpm.snapshotReleasePrefix" )
     private final String snapshotReleasePrefix = "0.";
+
+    /**
+     * Set the build id which is used when a snapshot build is active.
+     * <p>
+     * If this parameter is left unset or empty then the current time (UTC) in
+     * the format {@code yyyyMMddHHmm} will be used.
+     * </p>
+     *
+     * @since 0.6.0
+     */
+    @Parameter ( property = "rpm.snapshotBuildId", required = false )
+    private String snapshotBuildId;
 
     /**
      * The release which will be used if this is not a snapshot build
      */
-    @Parameter ( property = "release", defaultValue = "1" )
+    @Parameter ( property = "rpm.release", defaultValue = "1" )
     private final String release = "1";
+
+    /**
+     * Always use the "release" string
+     * <p>
+     * This parameter enforces the build to always use the RPM release
+     * information from the parameter "release", whether this is a snapshot
+     * build or not
+     * </p>
+     *
+     * @since 0.6.0
+     */
+    @Parameter ( property = "rpm.forceRelease", defaultValue = "false" )
+    private final boolean forceRelease = false;
 
     /**
      * The classifier of the attached rpm
      */
-    @Parameter ( property = "classifier", defaultValue = "rpm" )
+    @Parameter ( property = "rpm.classifier", defaultValue = "rpm" )
     private final String classifier = "rpm";
 
     /**
      * Whether to attach the output file
      */
-    @Parameter ( property = "attach", defaultValue = "true" )
+    @Parameter ( property = "rpm.attach", defaultValue = "true" )
     private final boolean attach = true;
 
     /**
      * The RPM epoch, leave unset for default
      */
-    @Parameter ( property = "epoch" )
+    @Parameter ( property = "rpm.epoch" )
     private Integer epoch;
 
     /**
@@ -135,7 +165,7 @@ public class RpmMojo extends AbstractMojo
      * This defaults to the project name
      * </p>
      */
-    @Parameter ( property = "summary", defaultValue = "${project.name}" )
+    @Parameter ( property = "rpm.summary", defaultValue = "${project.name}" )
     private String summary;
 
     /**
@@ -144,7 +174,7 @@ public class RpmMojo extends AbstractMojo
      * This defaults to the Maven project description
      * </p>
      */
-    @Parameter ( property = "description", defaultValue = "${project.description}" )
+    @Parameter ( property = "rpm.description", defaultValue = "${project.description}" )
     private String description;
 
     /**
@@ -155,13 +185,13 @@ public class RpmMojo extends AbstractMojo
      * org/wiki/RPMGroups</a>
      * </p>
      */
-    @Parameter ( property = "group", defaultValue = "Unspecified" )
+    @Parameter ( property = "rpm.group", defaultValue = "Unspecified" )
     private String group;
 
     /**
      * The "distribution" field in the RPM file
      */
-    @Parameter ( property = "distribution" )
+    @Parameter ( property = "rpm.distribution" )
     private String distribution;
 
     /**
@@ -171,7 +201,7 @@ public class RpmMojo extends AbstractMojo
      * used instead of the actual hostname
      * </p>
      */
-    @Parameter ( property = "evalHostname", defaultValue = "true" )
+    @Parameter ( property = "rpm.evalHostname", defaultValue = "true" )
     private final boolean evalHostname = true;
 
     /**
@@ -181,7 +211,7 @@ public class RpmMojo extends AbstractMojo
      * the projects POM file.
      * </p>
      */
-    @Parameter ( property = "license" )
+    @Parameter ( property = "rpm.license" )
     private String license;
 
     /**
@@ -190,14 +220,14 @@ public class RpmMojo extends AbstractMojo
      * This defaults to the name of the organization in the POM file.
      * </p>
      */
-    @Parameter ( property = "vendor" )
+    @Parameter ( property = "rpm.vendor" )
     private String vendor;
 
     /**
      * The name of the packager in the RPM file
      * <p>
-     * This defaults to {@code ${project.organization.name}
-     * <${project.organization.url}>} if both values are set.
+     * This defaults to <tt>${project.organization.name}
+     * &lt;${project.organization.url}&gt;</tt> if both values are set.
      * </p>
      * <p>
      * See also <a href=
@@ -206,7 +236,7 @@ public class RpmMojo extends AbstractMojo
      * -TAG</a>
      * </p>
      */
-    @Parameter ( property = "packager" )
+    @Parameter ( property = "rpm.packager" )
     private String packager;
 
     /**
@@ -236,7 +266,7 @@ public class RpmMojo extends AbstractMojo
      * &lt;/entries&gt;
      * </pre>
      */
-    @Parameter ( property = "entries" )
+    @Parameter
     private final List<PackageEntry> entries = new LinkedList<> ();
 
     /**
@@ -245,13 +275,13 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="rulesets.html">rulesets</a>
      * </p>
      */
-    @Parameter ( property = "rulesets" )
+    @Parameter
     private final List<Ruleset> rulesets = new LinkedList<> ();
 
     /**
      * The default ruleset to use if no other is specified
      */
-    @Parameter ( property = "defaultRuleset" )
+    @Parameter
     private String defaultRuleset;
 
     private Logger logger;
@@ -264,7 +294,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
-    @Parameter ( property = "beforeInstallation" )
+    @Parameter
     private Script beforeInstallation;
 
     /**
@@ -273,7 +303,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
-    @Parameter ( property = "afterInstallation" )
+    @Parameter
     private Script afterInstallation;
 
     /**
@@ -282,7 +312,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
-    @Parameter ( property = "beforeRemoval" )
+    @Parameter
     private Script beforeRemoval;
 
     /**
@@ -291,14 +321,14 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="rulesets.html">scripts</a>
      * </p>
      */
-    @Parameter ( property = "afterRemoval" )
+    @Parameter
     private Script afterRemoval;
 
     /**
      * The default script interpreter which is used if neither the script has
      * one set explicitly, nor one could be detected
      */
-    @Parameter ( property = "defaultScriptInterpreter", defaultValue = "/bin/sh" )
+    @Parameter ( property = "rpm.defaultScriptInterpreter", defaultValue = "/bin/sh" )
     private final String defaultScriptInterpreter = "/bin/sh";
 
     /**
@@ -307,7 +337,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="deps.html">dependencies</a>
      * </p>
      */
-    @Parameter ( property = "requires" )
+    @Parameter
     private final List<Dependency> requires = new LinkedList<> ();
 
     /**
@@ -316,7 +346,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="deps.html">dependencies</a>
      * </p>
      */
-    @Parameter ( property = "provides" )
+    @Parameter
     private final List<SimpleDependency> provides = new LinkedList<> ();
 
     /**
@@ -325,7 +355,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="deps.html">dependencies</a>
      * </p>
      */
-    @Parameter ( property = "conflicts" )
+    @Parameter
     private final List<SimpleDependency> conflicts = new LinkedList<> ();
 
     /**
@@ -334,7 +364,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="deps.html">dependencies</a>
      * </p>
      */
-    @Parameter ( property = "obsoletes" )
+    @Parameter
     private final List<SimpleDependency> obsoletes = new LinkedList<> ();
 
     /**
@@ -343,7 +373,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="deps.html">dependencies</a>
      * </p>
      */
-    @Parameter ( property = "prerequisites" )
+    @Parameter
     private final List<SimpleDependency> prerequisites = new LinkedList<> ();
 
     /**
@@ -352,13 +382,13 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="signing.html">signing</a>
      * </p>
      */
-    @Parameter ( property = "signature" )
+    @Parameter ( property = "rpm.signature" )
     private Signature signature;
 
     /**
      * Disable all package signing
      */
-    @Parameter ( property = "skipSigning", defaultValue = "${rpm.skipSigning}" )
+    @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
     private boolean skipSigning = false;
 
     public void setSkipSigning ( final boolean skipSigning )
@@ -714,23 +744,31 @@ public class RpmMojo extends AbstractMojo
 
     private RpmVersion makeVersion ()
     {
-        if ( isSnapshotVersion () )
+        if ( !this.forceRelease && isSnapshotVersion () )
         {
             this.logger.info ( "Building with SNAPSHOT version" );
-            final String baseVersion = this.project.getVersion ().substring ( 0, this.project.getVersion ().length () - "-SNAPSHOT".length () );
-            return new RpmVersion ( this.epoch, baseVersion, this.snapshotReleasePrefix + getBuildTimestamp () );
+            final String baseVersion = this.project.getVersion ().substring ( 0, this.project.getVersion ().length () - SNAPSHOT_SUFFIX.length () );
+            return new RpmVersion ( this.epoch, baseVersion, makeSnapshotReleaseString () );
         }
         return new RpmVersion ( this.epoch, this.version, this.release );
     }
 
     private boolean isSnapshotVersion ()
     {
-        return this.project.getVersion ().endsWith ( "-SNAPSHOT" );
+        return this.project.getVersion ().endsWith ( SNAPSHOT_SUFFIX );
     }
 
-    private String getBuildTimestamp ()
+    private String makeSnapshotReleaseString ()
     {
-        return DateTimeFormatter.ofPattern ( "yyyyMMddHHmm", Locale.ROOT ).format ( Instant.now ().atOffset ( ZoneOffset.UTC ) );
+        if ( this.snapshotBuildId == null || this.snapshotBuildId.isEmpty () )
+        {
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern ( "yyyyMMddHHmm", Locale.ROOT );
+            return this.snapshotReleasePrefix + formatter.format ( Instant.now ().atOffset ( ZoneOffset.UTC ) );
+        }
+        else
+        {
+            return this.snapshotReleasePrefix + this.snapshotBuildId;
+        }
     }
 
     protected void fillPackageInformation ( final RpmBuilder builder )
