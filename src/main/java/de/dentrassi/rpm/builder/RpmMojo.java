@@ -98,7 +98,7 @@ public class RpmMojo extends AbstractMojo
      * The architecture
      */
     @Parameter ( defaultValue = "noarch", property = "rpm.architecture" )
-    private final String architecture = "noarch";
+    private String architecture = "noarch";
 
     /**
      * The prefix of the release if this is a snapshot build, will be suffixed
@@ -108,7 +108,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter ( defaultValue = "0.", property = "rpm.snapshotReleasePrefix" )
-    private final String snapshotReleasePrefix = "0.";
+    private String snapshotReleasePrefix = "0.";
 
     /**
      * Set the build id which is used when a snapshot build is active.
@@ -126,7 +126,7 @@ public class RpmMojo extends AbstractMojo
      * The release which will be used if this is not a snapshot build
      */
     @Parameter ( property = "rpm.release", defaultValue = "1" )
-    private final String release = "1";
+    private String release = "1";
 
     /**
      * Always use the "release" string
@@ -139,19 +139,19 @@ public class RpmMojo extends AbstractMojo
      * @since 0.6.0
      */
     @Parameter ( property = "rpm.forceRelease", defaultValue = "false" )
-    private final boolean forceRelease = false;
+    private boolean forceRelease = false;
 
     /**
      * The classifier of the attached rpm
      */
     @Parameter ( property = "rpm.classifier", defaultValue = "rpm" )
-    private final String classifier = "rpm";
+    private String classifier = "rpm";
 
     /**
      * Whether to attach the output file
      */
     @Parameter ( property = "rpm.attach", defaultValue = "true" )
-    private final boolean attach = true;
+    private boolean attach = true;
 
     /**
      * The RPM epoch, leave unset for default
@@ -202,7 +202,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter ( property = "rpm.evalHostname", defaultValue = "true" )
-    private final boolean evalHostname = true;
+    private boolean evalHostname = true;
 
     /**
      * The license of the RPM file
@@ -267,7 +267,7 @@ public class RpmMojo extends AbstractMojo
      * </pre>
      */
     @Parameter
-    private final List<PackageEntry> entries = new LinkedList<> ();
+    private List<PackageEntry> entries = new LinkedList<> ();
 
     /**
      * Rulesets to configure the file information like "user", "modes", etc.
@@ -276,7 +276,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<Ruleset> rulesets = new LinkedList<> ();
+    private List<Ruleset> rulesets = new LinkedList<> ();
 
     /**
      * The default ruleset to use if no other is specified
