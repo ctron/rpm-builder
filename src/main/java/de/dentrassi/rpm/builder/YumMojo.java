@@ -46,6 +46,7 @@ import org.eclipse.packagedrone.utils.rpm.parse.RpmInputStream;
 import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator;
 import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.Builder;
 import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.FileInformation;
+import org.eclipse.packagedrone.utils.security.pgp.SigningStream;
 
 /**
  * Build a YUM repository
@@ -115,7 +116,8 @@ public class YumMojo extends AbstractMojo
                 final PGPPrivateKey privateKey = SigningHelper.loadKey ( this.signature, this.logger );
                 if ( privateKey != null )
                 {
-                    builder.setSigning ( privateKey, HashAlgorithm.from ( this.signature.getHashAlgorithm () ).getValue () );
+                    final int digestAlgorithm = HashAlgorithm.from ( this.signature.getHashAlgorithm () ).getValue ();
+                    builder.setSigning ( output -> new SigningStream ( output, privateKey, digestAlgorithm, false, "RPM builder Mojo - de.dentrassi.maven:rpm" ) );
                 }
             }
 
