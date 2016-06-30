@@ -1,2 +1,6 @@
 de.dentrassi.rpm.builder
-org.eclipse.packagedrone.repo.signing.pgp
+org.eclipse.packagedrone.utils
+org.eclipse.packagedrone.utils.io
+org.eclipse.packagedrone.utils.rpm.info
+org.eclipse.packagedrone.utils.rpm.yum
+org.eclipse.packagedrone.utils.security.pgp
