@@ -73,12 +73,32 @@ public class YumMojo extends AbstractMojo
     @Component
     private MavenProjectHelper projectHelper;
 
+    /**
+     * The location of the output directory.
+     * <p>
+     * This directory will be created if it does not exists.
+     * </p>
+     */
     @Parameter ( property = "yum.repository.output", defaultValue = "${project.build.directory}/yum" )
     private File outputDirectory;
 
+    /**
+     * A list of files to be added
+     * <p>
+     * All listed files will be added to the final repository.
+     * </p>
+     */
     @Parameter
     private List<File> files;
 
+    /**
+     * A list of directories
+     * <p>
+     * These directories will be scanned recursively for files with the
+     * extension <code>.rpm</code>. All matching files will be added to the
+     * final repository.
+     * </p>
+     */
     @Parameter
     private List<File> directories;
 
