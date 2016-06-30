@@ -27,7 +27,6 @@
 		<url>https://github.com/ctron/rpm-builder</url>
 		<connection>scm:git:git://github.com/ctron/rpm-builder.git</connection>
 		<developerConnection>scm:git:git@github.com:ctron/rpm-builder.git</developerConnection>
-		<tag>rpm-0.4.0</tag>
 	</scm>
 
 	<issueManagement>
@@ -114,6 +113,12 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+		</dependency>
+
 		<!-- EOTD -->
 
 		<dependency>

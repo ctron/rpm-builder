@@ -14,9 +14,7 @@ import static com.google.common.io.Files.readFirstLine;
 import static java.nio.file.Files.walkFileTree;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
@@ -46,9 +44,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.eclipse.packagedrone.repo.signing.pgp.PgpHelper;
 import org.eclipse.packagedrone.utils.rpm.RpmVersion;
 import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
@@ -449,47 +445,14 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private SignatureProcessor makeRsaSigner ( final Signature signature ) throws IOException, MojoFailureException
+    private SignatureProcessor makeRsaSigner ( final Signature signature ) throws MojoExecutionException, MojoFailureException
     {
-        if ( signature == null )
+        final PGPPrivateKey privateKey = SigningHelper.loadKey ( signature, this.logger );
+        if ( privateKey == null )
         {
             return null;
         }
-
-        if ( signature.isSkip () )
-        {
-            return null;
-        }
-
-        if ( signature.getKeyId () == null || signature.getKeyId ().isEmpty () )
-        {
-            throw new MojoFailureException ( signature, "'keyId' parameter not set", "Signing requires the 'keyId' to the user id of the GPG key to use." );
-        }
-
-        if ( signature.getKeyringFile () == null )
-        {
-            throw new MojoFailureException ( signature, "'keyringFile' parameter not set", "Signing requires the 'keyringFile' to be set to a valid GPG keyring file, containing the secret keys." );
-        }
-
-        if ( signature.getPassphrase () == null )
-        {
-            throw new MojoFailureException ( signature, "'passphrase' parameter not set", "Signing requires the 'passphrase' parameter to be set." );
-        }
-
-        try ( InputStream input = new FileInputStream ( signature.getKeyringFile () ) )
-        {
-            final PGPPrivateKey privateKey = PgpHelper.loadPrivateKey ( input, signature.getKeyId (), signature.getPassphrase () );
-            if ( privateKey == null )
-            {
-                throw new MojoFailureException ( String.format ( "Unable to load GPG key '%s' from '%s'", signature.getKeyId (), signature.getKeyringFile () ) );
-            }
-            this.logger.info ( "Signing RPM - keyId: %016x", privateKey.getKeyID () );
-            return new RsaHeaderSignatureProcessor ( privateKey, HashAlgorithm.from ( signature.getHashAlgorithm () ) );
-        }
-        catch ( final PGPException e )
-        {
-            throw new IOException ( "Failed to load private key", e );
-        }
+        return new RsaHeaderSignatureProcessor ( privateKey, HashAlgorithm.from ( signature.getHashAlgorithm () ) );
     }
 
     @FunctionalInterface
