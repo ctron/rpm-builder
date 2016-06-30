@@ -21,7 +21,7 @@ Signing is configured using the `<signature>` element:
     
 The keyring file is a standard GPG keyring file. The key ID is the short ID of the key to use for signing.
 
-The hash algorithm can be either `SHA1` or `SHA512`.
+The hash algorithm can be either `SHA1`, `SHA256` or `SHA512`.
 
 The `<skip>` element can be set to `true` in order to skip signing the package with this signature.
 
