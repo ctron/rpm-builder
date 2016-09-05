@@ -1,5 +1,5 @@
 
-# RPM builder plugin ![Build status](https://api.travis-ci.org/ctron/rpm-builder.svg "Travis Build Status") ![Maven Central](https://img.shields.io/maven-central/v/de.dentrassi.maven/rpm.svg "Maven Central Status")
+# RPM builder plugin [![Build status](https://api.travis-ci.org/ctron/rpm-builder.svg)](https://travis-ci.org/ctron/rpm-builder) ![Maven Central](https://img.shields.io/maven-central/v/de.dentrassi.maven/rpm.svg "Maven Central Status")
 
 This is a Maven Plugin which can build RPM files using plain Java.
 It does not require the `rpmbuild` command line tool.
