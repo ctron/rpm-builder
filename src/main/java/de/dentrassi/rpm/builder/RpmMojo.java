@@ -640,7 +640,7 @@ public class RpmMojo extends AbstractMojo
                 public FileVisitResult visitFile ( final Path file, final BasicFileAttributes attrs ) throws IOException
                 {
                     final Path relative = from.relativize ( file );
-                    final String targetName = targetPrefix + relative.toString ();
+                    final String targetName = makeUnix ( targetPrefix + relative.toString () );
 
                     if ( java.nio.file.Files.isSymbolicLink ( file ) )
                     {
@@ -675,7 +675,7 @@ public class RpmMojo extends AbstractMojo
                     {
                         RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
                         final Path relative = from.relativize ( dir );
-                        final String targetName = targetPrefix + relative.toString ();
+                        final String targetName = makeUnix ( targetPrefix + relative.toString () );
                         RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
                         ctx.addDirectory ( targetName, provider );
                     }
@@ -683,6 +683,11 @@ public class RpmMojo extends AbstractMojo
                 }
             } );
         }
+    }
+
+    protected String makeUnix ( final String path )
+    {
+        return path.replace ( "\\", "/" );
     }
 
     private MojoFileInformationProvider makeProvider ( final PackageEntry entry, final String padding )
