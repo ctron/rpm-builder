@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
+ *     Red Hat Inc - upgrade to package drone 0.14.0
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -39,9 +40,9 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
     }
 
     @Override
-    public FileInformation provide ( final Object object, final PayloadEntryType type ) throws IOException
+    public FileInformation provide ( final String targetName, final Object object, final PayloadEntryType type ) throws IOException
     {
-        final FileInformation result = provideByRule ( object, type );
+        final FileInformation result = provideByRule ( targetName, object, type );
 
         if ( result == null )
         {
@@ -59,9 +60,9 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
         return result;
     }
 
-    private FileInformation provideByRule ( final Object object, final PayloadEntryType type ) throws IOException
+    private FileInformation provideByRule ( final String targetName, final Object object, final PayloadEntryType type ) throws IOException
     {
-        final FileInformation result = BuilderContext.defaultProvider ().provide ( object, type );
+        final FileInformation result = BuilderContext.defaultProvider ().provide ( targetName, object, type );
 
         if ( this.ruleId != null && !this.ruleId.isEmpty () )
         {

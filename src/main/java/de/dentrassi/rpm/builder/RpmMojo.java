@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
+ *     Red Hat Inc - upgrade to package drone 0.14.0
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -45,13 +46,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
 import org.eclipse.packagedrone.utils.rpm.RpmVersion;
 import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packagedrone.utils.rpm.signature.RsaHeaderSignatureProcessor;
-import org.eclipse.packagedrone.utils.rpm.signature.RsaHeaderSignatureProcessor.HashAlgorithm;
 import org.eclipse.packagedrone.utils.rpm.signature.SignatureProcessor;
 
 import com.google.common.base.Strings;
