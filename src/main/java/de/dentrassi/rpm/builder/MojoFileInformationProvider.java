@@ -67,7 +67,7 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
         if ( this.ruleId != null && !this.ruleId.isEmpty () )
         {
             this.logger.accept ( String.format ( "run ruleset: '%s'", this.ruleId ) );
-            this.rulesetEval.eval ( this.ruleId, object, type, this.entry.getName (), result );
+            this.rulesetEval.eval ( this.ruleId, object, type, targetName, result );
         }
 
         this.logger.accept ( String.format ( "fileInformation = %s", result ) );
