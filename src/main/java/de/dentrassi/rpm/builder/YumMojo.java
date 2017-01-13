@@ -12,7 +12,7 @@
 package de.dentrassi.rpm.builder;
 
 import static java.util.Collections.singletonMap;
-import static org.eclipse.packagedrone.utils.rpm.yum.ChecksumType.SHA256;
+import static org.eclipse.packagedrone.utils.rpm.HashAlgorithm.SHA256;
 
 import java.io.File;
 import java.io.IOException;
