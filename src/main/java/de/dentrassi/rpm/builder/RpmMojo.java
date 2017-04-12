@@ -58,6 +58,7 @@ import org.eclipse.packagedrone.utils.rpm.signature.SignatureProcessor;
 import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
 
+import de.dentrassi.rpm.builder.Naming.Case;
 import de.dentrassi.rpm.builder.PackageEntry.Collector;
 
 /**
@@ -388,9 +389,23 @@ public class RpmMojo extends AbstractMojo
     @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
     private boolean skipSigning = false;
 
+    /**
+     * Provide package naming options
+     * <p>
+     * Also see <a href="naming.html">naming</a>
+     * </p>
+     */
+    @Parameter ( property = "rpm.naming" )
+    private Naming naming;
+
     public void setSkipSigning ( final boolean skipSigning )
     {
         this.skipSigning = skipSigning;
+    }
+
+    public void setNaming ( final Naming naming )
+    {
+        this.naming = naming;
     }
 
     @Override
@@ -708,7 +723,28 @@ public class RpmMojo extends AbstractMojo
 
     private String makePackageName ()
     {
-        return this.packageName.toLowerCase ();
+        final Case nameCase;
+        if ( this.naming == null )
+        {
+            nameCase = Case.UNMODIFIED;
+            if ( !this.packageName.toLowerCase ().equals ( this.packageName ) )
+            {
+                getLog ().warn ( "Since version 0.9.0 of the RPM builder mojo the default behavior of forcing a lower case package name was removed. This package name seems to contain non-lowercase characters. It is possible to restore the previous behavior by setting the 'case' value in the 'naming' element." );
+            }
+        }
+        else
+        {
+            nameCase = this.naming.getCase ();
+        }
+
+        switch ( nameCase )
+        {
+            case LOWERCASE:
+                return this.packageName.toLowerCase ();
+            case UNMODIFIED:
+            default:
+                return this.packageName;
+        }
     }
 
     private RpmVersion makeVersion ()

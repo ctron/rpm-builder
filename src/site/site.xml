@@ -17,6 +17,7 @@
             <item name="Scripts" href="scripts.html"/>
             <item name="Dependencies" href="deps.html"/>
             <item name="Signing" href="signing.html"/>
+            <item name="Naming" href="naming.html"/>
 		</menu>
 
 		<menu ref="reports" />
@@ -24,7 +25,7 @@
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
 		<artifactId>maven-fluido-skin</artifactId>
-		<version>1.5</version>
+		<version>1.6</version>
 	</skin>
 	<custom>
 		<fluidoSkin>
