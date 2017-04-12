@@ -740,10 +740,10 @@ public class RpmMojo extends AbstractMojo
         switch ( nameCase )
         {
             case LOWERCASE:
-                return this.packageName.toLowerCase ();
+                return this.packageName.trim ().toLowerCase ();
             case UNMODIFIED:
             default:
-                return this.packageName;
+                return this.packageName.trim ();
         }
     }
 
