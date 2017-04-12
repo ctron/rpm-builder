@@ -708,7 +708,7 @@ public class RpmMojo extends AbstractMojo
 
     private String makePackageName ()
     {
-        return this.packageName.toLowerCase ();
+        return this.packageName;
     }
 
     private RpmVersion makeVersion ()
