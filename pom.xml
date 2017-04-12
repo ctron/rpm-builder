@@ -93,7 +93,7 @@
 		<dependency>
 		    <groupId>org.eclipse.packagedrone</groupId>
 		    <artifactId>org.eclipse.packagedrone.utils.rpm</artifactId>
-		    <version>0.14.0</version>
+		    <version>0.14.1</version>
 		</dependency>
 
 		<dependency>
@@ -139,7 +139,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.5</version>
+					<version>3.6.1</version>
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
