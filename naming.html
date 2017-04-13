@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Date-Revision-yyyymmdd" content="20170413" />
     <meta http-equiv="Content-Language" content="en" />
-    <title>Java RPM builder &#x2013; Project Summary</title>
+    <title>Java RPM builder &#x2013; Package naming</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.6.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -59,24 +59,10 @@
     <li><a href="scripts.html" title="Scripts"><span class="none"></span>Scripts</a>  </li>
     <li><a href="deps.html" title="Dependencies"><span class="none"></span>Dependencies</a>  </li>
     <li><a href="signing.html" title="Signing"><span class="none"></span>Signing</a>  </li>
-    <li><a href="naming.html" title="Naming"><span class="none"></span>Naming</a>  </li>
+    <li class="active"><a href="#"><span class="none"></span>Naming</a>
+  </li>
           <li class="nav-header">Project Documentation</li>
-    <li><a href="project-info.html" title="Project Information"><span class="icon-chevron-down"></span>Project Information</a>
-      <ul class="nav nav-list">
-    <li><a href="dependencies.html" title="Dependencies"><span class="none"></span>Dependencies</a>  </li>
-    <li><a href="dependency-info.html" title="Dependency Information"><span class="none"></span>Dependency Information</a>  </li>
-    <li><a href="distribution-management.html" title="Distribution Management"><span class="none"></span>Distribution Management</a>  </li>
-    <li><a href="index.html" title="About"><span class="none"></span>About</a>  </li>
-    <li><a href="issue-tracking.html" title="Issue Management"><span class="none"></span>Issue Management</a>  </li>
-    <li><a href="license.html" title="Licenses"><span class="none"></span>Licenses</a>  </li>
-    <li><a href="plugin-management.html" title="Plugin Management"><span class="none"></span>Plugin Management</a>  </li>
-    <li><a href="plugins.html" title="Plugins"><span class="none"></span>Plugins</a>  </li>
-    <li><a href="team-list.html" title="Team"><span class="none"></span>Team</a>  </li>
-    <li><a href="source-repository.html" title="Source Code Management"><span class="none"></span>Source Code Management</a>  </li>
-    <li class="active"><a href="#"><span class="none"></span>Summary</a>
-  </li>
-      </ul>
-  </li>
+    <li><a href="project-info.html" title="Project Information"><span class="icon-chevron-right"></span>Project Information</a>  </li>
     <li><a href="project-reports.html" title="Project Reports"><span class="icon-chevron-right"></span>Project Reports</a>  </li>
   </ul>
           <hr />
@@ -99,47 +85,16 @@
           </div>
         </div>
         <div id="bodyColumn"  class="span10" >
-<div class="section">
-<h2><a name="Project_Summary"></a>Project Summary</h2><a name="Project_Summary"></a>
-<div class="section">
-<h3><a name="Project_Information"></a>Project Information</h3><a name="Project_Information"></a>
-<table border="0" class="table table-striped">
-<tr class="a">
-<th>Field</th>
-<th>Value</th></tr>
-<tr class="b">
-<td>Name</td>
-<td>Java RPM builder</td></tr>
-<tr class="a">
-<td>Description</td>
-<td>Build RPM packages using plain Java on any platform</td></tr>
-<tr class="b">
-<td>Homepage</td>
-<td><a class="externalLink" href="https://ctron.github.io/rpm-builder">https://ctron.github.io/rpm-builder</a></td></tr></table></div>
-<div class="section">
-<h3><a name="Project_Organization"></a>Project Organization</h3><a name="Project_Organization"></a>
-<p>This project does not belong to an organization.</p></div>
-<div class="section">
-<h3><a name="Build_Information"></a>Build Information</h3><a name="Build_Information"></a>
-<table border="0" class="table table-striped">
-<tr class="a">
-<th>Field</th>
-<th>Value</th></tr>
-<tr class="b">
-<td>GroupId</td>
-<td>de.dentrassi.maven</td></tr>
-<tr class="a">
-<td>ArtifactId</td>
-<td>rpm</td></tr>
-<tr class="b">
-<td>Version</td>
-<td>0.9.0</td></tr>
-<tr class="a">
-<td>Type</td>
-<td>maven-plugin</td></tr>
-<tr class="b">
-<td>Java Version</td>
-<td>1.8</td></tr></table></div></div>
+<h1>Package naming</h1>
+<p>In versions prior to 0.9.0 the default behavior was to always lowercase the package name.</p>
+<p>This behavior has been changed in 0.9.0 which will allow you to control the naming process. However the default behavior is to leave the package name unchanged.</p>
+<p>It is possible to revert to the old behavior by configuring your build like:</p>
+
+<div class="source">
+<div class="source"><pre class="prettyprint">&lt;naming&gt;
+    &lt;case&gt;lowercase&lt;/case&gt;
+&lt;/naming&gt;
+</pre></div></div>
         </div>
       </div>
     </div>
