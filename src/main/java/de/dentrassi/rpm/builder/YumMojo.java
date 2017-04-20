@@ -121,6 +121,12 @@ public class YumMojo extends AbstractMojo
     @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
     private boolean skipSigning = false;
 
+    /**
+     * Disable the use of rpms from maven dependency artifacts
+     */
+    @Parameter ( property = "rpm.skipDependencies", defaultValue = "false" )
+    private boolean skipDependencies = false;
+
     private Logger logger;
 
     @Override
@@ -150,11 +156,15 @@ public class YumMojo extends AbstractMojo
 
             int count = 0;
 
-            final Set<Artifact> deps = this.project.getArtifacts ();
-            if ( deps != null )
+            if ( !this.skipDependencies )
             {
-                deps.forEach ( art -> addPackage ( creator, art.getFile () ) );
-                count++;
+                this.logger.debug ( "Skipping rpm artifacts from maven dependencies" );
+                final Set<Artifact> deps = this.project.getArtifacts ();
+                if ( deps != null )
+                {
+                    deps.forEach ( art -> addPackage ( creator, art.getFile () ) );
+                    count++;
+                }
             }
             if ( this.files != null )
             {
