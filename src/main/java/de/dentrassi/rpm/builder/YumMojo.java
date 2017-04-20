@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2017 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
+ *     Bernd Warmuth - introduced skipDependencies property
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -121,6 +122,12 @@ public class YumMojo extends AbstractMojo
     @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
     private boolean skipSigning = false;
 
+    /**
+     * Disable the use of RPMs from maven dependency artifacts
+     */
+    @Parameter ( property = "rpm.skipDependencies", defaultValue = "false" )
+    private boolean skipDependencies = false;
+
     private Logger logger;
 
     @Override
@@ -150,11 +157,18 @@ public class YumMojo extends AbstractMojo
 
             int count = 0;
 
-            final Set<Artifact> deps = this.project.getArtifacts ();
-            if ( deps != null )
+            if ( !this.skipDependencies )
             {
-                deps.forEach ( art -> addPackage ( creator, art.getFile () ) );
-                count++;
+                final Set<Artifact> deps = this.project.getArtifacts ();
+                if ( deps != null )
+                {
+                    deps.forEach ( art -> addPackage ( creator, art.getFile () ) );
+                    count++;
+                }
+            }
+            else
+            {
+                this.logger.debug ( "Skipped RPM artifacts from maven dependencies" );
             }
             if ( this.files != null )
             {
