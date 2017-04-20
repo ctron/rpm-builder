@@ -8,7 +8,7 @@
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
- *     triggetry - introduced skipDependencies property
+ *     Bernd Warmuth - introduced skipDependencies property
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
