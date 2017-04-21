@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2017 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
+ *     Bernd Warmuth - bugfix target folder creation
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -20,6 +21,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -416,6 +418,20 @@ public class RpmMojo extends AbstractMojo
         this.eval = new RulesetEvaluator ( this.rulesets );
 
         final Path targetDir = Paths.get ( this.project.getBuild ().getDirectory () );
+
+        if ( !Files.exists ( targetDir ) )
+        {
+            try
+            {
+                Files.createDirectories ( targetDir );
+            }
+            catch ( final IOException ioe )
+            {
+                this.logger.debug ( "Unable to create target directory {}", targetDir );
+                throw new MojoExecutionException ( "RPM build failed.", ioe );
+
+            }
+        }
 
         this.logger.info ( "Writing to target to: %s", targetDir );
         this.logger.debug ( "Default script interpreter: %s", this.defaultScriptInterpreter );
