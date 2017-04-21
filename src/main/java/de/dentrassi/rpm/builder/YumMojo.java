@@ -8,7 +8,8 @@
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
- *     Bernd Warmuth - introduced skipDependencies property
+ *     Bernd Warmuth - introduced skipDependencies property,
+ *                     only consider dependencies of type "rpm"
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -130,6 +131,8 @@ public class YumMojo extends AbstractMojo
 
     private Logger logger;
 
+    private int countFilesAdded = 0;
+
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
@@ -155,15 +158,12 @@ public class YumMojo extends AbstractMojo
             this.packagesPath = new File ( this.outputDirectory, "packages" );
             Files.createDirectories ( this.packagesPath.toPath () );
 
-            int count = 0;
-
             if ( !this.skipDependencies )
             {
                 final Set<Artifact> deps = this.project.getArtifacts ();
                 if ( deps != null )
                 {
-                    deps.forEach ( art -> addPackage ( creator, art.getFile () ) );
-                    count++;
+                    deps.stream ().filter ( d -> d.getType ().equalsIgnoreCase ( "rpm" ) ).forEach ( art -> addPackage ( creator, art.getFile () ) );
                 }
             }
             else
@@ -173,7 +173,6 @@ public class YumMojo extends AbstractMojo
             if ( this.files != null )
             {
                 this.files.forEach ( file -> addPackage ( creator, file ) );
-                count++;
             }
             if ( this.directories != null )
             {
@@ -193,7 +192,7 @@ public class YumMojo extends AbstractMojo
                 }
             }
 
-            getLog ().info ( String.format ( "Added %s packages to the repository", count ) );
+            getLog ().info ( String.format ( "Added %s packages to the repository", this.countFilesAdded ) );
         }
         catch ( final IOException e )
         {
@@ -226,6 +225,7 @@ public class YumMojo extends AbstractMojo
 
                 Files.copy ( path, this.packagesPath.toPath ().resolve ( fileName ), StandardCopyOption.COPY_ATTRIBUTES );
             } );
+            this.countFilesAdded++;
         }
         catch ( final IOException e )
         {
