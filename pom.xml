@@ -91,9 +91,9 @@
 		</dependency>
 		
 		<dependency>
-		    <groupId>org.eclipse.packagedrone</groupId>
-		    <artifactId>org.eclipse.packagedrone.utils.rpm</artifactId>
-		    <version>0.14.1</version>
+			<groupId>org.eclipse.packagedrone</groupId>
+			<artifactId>org.eclipse.packagedrone.utils.rpm</artifactId>
+			<version>0.14.1</version>
 		</dependency>
 
 		<dependency>
@@ -244,11 +244,11 @@
 					<version>0.12</version>
 				</plugin>
 				
-	            <plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-enforcer-plugin</artifactId>
-	                <version>1.4.1</version>
-	            </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>1.4.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -329,19 +329,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<executions>
-				    <execution>
-				        <id>enforce-java</id>
-				        <goals>
-				            <goal>enforce</goal>
-				        </goals>
-				        <configuration>
-				            <rules>
-				                <requireJavaVersion>
-				                    <version>1.8.0</version>
-				                </requireJavaVersion>
-				            </rules>
-				        </configuration>
-				    </execution>
+					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>1.8.0</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -413,11 +413,11 @@
 							<pomIncludes>
 								<pomInclude>*/pom.xml</pomInclude>
 							</pomIncludes>
-                            <profiles>
-                            <!-- 
-                                <profile>sign</profile>
-                            -->
-                            </profiles>
+							<profiles>
+								<!--
+									<profile>sign</profile>
+								-->
+							</profiles>
 							<properties>
 								<!-- forward properties -->
 								<keyId>${keyId}</keyId>
