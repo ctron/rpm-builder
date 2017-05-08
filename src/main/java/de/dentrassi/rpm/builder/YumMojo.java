@@ -9,7 +9,8 @@
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
  *     Bernd Warmuth - introduced skipDependencies property,
- *                     only consider dependencies of type "rpm"
+                       only consider dependencies of type "rpm",
+                       fixed repodata creation for multiple rpm packages
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -25,8 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.maven.artifact.Artifact;
@@ -49,8 +52,11 @@ import org.eclipse.packagedrone.utils.rpm.info.RpmInformations;
 import org.eclipse.packagedrone.utils.rpm.parse.RpmInputStream;
 import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator;
 import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.Builder;
+import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.Context;
 import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.FileInformation;
 import org.eclipse.packagedrone.utils.security.pgp.SigningStream;
+
+import com.google.common.collect.Lists;
 
 /**
  * Build a YUM repository
@@ -131,8 +137,6 @@ public class YumMojo extends AbstractMojo
 
     private Logger logger;
 
-    private int countFilesAdded = 0;
-
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
@@ -158,21 +162,27 @@ public class YumMojo extends AbstractMojo
             this.packagesPath = new File ( this.outputDirectory, "packages" );
             Files.createDirectories ( this.packagesPath.toPath () );
 
+            final Collection<Path> paths = Lists.newArrayList ();
+
             if ( !this.skipDependencies )
             {
                 final Set<Artifact> deps = this.project.getArtifacts ();
                 if ( deps != null )
                 {
-                    deps.stream ().filter ( d -> d.getType ().equalsIgnoreCase ( "rpm" ) ).forEach ( art -> addPackage ( creator, art.getFile () ) );
+                    paths.addAll ( deps.stream ()//
+                    .filter ( d -> d.getType ().equalsIgnoreCase ( "rpm" ) )//
+                    .map ( d -> d.getFile ().toPath () )//
+                    .collect ( Collectors.toList () ) );
                 }
             }
             else
             {
                 this.logger.debug ( "Skipped RPM artifacts from maven dependencies" );
             }
+
             if ( this.files != null )
             {
-                this.files.forEach ( file -> addPackage ( creator, file ) );
+                paths.addAll ( this.files.stream ().map ( f -> f.toPath () ).collect ( Collectors.toList () ) );
             }
             if ( this.directories != null )
             {
@@ -184,7 +194,7 @@ public class YumMojo extends AbstractMojo
                         {
                             if ( file.getFileName ().toString ().toLowerCase ().endsWith ( ".rpm" ) )
                             {
-                                addPackage ( creator, file );
+                                paths.add ( file );
                             }
                             return FileVisitResult.CONTINUE;
                         }
@@ -192,7 +202,7 @@ public class YumMojo extends AbstractMojo
                 }
             }
 
-            getLog ().info ( String.format ( "Added %s packages to the repository", this.countFilesAdded ) );
+            addPackageList ( creator, paths );
         }
         catch ( final IOException e )
         {
@@ -200,37 +210,40 @@ public class YumMojo extends AbstractMojo
         }
     }
 
-    private void addPackage ( final RepositoryCreator creator, final File file )
-    {
-        addPackage ( creator, file.toPath () );
-    }
-
-    private void addPackage ( final RepositoryCreator creator, final Path path )
+    private void addPackageList ( final RepositoryCreator creator, final Collection<Path> paths )
     {
         try
         {
             creator.process ( context -> {
-                final String checksum = makeChecksum ( path );
-                final String fileName = path.getFileName ().toString ();
-                final String location = "packages/" + fileName;
-                final FileInformation fileInformation = new FileInformation ( Files.getLastModifiedTime ( path ).toInstant (), Files.size ( path ), location );
-
-                final RpmInformation rpmInformation;
-                try ( RpmInputStream ris = new RpmInputStream ( Files.newInputStream ( path ) ) )
+                for ( final Path p : paths )
                 {
-                    rpmInformation = RpmInformations.makeInformation ( ris );
+                    addSinglePackage ( p, context );
                 }
-
-                context.addPackage ( fileInformation, rpmInformation, singletonMap ( SHA256, checksum ), SHA256 );
-
-                Files.copy ( path, this.packagesPath.toPath ().resolve ( fileName ), StandardCopyOption.COPY_ATTRIBUTES );
+                getLog ().info ( String.format ( "Added %s packages to the repository", paths.size () ) );
             } );
-            this.countFilesAdded++;
         }
         catch ( final IOException e )
         {
             throw new RuntimeException ( e );
         }
+    }
+
+    private void addSinglePackage ( final Path path, final Context context ) throws IOException
+    {
+        final String checksum = makeChecksum ( path );
+        final String fileName = path.getFileName ().toString ();
+        final String location = "packages/" + fileName;
+        final FileInformation fileInformation = new FileInformation ( Files.getLastModifiedTime ( path ).toInstant (), Files.size ( path ), location );
+
+        final RpmInformation rpmInformation;
+        try ( RpmInputStream ris = new RpmInputStream ( Files.newInputStream ( path ) ) )
+        {
+            rpmInformation = RpmInformations.makeInformation ( ris );
+        }
+
+        context.addPackage ( fileInformation, rpmInformation, singletonMap ( SHA256, checksum ), SHA256 );
+
+        Files.copy ( path, this.packagesPath.toPath ().resolve ( fileName ), StandardCopyOption.COPY_ATTRIBUTES );
     }
 
     private String makeChecksum ( final Path path ) throws IOException
