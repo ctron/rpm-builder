@@ -12,3 +12,4 @@ For more information about how to use this plugin see
 ## License
 
 This plugin is open source and licensed under the EPL. See also [license.html](license.html).
+
