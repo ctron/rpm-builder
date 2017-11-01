@@ -91,7 +91,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * The RPM package name
      */
-    @Parameter ( defaultValue = "${project.artifactId}" )
+    @Parameter ( defaultValue = "${project.artifactId}", property = "rpm.packageName" )
     private String packageName;
 
     /**
@@ -329,7 +329,7 @@ public class RpmMojo extends AbstractMojo
      * one set explicitly, nor one could be detected
      */
     @Parameter ( property = "rpm.defaultScriptInterpreter", defaultValue = "/bin/sh" )
-    private final String defaultScriptInterpreter = "/bin/sh";
+    private String defaultScriptInterpreter;
 
     /**
      * RPM package requirements
