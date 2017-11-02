@@ -9,6 +9,7 @@
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
  *     Bernd Warmuth - bugfix target folder creation
+ *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
