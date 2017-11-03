@@ -9,15 +9,15 @@
 			<item name="Usage" href="usage.html" />
 			<item name="Example" href="example.html" />
 		</menu>
-		
+
 		<menu name="Configuration">
-            <item name="Payload Entries" href="entry.html" />
-            <item name="Rulesets" href="rulesets.html" />
-            <item name="Payload information" href="payload_information.html"/>
-            <item name="Scripts" href="scripts.html"/>
-            <item name="Dependencies" href="deps.html"/>
-            <item name="Signing" href="signing.html"/>
-            <item name="Naming" href="naming.html"/>
+			<item name="Payload Entries" href="entry.html" />
+			<item name="Rulesets" href="rulesets.html" />
+			<item name="Payload information" href="payload_information.html" />
+			<item name="Scripts" href="scripts.html" />
+			<item name="Dependencies" href="deps.html" />
+			<item name="Signing" href="signing.html" />
+			<item name="Naming" href="naming.html" />
 		</menu>
 
 		<menu ref="reports" />
