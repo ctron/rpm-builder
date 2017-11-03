@@ -9,6 +9,7 @@
  *     IBH SYSTEMS GmbH - initial API and implementation
  *     Red Hat Inc - upgrade to package drone 0.14.0
  *     Bernd Warmuth - bugfix target folder creation
+ *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -91,7 +92,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * The RPM package name
      */
-    @Parameter ( defaultValue = "${project.artifactId}" )
+    @Parameter ( defaultValue = "${project.artifactId}", property = "rpm.packageName" )
     private String packageName;
 
     /**
@@ -329,7 +330,7 @@ public class RpmMojo extends AbstractMojo
      * one set explicitly, nor one could be detected
      */
     @Parameter ( property = "rpm.defaultScriptInterpreter", defaultValue = "/bin/sh" )
-    private final String defaultScriptInterpreter = "/bin/sh";
+    private String defaultScriptInterpreter;
 
     /**
      * RPM package requirements
