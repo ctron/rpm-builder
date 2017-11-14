@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,7 +70,7 @@ import de.dentrassi.rpm.builder.PackageEntry.Collector;
  *
  * @author ctron
  */
-@Mojo ( name = "rpm", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false )
+@Mojo ( name = "rpm", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true )
 public class RpmMojo extends AbstractMojo
 {
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
@@ -425,6 +426,10 @@ public class RpmMojo extends AbstractMojo
             try
             {
                 Files.createDirectories ( targetDir );
+            }
+            catch ( final FileAlreadyExistsException e )
+            {
+                // silently ignore
             }
             catch ( final IOException ioe )
             {
