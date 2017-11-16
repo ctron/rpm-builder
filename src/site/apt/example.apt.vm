@@ -80,6 +80,18 @@ Example configuration #1
                       </when>
                       <configuration>true</configuration>
                     </rule>
+                    <file>
+                      <when>
+                        <prefix>/usr/shar/doc/</prefix>
+                      </when>
+                      <documentation>true</documentation>
+                    </file>
+                    <file>
+                      <when>
+                        <suffix>README.txt</suffix>
+                      </when>
+                      <readme>true</readme>
+                    </file>
                     <rule>
                       <when>
                         <type>file</type>

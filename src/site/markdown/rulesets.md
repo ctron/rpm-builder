@@ -70,7 +70,30 @@ If the rule matches the current payload entry, then the provided information wil
       <configuration>true</configuration> <!-- mark as configuration -->
     </rule>
     
-Also see [entry information](entry_information.html).
+Also see [entry information](entry.html).
+
+## Conditions
+
+The `<when>` tag captures all the requires conditions which must be met in order
+for a rule to match.
+
+The following child elements are possible:
+
+### `<type>`
+
+Tests for a entry type. This can be one of:
+
+ * `file` – to match a regular file
+ * `directory` – to match a directory
+ * `link` – to match a symbolic link
+
+### `<prefix>`
+
+Matches the prefix of the *target path*.
+
+### `<suffix>`
+
+Matches the suffix of the *target path*.
 
 ## Ruleset processing
 

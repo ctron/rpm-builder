@@ -36,10 +36,40 @@ The group element specifies the file group. It must be the name of the group.
 
 Specifies the file permissions in octal notation. A leading zero is allowed but not required.
 
-It is however **not** possible to use a `chmod` like string representation like `u=rw,g=r,o=`.
+It is however **not** possible to use a `chmod` string representation like `u=rw,g=r,o=`.
 
 ## `<configuration>`
 
 A boolean flag (`true` or `false`) which marks the entry a configuration file.
 
 **Note:** This is only valid for file entries
+
+## `<missingOk>`
+
+A boolean flag (`true` or `false`) which sets the "missing ok" flag.
+
+**Note:** This should only be used in combination with `<configuration>true</configuration>`. 
+
+## `<noreplace>`
+
+A boolean flag (`true` or `false`) which sets the "noreplace" flag.
+
+**Note:** This should only be used in combination with `<configuration>true</configuration>`.
+
+## `<documentation>`
+
+A boolean flag (`true` or `false`) which marks the entry a documentation file.
+
+## `<readme>`
+
+A boolean flag (`true` or `false`) which marks the entry as a README file.
+
+## `<ghost>`
+
+A boolean flag (`true` or `false`) which marks the entry as a ghost entry.
+
+For more information about ghost, see
+"[The %ghost Directive](http://ftp.rpm.org/max-rpm/s1-rpm-inside-files-list-directives.html#S3-RPM-INSIDE-FLIST-GHOST-DIRECTIVE)". 
+
+
+ 
