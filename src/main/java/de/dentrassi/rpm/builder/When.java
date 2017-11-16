@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2017 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
+ *     Red Hat Inc - add suffix
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -20,6 +21,8 @@ public class When
     private String type;
 
     private String prefix;
+
+    private String suffix;
 
     public void setType ( final String type )
     {
@@ -41,10 +44,20 @@ public class When
         return this.prefix;
     }
 
+    public void setSuffix ( final String suffix )
+    {
+        this.suffix = suffix;
+    }
+
+    public String getSuffix ()
+    {
+        return this.suffix;
+    }
+
     @Override
     public String toString ()
     {
-        return String.format ( "[when - type: %s, prefix: %s]", this.type, this.prefix );
+        return String.format ( "[when - type: %s, prefix: %s, suffix: %s]", this.type, this.prefix, this.suffix );
     }
 
     public boolean matches ( final Object object, final PayloadEntryType type, final String targetName )
@@ -52,6 +65,12 @@ public class When
         if ( this.prefix != null && !this.prefix.isEmpty () && !targetName.startsWith ( this.prefix ) )
         {
             logger.debug ( "Prefix is set and does not match - expected: '{}', provided: '{}'", this.prefix, targetName );
+            return false;
+        }
+
+        if ( this.suffix != null && !this.suffix.isEmpty () && !targetName.endsWith ( this.suffix ) )
+        {
+            logger.debug ( "Suffix is set and does not match - expected: '{}', provided: '{}'", this.suffix, targetName );
             return false;
         }
 
