@@ -76,6 +76,18 @@
 										</rule>
 										<rule>
 											<when>
+												<prefix>/usr/share/doc</prefix>
+											</when>
+											<documentation>true</documentation>
+										</rule>
+										<rule>
+											<when>
+												<suffix>README.txt</suffix>
+											</when>
+											<readme>true</readme>
+										</rule>
+										<rule>
+											<when>
 												<type>file</type>
 												<prefix>/usr/lib/foobar/lib/dir1</prefix>
 											</when>
@@ -100,6 +112,13 @@
 									<user>root</user>
 									<group>root</group>
 									<mode>0600</mode>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/usr/share</name>
+									<collect>
+										<from>src/main/resources/usr/share</from>
+									</collect>
 									<ruleset>default</ruleset>
 								</entry>
 								<entry>

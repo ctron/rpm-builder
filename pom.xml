@@ -3,7 +3,7 @@
 
 	<groupId>de.dentrassi.maven</groupId>
 	<artifactId>rpm</artifactId>
-	<version>0.9.4-SNAPSHOT</version>
+	<version>0.10.0-SNAPSHOT</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -27,8 +27,8 @@
 		<url>https://github.com/ctron/rpm-builder</url>
 		<connection>scm:git:git://github.com/ctron/rpm-builder.git</connection>
 		<developerConnection>scm:git:git@github.com:ctron/rpm-builder.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<issueManagement>
 		<url>https://github.com/ctron/rpm-builder/issues</url>
@@ -89,11 +89,11 @@
 			<artifactId>maven-artifact</artifactId>
 			<version>${maven.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.packagedrone</groupId>
 			<artifactId>org.eclipse.packagedrone.utils.rpm</artifactId>
-			<version>0.14.1</version>
+			<version>0.14.2</version>
 		</dependency>
 
 		<dependency>
