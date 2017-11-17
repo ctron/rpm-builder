@@ -14,14 +14,19 @@ of information.
 Therefore all information, either file system related, or RPM package related (like configuration flag)
 has to be provided either [explicitly](entry.html) or using [rulesets](rulesets.html).
 
-Both ways however use the same to specify the information:
+Both ways however use the same way to specify the information:
 
 
     <user>root</user>                   <!-- name of the user -->
     <group>root</group>                 <!-- name of the group -->
     <mode>0644</mode>                   <!-- octal mode -->
     <configuration>true</configuration> <!-- mark as configuration -->
-    
+    <missingOk>true</missingOk>         <!-- mark as "missing ok" in combination with configuration -->
+    <noreplace>true</noreplace>         <!-- mark as "no replace" in combination with configuration -->
+    <documentation>true</documentation> <!-- mark as documentation -->
+    <readme>true</readme>               <!-- mark as readme -->
+    <ghost>true</ghost>                 <!-- mark as ghost -->
+
 Either of these elements may be specified exactly once.
     
 ## `<user>`

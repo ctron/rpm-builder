@@ -120,6 +120,7 @@ In order to use explicit information use the following elements:
        <group>root</group>                 <!-- name of the group -->
        <mode>0644</mode>                   <!-- octal mode -->
        <configuration>true</configuration> <!-- mark as configuration -->
+       <…>…</…>
     </entry>
 
-Also see [payload entry information](payload_information.html).
+Also see [payload entry information](payload_information.html) for a full list.
