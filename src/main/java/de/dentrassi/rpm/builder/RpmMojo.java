@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
- *     Red Hat Inc - upgrade to package drone 0.14.0
+ *     Red Hat Inc - upgrade to package drone 0.14.0, enhance features
  *     Bernd Warmuth - bugfix target folder creation
  *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
  *******************************************************************************/
@@ -393,6 +393,11 @@ public class RpmMojo extends AbstractMojo
     @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
     private boolean skipSigning = false;
 
+    public void setSkipSigning ( final boolean skipSigning )
+    {
+        this.skipSigning = skipSigning;
+    }
+
     /**
      * Provide package naming options
      * <p>
@@ -402,14 +407,43 @@ public class RpmMojo extends AbstractMojo
     @Parameter ( property = "rpm.naming" )
     private Naming naming;
 
-    public void setSkipSigning ( final boolean skipSigning )
-    {
-        this.skipSigning = skipSigning;
-    }
-
     public void setNaming ( final Naming naming )
     {
         this.naming = naming;
+    }
+
+    /**
+     * The location to place the RPM file into.
+     *
+     * @since 0.10.1
+     */
+    @Parameter ( property = "rpm.targetDir", defaultValue = "${project.build.directory}" )
+    private File targetDir;
+
+    public void setTargetDir ( final File targetDir )
+    {
+        this.targetDir = targetDir;
+    }
+
+    /**
+     * The file name of the output file.
+     * <p>
+     * This defaults the to an internal builder which will use
+     * {@code <packageName>-<version>-<release>-<arch>.rpm}.
+     * </p>
+     * <p>
+     * Using this override will completely disable the internal
+     * name builder and simply use the provided value.
+     * </p>
+     *
+     * @since 0.10.1
+     */
+    @Parameter ( property = "rpm.outputFileName" )
+    private String outputFileName;
+
+    public void setOutputFileName ( final String outputFileName )
+    {
+        this.outputFileName = outputFileName;
     }
 
     @Override
@@ -419,7 +453,16 @@ public class RpmMojo extends AbstractMojo
 
         this.eval = new RulesetEvaluator ( this.rulesets );
 
-        final Path targetDir = Paths.get ( this.project.getBuild ().getDirectory () );
+        final Path targetDir;
+
+        if ( this.targetDir != null )
+        {
+            targetDir = this.targetDir.toPath ();
+        }
+        else
+        {
+            targetDir = Paths.get ( this.project.getBuild ().getDirectory () );
+        }
 
         if ( !Files.exists ( targetDir ) )
         {
@@ -439,7 +482,18 @@ public class RpmMojo extends AbstractMojo
             }
         }
 
-        this.logger.info ( "Writing to target to: %s", targetDir );
+        final Path targetFile;
+        if ( this.outputFileName != null && !this.outputFileName.isEmpty () )
+        {
+            targetFile = targetDir.resolve ( this.outputFileName );
+            this.logger.debug ( "Using custom output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
+        }
+        else
+        {
+            targetFile = targetDir;
+        }
+
+        this.logger.info ( "Writing to target to: %s", targetFile );
         this.logger.debug ( "Default script interpreter: %s", this.defaultScriptInterpreter );
         this.logger.debug ( "Default ruleset: %s", this.defaultRuleset );
 
@@ -448,7 +502,7 @@ public class RpmMojo extends AbstractMojo
 
         this.logger.info ( "RPM base information - name: %s, version: %s, arch: %s", packageName, version, this.architecture );
 
-        try ( RpmBuilder builder = new RpmBuilder ( packageName, version, this.architecture, targetDir ) )
+        try ( final RpmBuilder builder = new RpmBuilder ( packageName, version, this.architecture, targetFile ) )
         {
             this.logger.info ( "Writing target file: %s", builder.getTargetFile () );
 

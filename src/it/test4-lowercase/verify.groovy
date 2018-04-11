@@ -1,5 +1,15 @@
-def pb = new ProcessBuilder ( "bash", "-c", "rpm -qlvvp target/foo-bar*.rpm" );
-pb.inheritIO ();
-def rc = pb.start ().waitFor();
+import java.io.File
+import java.nio.file.Files
 
-return rc == 0;
+import groovy.io.FileType
+
+def found = false
+def parent = new File(basedir, "target")
+
+parent.eachFileRecurse(FileType.FILES) { file ->
+    if ( file.name.startsWith("foo-bar")) {
+        found = true
+    }
+}
+
+return found
