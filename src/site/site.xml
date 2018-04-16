@@ -18,6 +18,7 @@
 			<item name="Dependencies" href="deps.html" />
 			<item name="Signing" href="signing.html" />
 			<item name="Naming" href="naming.html" />
+			<item name="Lead information" href="lead.html" />
 		</menu>
 
 		<menu ref="reports" />
@@ -29,8 +30,6 @@
 	</skin>
 	<custom>
 		<fluidoSkin>
-			<facebookLike />
-			<googlePlusOne />
 			<twitter>
 				<user>ctron</user>
 				<showUser>true</showUser>

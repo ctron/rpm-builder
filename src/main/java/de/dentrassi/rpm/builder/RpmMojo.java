@@ -34,6 +34,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -50,7 +51,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.eclipse.packagedrone.utils.rpm.Architecture;
 import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
+import org.eclipse.packagedrone.utils.rpm.OperatingSystem;
 import org.eclipse.packagedrone.utils.rpm.RpmVersion;
 import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
@@ -101,6 +104,51 @@ public class RpmMojo extends AbstractMojo
      */
     @Parameter ( defaultValue = "noarch", property = "rpm.architecture" )
     private String architecture = "noarch";
+
+    /**
+     * Override the lead architecture value.
+     * <p>
+     * Also see <a href="lead.html">Lead information</a>.
+     * </p>
+     *
+     * @since 0.10.2
+     */
+    @Parameter ( property = "rpm.leadOverride.architecture" )
+    private Architecture leadOverrideArchitecture;
+
+    public void setLeadOverrideArchitecture ( final Architecture leadOverrideArchitecture )
+    {
+        this.leadOverrideArchitecture = leadOverrideArchitecture;
+    }
+
+    /**
+     * The "operatingSystem" field in the RPM file.
+     *
+     * @since 0.10.2
+     */
+    @Parameter ( property = "rpm.operatingSystem" )
+    private String operatingSystem = "linux";
+
+    public void setOperatingSystem ( final String operatingSystem )
+    {
+        this.operatingSystem = operatingSystem;
+    }
+
+    /**
+     * Override the lead operating system value.
+     * <p>
+     * Also see <a href="lead.html">Lead information</a>.
+     * </p>
+     *
+     * @since 0.10.2
+     */
+    @Parameter ( property = "rpm.leadOverride.operatingSystem" )
+    private OperatingSystem leadOverrideOperatingSystem;
+
+    public void setLeadOverrideOperatingSystem ( final OperatingSystem leadOverrideOperatingSystem )
+    {
+        this.leadOverrideOperatingSystem = leadOverrideOperatingSystem;
+    }
 
     /**
      * The prefix of the release if this is a snapshot build, will be suffixed
@@ -274,7 +322,7 @@ public class RpmMojo extends AbstractMojo
     /**
      * Rulesets to configure the file information like "user", "modes", etc.
      * <p>
-     * Also see <a href="rulesets.html">rulesets</a>
+     * Also see <a href="rulesets.html">rulesets</a>.
      * </p>
      */
     @Parameter
@@ -502,9 +550,22 @@ public class RpmMojo extends AbstractMojo
 
         this.logger.info ( "RPM base information - name: %s, version: %s, arch: %s", packageName, version, this.architecture );
 
+        testLeadFlags ();
+
         try ( final RpmBuilder builder = new RpmBuilder ( packageName, version, this.architecture, targetFile ) )
         {
             this.logger.info ( "Writing target file: %s", builder.getTargetFile () );
+
+            if ( this.leadOverrideArchitecture != null )
+            {
+                this.logger.info ( "Override RPM lead architecture: %s", this.leadOverrideArchitecture );
+                builder.setLeadOverrideArchitecture ( this.leadOverrideArchitecture );
+            }
+            if ( this.leadOverrideOperatingSystem != null )
+            {
+                this.logger.info ( "Override RPM lead operating system: %s", this.leadOverrideOperatingSystem );
+                builder.setLeadOverrideOperatingSystem ( this.leadOverrideOperatingSystem );
+            }
 
             fillPackageInformation ( builder );
             fillScripts ( builder );
@@ -535,6 +596,28 @@ public class RpmMojo extends AbstractMojo
         {
             throw new MojoExecutionException ( "Failed to write RPM", e );
         }
+    }
+
+    private void testLeadFlags ()
+    {
+        if ( this.leadOverrideArchitecture == null )
+        {
+            final Optional<Architecture> arch = Architecture.fromAlias ( this.architecture );
+            if ( !arch.isPresent () )
+            {
+                this.logger.warn ( "Architecture '%s' cannot be mapped to lead information. Consider using setting 'leadOverrideArchitecture'.", this.architecture );
+            }
+        }
+
+        if ( this.leadOverrideOperatingSystem == null )
+        {
+            final Optional<OperatingSystem> os = OperatingSystem.fromAlias ( this.operatingSystem );
+            if ( !os.isPresent () )
+            {
+                this.logger.warn ( "OperatingSystem '%s' cannot be mapped to lead information. Consider using setting 'leadOverrideOperatingSystem'.", this.operatingSystem );
+            }
+        }
+
     }
 
     private SignatureProcessor makeRsaSigner ( final Signature signature ) throws MojoExecutionException, MojoFailureException
@@ -860,6 +943,7 @@ public class RpmMojo extends AbstractMojo
         ifSet ( pinfo::setSummary, this.summary );
         ifSet ( pinfo::setGroup, this.group );
         ifSet ( pinfo::setDistribution, this.distribution );
+        ifSet ( pinfo::setOperatingSystem, this.operatingSystem );
 
         if ( this.evalHostname )
         {
