@@ -64,7 +64,7 @@ Assuming you have the following director tree in the file system:
     src/main/resources/dir2/foo3.txt
     src/main/resources/dir2/foo4.txt
     src/main/resources/dir2/foo5.txt -> foo4.txt (symlink)
-    
+
 Using the collector configuration:
 
     <entry>
@@ -82,6 +82,22 @@ Will result in the following payload entries:
     /usr/lib/foo/dir2            (dir)
     /usr/lib/foo/dir2/foo3.txt   (file)
     /usr/lib/foo/dir2/foo4.txt   (file)
+
+As of version 1.0.0 it is also possible to use the standard Maven `includes`/`excludes` elements
+which follow the standard Maven include/exclude pattern. For example:
+
+    <entry>
+        <name>/usr/lib/foo</name>
+        <collect>
+            <from>src/main/resources</from>
+            <includes>
+                <include>…</include>
+            </includes>
+            <excludes>
+                <exclude>…</exclude>
+            </excludes>
+        </collect>
+    </entry>
 
 ## Entry information
 

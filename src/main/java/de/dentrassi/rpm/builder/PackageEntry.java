@@ -22,6 +22,10 @@ public class PackageEntry extends EntryDetails
 
         private boolean symbolicLinks = false;
 
+        private String[] includes;
+
+        private String[] excludes;
+
         public File getFrom ()
         {
             return this.from;
@@ -52,10 +56,30 @@ public class PackageEntry extends EntryDetails
             return this.symbolicLinks;
         }
 
+        public void setIncludes ( final String[] includes )
+        {
+            this.includes = includes;
+        }
+
+        public String[] getIncludes ()
+        {
+            return this.includes;
+        }
+
+        public void setExcludes ( final String[] excludes )
+        {
+            this.excludes = excludes;
+        }
+
+        public String[] getExcludes ()
+        {
+            return this.excludes;
+        }
+
         @Override
         public String toString ()
         {
-            return String.format ( "[collector - from: %s,  directories: %s, symLinks: %s]", this.from, this.directories, this.symbolicLinks );
+            return String.format ( "[collector - from: %s,  directories: %s, symLinks: %s, includes: %s, excludes: %s]", this.from, this.directories, this.symbolicLinks, this.includes, this.excludes );
         }
     }
 

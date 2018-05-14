@@ -14,7 +14,6 @@
 package de.dentrassi.rpm.builder;
 
 import static com.google.common.io.Files.readFirstLine;
-import static java.nio.file.Files.walkFileTree;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +21,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +47,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.packagedrone.utils.rpm.Architecture;
 import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
 import org.eclipse.packagedrone.utils.rpm.OperatingSystem;
@@ -776,87 +773,114 @@ public class RpmMojo extends AbstractMojo
 
         if ( entry.getDirectory () != null && entry.getDirectory () )
         {
-            this.logger.debug ( "    as directory:" );
-            ctx.addDirectory ( entry.getName (), makeProvider ( entry, "      - " ) );
+            fillFromEntryDirectory ( ctx, entry );
         }
         else if ( entry.getFile () != null )
         {
-            this.logger.debug ( "    as file:" );
-            final Path source = entry.getFile ().toPath ().toAbsolutePath ();
-            this.logger.debug ( "      - source: %s", source );
-
-            ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
+            fillFromEntryFile ( ctx, entry );
         }
         else if ( entry.getLinkTo () != null )
         {
-            this.logger.debug ( "    as symbolic link:" );
-            this.logger.debug ( "      - linkTo: %s", entry.getLinkTo () );
-            ctx.addSymbolicLink ( entry.getName (), entry.getLinkTo (), makeProvider ( entry, "      - " ) );
+            fillFromEntryLinkTo ( ctx, entry );
         }
         else if ( entry.getCollect () != null )
         {
-            this.logger.debug ( "    as collector:" );
+            fillFromEntryCollect ( ctx, entry );
+        }
+    }
 
-            final Collector collector = entry.getCollect ();
+    private void fillFromEntryDirectory ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
+    {
+        this.logger.debug ( "    as directory:" );
+        ctx.addDirectory ( entry.getName (), makeProvider ( entry, "      - " ) );
+    }
 
-            this.logger.debug ( "      - configuration: %s", collector );
+    private void fillFromEntryFile ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
+    {
+        this.logger.debug ( "    as file:" );
+        final Path source = entry.getFile ().toPath ().toAbsolutePath ();
+        this.logger.debug ( "      - source: %s", source );
 
-            final String padding = "          ";
+        ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
+    }
 
-            final Path from = collector.getFrom ().toPath ();
-            final String targetPrefix = entry.getName ().endsWith ( "/" ) ? entry.getName () : entry.getName () + "/";
+    private void fillFromEntryLinkTo ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
+    {
+        this.logger.debug ( "    as symbolic link:" );
+        this.logger.debug ( "      - linkTo: %s", entry.getLinkTo () );
+        ctx.addSymbolicLink ( entry.getName (), entry.getLinkTo (), makeProvider ( entry, "      - " ) );
+    }
 
-            this.logger.debug ( "      - files:" );
+    private void fillFromEntryCollect ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
+    {
+        this.logger.debug ( "    as collector:" );
 
-            final MojoFileInformationProvider provider = makeProvider ( entry, "            - " );
+        final Collector collector = entry.getCollect ();
 
-            walkFileTree ( from, new SimpleFileVisitor<Path> () {
-                @Override
-                public FileVisitResult visitFile ( final Path file, final BasicFileAttributes attrs ) throws IOException
+        this.logger.debug ( "      - configuration: %s", collector );
+
+        final String padding = "          ";
+
+        final Path from = collector.getFrom ().toPath ();
+        final String targetPrefix = entry.getName ().endsWith ( "/" ) ? entry.getName () : entry.getName () + "/";
+
+        this.logger.debug ( "      - files:" );
+
+        final MojoFileInformationProvider provider = makeProvider ( entry, "            - " );
+
+        final DirectoryScanner scanner = new DirectoryScanner ();
+        scanner.setBasedir ( from.toFile () );
+        scanner.setCaseSensitive ( true );
+        scanner.setFollowSymlinks ( true );
+        scanner.setIncludes ( collector.getIncludes () );
+        scanner.setExcludes ( collector.getExcludes () );
+        scanner.scan ();
+
+        if ( collector.isDirectories () )
+        {
+            for ( final String directory : scanner.getIncludedDirectories () )
+            {
+                final Path dir = from.resolve ( directory );
+                if ( dir.equals ( from ) )
                 {
-                    final Path relative = from.relativize ( file );
-                    final String targetName = makeUnix ( targetPrefix + relative.toString () );
-
-                    if ( java.nio.file.Files.isSymbolicLink ( file ) )
-                    {
-                        RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
-                        if ( collector.isSymbolicLinks () )
-                        {
-                            final Path sym = java.nio.file.Files.readSymbolicLink ( file );
-                            RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
-                            RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
-                            RpmMojo.this.logger.debug ( "%s  - linkTo: %s", padding, sym.toString () );
-                        }
-                        else
-                        {
-                            RpmMojo.this.logger.debug ( "%s%s (symlink) - ignoring symbolic links", padding, file );
-                        }
-                    }
-                    else
-                    {
-                        RpmMojo.this.logger.debug ( "%s%s (file)", padding, file );
-                        RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
-
-                        ctx.addFile ( targetName, file, provider );
-                    }
-                    return FileVisitResult.CONTINUE;
+                    continue;
                 }
 
-                @Override
-                public FileVisitResult preVisitDirectory ( final Path dir, final BasicFileAttributes attrs ) throws IOException
+                RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
+                final Path relative = from.relativize ( dir );
+                final String targetName = makeUnix ( targetPrefix + relative.toString () );
+                RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
+                ctx.addDirectory ( targetName, provider );
+            }
+        }
+
+        for ( final String relative : scanner.getIncludedFiles () )
+        {
+            final Path file = from.resolve ( relative );
+            final String targetName = makeUnix ( targetPrefix + relative );
+
+            if ( java.nio.file.Files.isSymbolicLink ( file ) )
+            {
+                RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
+                if ( collector.isSymbolicLinks () )
                 {
-                    // only add when we add directories and it is not be base
-                    if ( collector.isDirectories () && !dir.equals ( from ) )
-                    {
-                        RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
-                        final Path relative = from.relativize ( dir );
-                        final String targetName = makeUnix ( targetPrefix + relative.toString () );
-                        RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
-                        ctx.addDirectory ( targetName, provider );
-                    }
-                    return FileVisitResult.CONTINUE;
+                    final Path sym = java.nio.file.Files.readSymbolicLink ( file );
+                    RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
+                    RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
+                    RpmMojo.this.logger.debug ( "%s  - linkTo: %s", padding, sym.toString () );
                 }
-            } );
+                else
+                {
+                    RpmMojo.this.logger.debug ( "%s%s (symlink) - ignoring symbolic links", padding, file );
+                }
+            }
+            else
+            {
+                RpmMojo.this.logger.debug ( "%s%s (file)", padding, file );
+                RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
+
+                ctx.addFile ( targetName, file, provider );
+            }
         }
     }
 
