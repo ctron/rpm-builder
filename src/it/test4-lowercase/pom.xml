@@ -52,7 +52,7 @@
 							<packageName>Foo-Bar</packageName>
 							
 							<naming>
-							   <case>lowercase</case>
+								<case>lowercase</case>
 							</naming>
 
 							<signature>
