@@ -13,8 +13,10 @@ Also see:
 The RPM builder current does support the following dependency types of RPM:
 
 | Name | Tag | Spec Name | Type | Description |
-| ----- | ----- | ---------------- | ------------- |
+| ----- | ----- | ---------------- | ------------- | ------------- |
 | Requirement | `<requires>` | `requires` | Complex | Require another package or capability |
+| Recommendation | `<recommends>` | `recommends` | Complex | Recommend another package or capability |
+| Suggestion | `<suggests>` | `suggests` | Complex | Suggest another package or capability |
 | Prerequisite | `<prerequisites>` | `prereq` | Simple | Require another package or capability |
 | Provide capability | `<provides>` | `provides` | Simple | Provide a capability (aka virtual package) |
 | Conflict | `<conflicts>` | `conflicts` | Simple | Conflict with another package |
@@ -38,6 +40,14 @@ Scripts are configured using the normal plugin configuration:
             <require>…</require>
             <require>…</require>
         </requires>
+        <recommends>
+            <recommend>…</recommend>
+            <recommend>…</recommend>
+        </recommends>
+        <suggests>
+            <suggest>…</suggest>
+            <suggest>…</suggest>
+        </suggests>
       …
     </configuration>
 

@@ -388,6 +388,24 @@ public class RpmMojo extends AbstractMojo
     private final List<Dependency> requires = new LinkedList<> ();
 
     /**
+     * RPM package recommends
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter
+    private final List<Dependency> recommends = new LinkedList<> ();
+
+    /**
+     * RPM package suggests
+     * <p>
+     * Also see <a href="deps.html">dependencies</a>
+     * </p>
+     */
+    @Parameter
+    private final List<Dependency> suggests = new LinkedList<> ();
+
+    /**
      * RPM provides information
      * <p>
      * Also see <a href="deps.html">dependencies</a>
@@ -636,6 +654,8 @@ public class RpmMojo extends AbstractMojo
     private void fillDependencies ( final RpmBuilder builder )
     {
         addAllDependencies ( "require", this.requires, builder::addRequirement, RpmMojo::validateName, null );
+        addAllDependencies ( "recommend", this.recommends, builder::addRecommendation, RpmMojo::validateName, null );
+        addAllDependencies ( "suggest", this.suggests, builder::addSuggestion, RpmMojo::validateName, null );
         addAllDependencies ( "prerequire", this.prerequisites, builder::addRequirement, RpmMojo::validateName, flags -> flags.add ( RpmDependencyFlags.PREREQ ) );
         addAllDependencies ( "provide", this.provides, builder::addProvides, ( (Consumer<SimpleDependency>)RpmMojo::validateName ).andThen ( this::validateNoVersion ), null );
         addAllDependencies ( "conflict", this.conflicts, builder::addConflicts, RpmMojo::validateName, null );
