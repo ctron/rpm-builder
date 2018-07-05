@@ -51,6 +51,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.packagedrone.utils.rpm.Architecture;
 import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
 import org.eclipse.packagedrone.utils.rpm.OperatingSystem;
+import org.eclipse.packagedrone.utils.rpm.RpmLead;
 import org.eclipse.packagedrone.utils.rpm.RpmVersion;
 import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
@@ -159,6 +160,37 @@ public class RpmMojo extends AbstractMojo
     public void setSourcePackage ( final String sourcePackage )
     {
         this.sourcePackage = sourcePackage;
+    }
+
+    /**
+     * Whether to generate a default source package.
+     * <p>
+     * If the {@code sourceProperty} package is {@code null} or empty, this flag
+     * controls if a default value is generated for the source package or not.
+     * </p>
+     * <p>
+     * The default name will consist of the package name and the version with
+     * the suffix {@code .src.rpm}. The output file name is not used as a basis
+     * for the default source package name. If you need more control over the
+     * source package name you need to use the {@code sourcePackage} property
+     * instead.
+     * </p>
+     * <p>
+     * Before version 0.11.0 the source package was always empty. The new
+     * default behavior is to fill the source package with a package name
+     * derived from the package name. Setting this flag to {@code false} will
+     * revert to the old default behavior of leaving the source package header
+     * field unset.
+     * </p>
+     *
+     * @since 0.11.0
+     */
+    @Parameter ( property = "rpm.generateDefaultSourcePackage", defaultValue = "true" )
+    private boolean generateDefaultSourcePackage = true;
+
+    public void setGenerateDefaultSourcePackage ( final boolean generateDefaultSourcePackage )
+    {
+        this.generateDefaultSourcePackage = generateDefaultSourcePackage;
     }
 
     /**
@@ -1070,6 +1102,16 @@ public class RpmMojo extends AbstractMojo
     {
         final PackageInformation pinfo = builder.getInformation ();
 
+        if ( this.sourcePackage == null || this.sourcePackage.isEmpty () )
+        {
+            if ( this.generateDefaultSourcePackage )
+            {
+                final String sourcePackage = generateDefaultSourcePackageName ();
+                this.logger.debug ( "Using generated source package name of '%s'. You can disable this by setting 'generateDefaultSourcePackage' to false.", sourcePackage );
+                this.sourcePackage = sourcePackage;
+            }
+        }
+
         ifSet ( pinfo::setDescription, this.description );
         ifSet ( pinfo::setSummary, this.summary );
         ifSet ( pinfo::setGroup, this.group );
@@ -1087,6 +1129,11 @@ public class RpmMojo extends AbstractMojo
         ifSet ( pinfo::setPackager, this.packager, this::makePackager );
 
         ifSet ( pinfo::setLicense, this.license, this::makeLicense );
+    }
+
+    private String generateDefaultSourcePackageName ()
+    {
+        return RpmLead.toLeadName ( makePackageName (), makeVersion () ) + ".src.rpm";
     }
 
     private String makeVendor ()
