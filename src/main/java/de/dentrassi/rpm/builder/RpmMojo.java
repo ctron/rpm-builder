@@ -55,6 +55,7 @@ import org.eclipse.packagedrone.utils.rpm.RpmVersion;
 import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
+import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.Version;
 import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packagedrone.utils.rpm.signature.RsaHeaderSignatureProcessor;
 import org.eclipse.packagedrone.utils.rpm.signature.SignatureProcessor;
@@ -548,6 +549,28 @@ public class RpmMojo extends AbstractMojo
         this.outputFileName = outputFileName;
     }
 
+    /**
+     * The highest supported RPM version this package must conform to.
+     * <p>
+     * This allows to set a maximum version of RPM this package must be
+     * compatible with. If unset, it will not check the required RPM version.
+     * </p>
+     *
+     * @since 0.11.0
+     */
+    @Parameter ( property = "rpm.maximumSupportedRpmVersion" )
+    private Version maximumSupportedRpmVersion;
+
+    public void setMaximumSupportedRpmVersion ( final Version maximumSupportedRpmVersion )
+    {
+        this.maximumSupportedRpmVersion = maximumSupportedRpmVersion;
+    }
+
+    public void setMaximumSupportedRpmVersion ( final String maximumSupportedRpmVersion )
+    {
+        this.maximumSupportedRpmVersion = Version.fromVersionString ( maximumSupportedRpmVersion ).orElseThrow ( () -> new IllegalArgumentException ( String.format ( "Version '%s' is unknown", maximumSupportedRpmVersion ) ) );
+    }
+
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
@@ -641,6 +664,12 @@ public class RpmMojo extends AbstractMojo
 
             builder.build ();
 
+            // version check
+
+            checkVersion ( builder );
+
+            // attach when necessary
+
             if ( this.attach )
             {
                 this.projectHelper.attachArtifact ( this.project, "rpm", this.classifier, builder.getTargetFile ().toFile () );
@@ -649,6 +678,22 @@ public class RpmMojo extends AbstractMojo
         catch ( final IOException e )
         {
             throw new MojoExecutionException ( "Failed to write RPM", e );
+        }
+    }
+
+    protected void checkVersion ( final RpmBuilder builder ) throws MojoFailureException
+    {
+        final Version version = builder.getRequiredRpmVersion ();
+        this.logger.info ( "Required RPM version: %s", version );
+
+        if ( this.maximumSupportedRpmVersion == null )
+        {
+            return;
+        }
+
+        if ( version.compareTo ( this.maximumSupportedRpmVersion ) > 0 )
+        {
+            throw new MojoFailureException ( builder.getTargetFile (), "Generated RPM file not compatible with version " + this.maximumSupportedRpmVersion, String.format ( "The generated RPM package would require at least version %1$s, however the build limits the supported RPM version to %2$s. Either raise the support RPM version or remove features requiring a more recent version of RPM.", version, this.maximumSupportedRpmVersion ) );
         }
     }
 
