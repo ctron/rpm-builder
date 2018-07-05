@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2018 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package de.dentrassi.rpm.builder;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.eclipse.packagedrone.utils.rpm.FileFlags;
 import org.eclipse.packagedrone.utils.rpm.build.FileInformation;
@@ -201,11 +202,10 @@ public class EntryDetails
 
     private void setFlag ( final FileInformation info, final FileFlags flag )
     {
-        EnumSet<FileFlags> flags = info.getFileFlags ();
+        final Set<FileFlags> flags = info.getFileFlags ();
         if ( flags == null )
         {
-            flags = EnumSet.of ( flag );
-            info.setFileFlags ( flags );
+            info.setFileFlags ( EnumSet.of ( flag ) );
         }
         else
         {
