@@ -26,7 +26,16 @@ dependency, with the `PREREQ` flag set. So this can either be configured using a
 
 For more details and the semantics of these dependencies please consult the RPM documentation.
 
-**Note:** In the following examples `<dependencies>` and `<dependency>` will be used to represent any dependency type. 
+**Note:** In the following examples `<dependencies>` and `<dependency>` will be used to represent any dependency type.
+
+Starting with version `0.11.0` of the plugin the new weak dependencies are also supported:
+
+| Name | Tag | Spec Name | Type | Description |
+| ----- | ----- | ---------------- | ------------- |
+| Recommends | `<recommends>` | `recommends` | Simple | Weak forward |
+| Supplements | `<supplements>` | `supplements` | Simple | Weak Reverse |
+| Suggests | `<suggests>` | `suggests` | Simple | Very weak forward |
+| Enhances | `<enhances>` | `enhances` | Simple | Very weak reverse |
 
 ## Basic configuration
 
