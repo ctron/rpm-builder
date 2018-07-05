@@ -148,6 +148,19 @@ public class RpmMojo extends AbstractMojo
     }
 
     /**
+     * Set the name of the source package.
+     *
+     * @since 0.11.0
+     */
+    @Parameter ( property = "rpm.sourcePackage" )
+    private String sourcePackage;
+
+    public void setSourcePackage ( final String sourcePackage )
+    {
+        this.sourcePackage = sourcePackage;
+    }
+
+    /**
      * The prefix of the release if this is a snapshot build, will be suffixed
      * with the snapshot build id
      * <p>
@@ -424,6 +437,50 @@ public class RpmMojo extends AbstractMojo
     private final List<SimpleDependency> prerequisites = new LinkedList<> ();
 
     /**
+     * Hint forward dependency.
+     * <p>
+     * Also see <a href="deps.html">dependencies</a> and
+     * <a href="https://fedoraproject.org/wiki/Packaging:WeakDependencies">Weak
+     * dependencies</a>.
+     * </p>
+     */
+    @Parameter
+    private final List<SimpleDependency> suggests = new LinkedList<> ();
+
+    /**
+     * Hint backward dependency.
+     * <p>
+     * Also see <a href="deps.html">dependencies</a> and
+     * <a href="https://fedoraproject.org/wiki/Packaging:WeakDependencies">Weak
+     * dependencies</a>.
+     * </p>
+     */
+    @Parameter
+    private final List<SimpleDependency> enhances = new LinkedList<> ();;
+
+    /**
+     * Weak backward dependency.
+     * <p>
+     * Also see <a href="deps.html">dependencies</a> and
+     * <a href="https://fedoraproject.org/wiki/Packaging:WeakDependencies">Weak
+     * dependencies</a>.
+     * </p>
+     */
+    @Parameter
+    private final List<SimpleDependency> supplements = new LinkedList<> ();;
+
+    /**
+     * Weak forward dependency.
+     * <p>
+     * Also see <a href="deps.html">dependencies</a> and
+     * <a href="https://fedoraproject.org/wiki/Packaging:WeakDependencies">Weak
+     * dependencies</a>.
+     * </p>
+     */
+    @Parameter
+    private final List<SimpleDependency> recommends = new LinkedList<> ();;
+
+    /**
      * An optional signature descriptor for GPP signing the final RPM
      * <p>
      * Also see <a href="signing.html">signing</a>
@@ -640,6 +697,11 @@ public class RpmMojo extends AbstractMojo
         addAllDependencies ( "provide", this.provides, builder::addProvides, ( (Consumer<SimpleDependency>)RpmMojo::validateName ).andThen ( this::validateNoVersion ), null );
         addAllDependencies ( "conflict", this.conflicts, builder::addConflicts, RpmMojo::validateName, null );
         addAllDependencies ( "obsolete", this.obsoletes, builder::addObsoletes, RpmMojo::validateName, null );
+
+        addAllDependencies ( "suggest", this.suggests, builder::addSuggests, RpmMojo::validateName, null );
+        addAllDependencies ( "enhance", this.enhances, builder::addEnhances, RpmMojo::validateName, null );
+        addAllDependencies ( "supplement", this.supplements, builder::addSupplements, RpmMojo::validateName, null );
+        addAllDependencies ( "recommends", this.recommends, builder::addRecommends, RpmMojo::validateName, null );
     }
 
     private static void validateName ( final SimpleDependency dep )
@@ -968,6 +1030,7 @@ public class RpmMojo extends AbstractMojo
         ifSet ( pinfo::setGroup, this.group );
         ifSet ( pinfo::setDistribution, this.distribution );
         ifSet ( pinfo::setOperatingSystem, this.operatingSystem );
+        ifSet ( pinfo::setSourcePackage, this.sourcePackage );
 
         if ( this.evalHostname )
         {
