@@ -650,6 +650,8 @@ public class RpmMojo extends AbstractMojo
             targetFile = targetDir;
         }
 
+        this.logger.debug ( "Max supported RPM version: %s", this.maximumSupportedRpmVersion );
+
         this.logger.info ( "Writing to target to: %s", targetFile );
         this.logger.debug ( "Default script interpreter: %s", this.defaultScriptInterpreter );
         this.logger.debug ( "Default ruleset: %s", this.defaultRuleset );
