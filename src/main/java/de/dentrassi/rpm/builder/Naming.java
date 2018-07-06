@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc and others.
+ * Copyright (c) 2017, 2018 Red Hat Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,15 @@ public class Naming
         LOWERCASE
     }
 
+    public static enum DefaultFormat
+    {
+        DEFAULT,
+        LEGACY;
+    }
+
     private Case caseValue = Case.UNMODIFIED;
+
+    private DefaultFormat defaultFormat = DefaultFormat.DEFAULT;
 
     public void setCase ( final String caseValue )
     {
@@ -35,5 +43,22 @@ public class Naming
     public Case getCase ()
     {
         return this.caseValue;
+    }
+
+    public void setDefaultFormat ( final String defaultFormat )
+    {
+        if ( defaultFormat != null )
+        {
+            this.defaultFormat = DefaultFormat.valueOf ( defaultFormat.toUpperCase () );
+        }
+        else
+        {
+            this.defaultFormat = DefaultFormat.DEFAULT;
+        }
+    }
+
+    public DefaultFormat getDefaultFormat ()
+    {
+        return this.defaultFormat;
     }
 }

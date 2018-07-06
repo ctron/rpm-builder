@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2018 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.Version;
+import org.eclipse.packagedrone.utils.rpm.build.RpmFileNameProvider;
 import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packagedrone.utils.rpm.signature.RsaHeaderSignatureProcessor;
 import org.eclipse.packagedrone.utils.rpm.signature.SignatureProcessor;
@@ -564,7 +565,8 @@ public class RpmMojo extends AbstractMojo
      * The file name of the output file.
      * <p>
      * This defaults the to an internal builder which will use
-     * {@code <packageName>-<version>-<release>-<arch>.rpm}.
+     * {@code <packageName>-<version>-<release>.<arch>.rpm}.
+     * Also see <a href="naming.html">naming</a>.
      * </p>
      * <p>
      * Using this override will completely disable the internal
@@ -639,16 +641,7 @@ public class RpmMojo extends AbstractMojo
             }
         }
 
-        final Path targetFile;
-        if ( this.outputFileName != null && !this.outputFileName.isEmpty () )
-        {
-            targetFile = targetDir.resolve ( this.outputFileName );
-            this.logger.debug ( "Using custom output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
-        }
-        else
-        {
-            targetFile = targetDir;
-        }
+        final Path targetFile = makeTargetFile ( targetDir );
 
         this.logger.debug ( "Max supported RPM version: %s", this.maximumSupportedRpmVersion );
 
@@ -713,6 +706,29 @@ public class RpmMojo extends AbstractMojo
         {
             throw new MojoExecutionException ( "Failed to write RPM", e );
         }
+    }
+
+    private Path makeTargetFile ( final Path targetDir )
+    {
+        String outputFileName = this.outputFileName;
+
+        if ( outputFileName == null || outputFileName.isEmpty () )
+        {
+            switch ( this.naming.getDefaultFormat () )
+            {
+                case LEGACY:
+                    outputFileName = RpmFileNameProvider.LEGACY_FILENAME_PROVIDER.getRpmFileName ( makePackageName (), makeVersion (), this.architecture );
+                    break;
+                default:
+                    outputFileName = RpmFileNameProvider.DEFAULT_FILENAME_PROVIDER.getRpmFileName ( makePackageName (), makeVersion (), this.architecture );
+                    break;
+            }
+            this.logger.debug ( "Using generated file name - %s", outputFileName, outputFileName );
+        }
+
+        final Path targetFile = targetDir.resolve ( outputFileName );;
+        this.logger.debug ( "Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
+        return targetFile;
     }
 
     protected void checkVersion ( final RpmBuilder builder ) throws MojoFailureException
