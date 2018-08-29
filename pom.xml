@@ -67,6 +67,17 @@
 		</license>
 	</licenses>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- fix for issue #29 -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.18</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 
 		<dependency>
