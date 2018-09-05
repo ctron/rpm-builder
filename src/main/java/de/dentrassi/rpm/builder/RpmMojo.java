@@ -334,6 +334,21 @@ public class RpmMojo extends AbstractMojo
     private String packager;
 
     /**
+     * Build relocatable packages.
+     *
+     * <pre>
+     *       &lt;prefixes&gt;
+     *           &lt;prefix&gt;/opt&lt;/prefix&gt;
+     *           &lt;prefix>/var/log&lt;/prefix&gt;
+     *       &lt;/prefixes&gt;
+     * </pre>
+     *
+     * See also <a href="http://ftp.rpm.org/max-rpm/s1-rpm-reloc-prefix-tag.html">The prefix tag</a>
+     */
+    @Parameter ( property = "rpm.prefixes" )
+    private List<String> prefixes;
+
+    /**
      * The actual payload/file entries
      * <p>
      * Also see <a href="entry.html">entries</a>
@@ -675,6 +690,7 @@ public class RpmMojo extends AbstractMojo
             fillScripts ( builder );
             fillDependencies ( builder );
             fillPayload ( builder );
+            fillPrefixes ( builder );
 
             // add signer
 
@@ -922,6 +938,21 @@ public class RpmMojo extends AbstractMojo
 
             fillFromEntry ( ctx, entry );
         }
+    }
+
+    private void fillPrefixes(  final RpmBuilder builder  )
+    {
+        if ( this.prefixes == null || this.prefixes.isEmpty() )
+        {
+            return;
+        }
+
+        this.logger.debug ( "Building relocatable package: " + this.prefixes );
+
+        builder.setHeaderCustomizer(rpmTagHeader -> {
+            int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
+            rpmTagHeader.putStringArray(RPMTAG_PREFIXES, this.prefixes.toArray(new String[0]));
+        });
     }
 
     private void fillFromEntry ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
