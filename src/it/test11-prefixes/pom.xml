@@ -50,10 +50,10 @@
 							<group>Application/Misc</group>
 
 							<outputFileName>test11.rpm</outputFileName>
-                            <prefixes>
-                                <prefix>/opt</prefix>
-                                <prefix>/var/log</prefix>
-                            </prefixes>
+							<prefixes>
+								<prefix>/opt</prefix>
+								<prefix>/var/log</prefix>
+							</prefixes>
 
 							<signature>
 								<keyId>${keyId}</keyId>
