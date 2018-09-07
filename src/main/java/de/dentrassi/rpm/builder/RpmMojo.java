@@ -10,6 +10,7 @@
  *     Red Hat Inc - upgrade to package drone 0.14.0, enhance features
  *     Bernd Warmuth - bugfix target folder creation
  *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
+ *     Lucian Burja - Added setting for creating relocatable RPM packages
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
