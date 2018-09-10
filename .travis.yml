@@ -10,7 +10,7 @@ cache:
 
 sudo: false
 
-script: travis_retry mvn -B integration-test -Pits
+script: travis_retry mvn -B verify -Pits
 
 addons:
    apt:
