@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.dentrassi.maven.rpm.test</groupId>
-	<artifactId>test11-newflags</artifactId>
+	<artifactId>test11-prefixes</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -63,6 +63,22 @@
 								<skip>${skipSigning}</skip>
 							</signature>
 
+							<entries>
+								<entry>
+									<name>/opt/foo</name>
+									<directory>true</directory>
+									<user>root</user>
+									<group>root</group>
+									<mode>0755</mode>
+								</entry>
+								<entry>
+									<name>/opt/foo/foo.txt</name>
+									<file>src/main/resources/foo.txt</file>
+									<user>root</user>
+									<group>root</group>
+									<mode>0600</mode>
+								</entry>
+							</entries>
 						</configuration>
 					</execution>
 				</executions>
