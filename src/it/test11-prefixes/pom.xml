@@ -72,11 +72,11 @@
 									<mode>0755</mode>
 								</entry>
 								<entry>
-									<name>/opt/foo/foo.txt</name>
-									<file>src/main/resources/foo.txt</file>
+									<name>/var/log/foo</name>
+									<directory>true</directory>
 									<user>root</user>
 									<group>root</group>
-									<mode>0600</mode>
+									<mode>0755</mode>
 								</entry>
 							</entries>
 						</configuration>
