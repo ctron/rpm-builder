@@ -344,7 +344,11 @@ public class RpmMojo extends AbstractMojo
      *       &lt;/prefixes&gt;
      * </pre>
      *
-     * See also <a href="http://ftp.rpm.org/max-rpm/s1-rpm-reloc-prefix-tag.html">The prefix tag</a>
+     * See also
+     * <a href="http://ftp.rpm.org/max-rpm/s1-rpm-reloc-prefix-tag.html">The
+     * prefix tag</a>
+     *
+     * @since 1.1.0
      */
     @Parameter ( property = "rpm.prefixes" )
     private List<String> prefixes;
@@ -941,20 +945,20 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private void fillPrefixes(  final RpmBuilder builder  )
+    private void fillPrefixes ( final RpmBuilder builder )
     {
-        if ( this.prefixes == null || this.prefixes.isEmpty() )
+        if ( this.prefixes == null || this.prefixes.isEmpty () )
         {
             return;
         }
 
         this.logger.debug ( "Building relocatable package: {}", this.prefixes );
 
-        builder.setHeaderCustomizer(rpmTagHeader -> {
+        builder.setHeaderCustomizer ( rpmTagHeader -> {
             // TODO: migrate to flags once https://github.com/eclipse/packagedrone/issues/130 is fixed
-            int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
-            rpmTagHeader.putStringArray(RPMTAG_PREFIXES, this.prefixes.toArray(new String[0]));
-        });
+            final int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
+            rpmTagHeader.putStringArray ( RPMTAG_PREFIXES, this.prefixes.toArray ( new String[0] ) );
+        } );
     }
 
     private void fillFromEntry ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
