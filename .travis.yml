@@ -10,6 +10,8 @@ cache:
 
 sudo: false
 
+before_script: travis_retry mvn -B help:active-profiles
+
 script: travis_retry mvn -B verify -Pits
 
 addons:
