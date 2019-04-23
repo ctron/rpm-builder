@@ -544,6 +544,19 @@ public class RpmMojo extends AbstractMojo
     private Signature signature;
 
     /**
+     * Disable the mojo altogether.
+     *
+     * @since 1.1.1
+     */
+    @Parameter ( property = "rpm.skip", defaultValue = "false" )
+    private boolean skip = false;
+
+    public void setSkip ( final boolean skip )
+    {
+        this.skip = skip;
+    }
+
+    /**
      * Disable all package signing
      */
     @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
@@ -629,6 +642,12 @@ public class RpmMojo extends AbstractMojo
     public void execute () throws MojoExecutionException, MojoFailureException
     {
         this.logger = new Logger ( getLog () );
+
+        if ( this.skip )
+        {
+            this.logger.debug ( "Skipping execution" );
+            return;
+        }
 
         this.eval = new RulesetEvaluator ( this.rulesets );
 

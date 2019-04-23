@@ -135,12 +135,31 @@ public class YumMojo extends AbstractMojo
     @Parameter ( property = "rpm.skipDependencies", defaultValue = "false" )
     private boolean skipDependencies = false;
 
+    /**
+     * Disable the mojo altogether.
+     *
+     * @since 1.1.1
+     */
+    @Parameter ( property = "yum.skip", defaultValue = "false" )
+    private boolean skip;
+
+    public void setSkip ( final boolean skip )
+    {
+        this.skip = skip;
+    }
+
     private Logger logger;
 
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
         this.logger = new Logger ( getLog () );
+
+        if ( this.skip )
+        {
+            this.logger.debug ( "Skipping execution" );
+            return;
+        }
 
         try
         {
@@ -170,9 +189,9 @@ public class YumMojo extends AbstractMojo
                 if ( deps != null )
                 {
                     paths.addAll ( deps.stream ()//
-                    .filter ( d -> d.getType ().equalsIgnoreCase ( "rpm" ) )//
-                    .map ( d -> d.getFile ().toPath () )//
-                    .collect ( Collectors.toList () ) );
+                            .filter ( d -> d.getType ().equalsIgnoreCase ( "rpm" ) )//
+                            .map ( d -> d.getFile ().toPath () )//
+                            .collect ( Collectors.toList () ) );
                 }
             }
             else
