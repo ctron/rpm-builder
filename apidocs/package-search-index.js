@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"de.dentrassi.rpm.builder"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"de.dentrassi.rpm.builder"}]
