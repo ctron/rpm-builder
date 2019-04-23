@@ -1,8 +1,10 @@
 language: java
 
+dist: xenial
+
 jdk:
-  - oraclejdk8
-  - oraclejdk10
+  - openjdk8
+  - openjdk11
 
 cache:
   directories:
