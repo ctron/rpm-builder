@@ -508,7 +508,7 @@
 		<profile>
 			<id>java-10</id>
 			<activation>
-				<jdk>10</jdk>
+				<jdk>[1.10,</jdk>
 			</activation>
 			<build>
 				<pluginManagement>
