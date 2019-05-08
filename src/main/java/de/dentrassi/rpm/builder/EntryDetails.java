@@ -39,6 +39,8 @@ public class EntryDetails
 
     private String group;
 
+    private Boolean skip = false;
+
     public void setMode ( final String mode )
     {
         this.mode = Short.parseShort ( mode, 8 );
@@ -137,6 +139,16 @@ public class EntryDetails
     public String getGroup ()
     {
         return this.group;
+    }
+
+    public void setSkip ( final Boolean skip )
+    {
+        this.skip = skip;
+    }
+
+    public Boolean getSkip()
+    {
+        return this.skip;
     }
 
     public void validate ()

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.dentrassi.maven.rpm.test</groupId>
+	<artifactId>test13-skipentry</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Test Package #1</name>
+	<description>
+	This is some long long text about foo bar and all the rest.
+	</description>
+
+	<url>http://dentrassi.de</url>
+
+	<organization>
+		<name>Jens Reimann</name>
+		<url>http://dentrassi.de</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<distribution>repo</distribution>
+			<url>https://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<skipSigning>true</skipSigning>
+        <skipDirThree>true</skipDirThree>
+	</properties>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>de.dentrassi.maven</groupId>
+				<artifactId>rpm</artifactId>
+				<version>@project.version@</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+						<configuration>
+							<attach>false</attach>
+							<group>Application/Misc</group>
+
+							<signature>
+								<keyId>${keyId}</keyId>
+								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
+								<passphrase>${passphrase}</passphrase>
+								<hashAlgorithm>SHA1</hashAlgorithm>
+								<skip>${skipSigning}</skip>
+							</signature>
+
+							<rulesets>
+								<ruleset>
+									<id>default</id>
+									<rules>
+										<rule>
+											<when>
+												<type>directory</type>
+											</when>
+											<mode>0750</mode>
+										</rule>
+										<rule>
+											<when>
+												<prefix>/etc/</prefix>
+											</when>
+											<configuration>true</configuration>
+										</rule>
+										<rule>
+											<when>
+												<prefix>/usr/share/doc</prefix>
+											</when>
+											<documentation>true</documentation>
+										</rule>
+										<rule>
+											<when>
+												<suffix>README.txt</suffix>
+											</when>
+											<readme>true</readme>
+										</rule>
+										<rule>
+											<when>
+												<type>file</type>
+												<prefix>/usr/lib/foobar/lib/dir1</prefix>
+											</when>
+											<user>foo</user>
+											<group>bar</group>
+										</rule>
+									</rules>
+								</ruleset>
+							</rulesets>
+
+							<entries>
+								<entry>
+									<name>/etc/foo</name>
+									<directory>true</directory>
+									<user>root</user>
+									<group>root</group>
+									<mode>0755</mode>
+								</entry>
+								<entry>
+									<name>/etc/foo/bar.txt</name>
+									<file>src/main/resources/bar.txt</file>
+									<user>root</user>
+									<group>root</group>
+									<mode>0600</mode>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<skip>true</skip>
+									<name>/usr/share</name>
+									<collect>
+										<from>src/main/resources/usr/share</from>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/usr/lib/foobar</name>
+									<collect>
+										<from>target/classes</from>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/etc</name>
+									<collect>
+										<from>src/main/resources/etc</from>
+										<directories>true</directories>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<name>/usr/lib</name>
+									<collect>
+										<from>src/main/resources/lib</from>
+										<directories>true</directories>
+									</collect>
+									<ruleset>default</ruleset>
+								</entry>
+								<entry>
+									<skip>${skipDirThree}</skip>
+									<name>/usr/lib/dir3</name>
+									<linkTo>dir2</linkTo>
+								</entry>
+								<entry>
+									<name>/usr/lib/dir4</name>
+									<linkTo>/usr/lib/dir2</linkTo>
+								</entry>
+							</entries>
+
+							<beforeInstallation>
+								set -e
+								echo "Before installation"
+							</beforeInstallation>
+							<afterInstallation>
+								<file>src/main/resources/afterInstall.sh</file>
+							</afterInstallation>
+							<beforeRemoval>
+								<interpreter>/bin/bash</interpreter>
+								<script>
+									set -e
+									echo "Before removal"
+								</script>
+							</beforeRemoval>
+							<afterRemoval>
+								<script>#!/bin/bash
+									set -e
+									echo "After removal"
+								</script>
+							</afterRemoval>
+
+							<prequisites>
+								<prequisite>findutils</prequisite>
+								<prequisite>
+									gzip >= 1.0
+								</prequisite>
+							</prequisites>
+
+							<requires>
+								<require>
+									<name>grep</name>
+									<pre />
+								</require>
+								<require>
+									<name>acl</name>
+									<version>2.2.0</version>
+									<greaterOrEqual />
+								</require>
+								<require>
+									<name>at</name>
+									<version>3.0.0</version>
+									<greaterOrEqual />
+									<flags>PREREQ</flags>
+								</require>
+								<require>file &gt;= 5.0</require>
+							</requires>
+
+							<conflicts>
+								<conflict>broken-package</conflict>
+								<conflict>foo lt 1.0</conflict>
+							</conflicts>
+
+							<obsoletes>
+								<obsolete>old-package &lt; 1.0</obsolete>
+								<obsolete>older-package lt 1.0</obsolete>
+							</obsoletes>
+
+							<provides>
+								<provide>foo-bar</provide>
+							</provides>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skipSigning>false</skipSigning>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>

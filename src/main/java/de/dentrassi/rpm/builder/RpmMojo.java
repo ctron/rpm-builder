@@ -951,16 +951,15 @@ public class RpmMojo extends AbstractMojo
 
         for ( final PackageEntry entry : this.entries )
         {
-            try
-            {
-                entry.validate ();
-            }
-            catch ( final IllegalStateException e )
-            {
-                throw new MojoFailureException ( e.getMessage () );
-            }
+            if (!entry.getSkip()) {
+                try {
+                    entry.validate();
+                } catch (final IllegalStateException e) {
+                    throw new MojoFailureException(e.getMessage());
+                }
 
-            fillFromEntry ( ctx, entry );
+                fillFromEntry(ctx, entry);
+            }
         }
     }
 
