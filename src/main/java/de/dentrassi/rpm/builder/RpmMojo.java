@@ -11,6 +11,7 @@
  *     Bernd Warmuth - bugfix target folder creation
  *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
  *     Lucian Burja - Added setting for creating relocatable RPM packages
+ *     Peter Wilkinson - add skip entry flag
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
