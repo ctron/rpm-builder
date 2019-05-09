@@ -20,6 +20,10 @@ All `<entry>` elements have to be contained in an `<entries>` element in the
 Each `<entry>` element has the common child element `<name>`, which defines
 the name of the element on the target system. This element is required.
 
+Since version `1.2.0`, every `<entry>` element has the optional `<skip>`
+child element. This allows to disable an entry (`true` will skip the entry,
+the default is `false`). The value can also be provided with a property.
+
 ## Entry type / source
 
 There are a few different entry types, defining where the actual payload data comes from for this entry.
