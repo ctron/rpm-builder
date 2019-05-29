@@ -102,9 +102,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.packagedrone</groupId>
-			<artifactId>org.eclipse.packagedrone.utils.rpm</artifactId>
-			<version>0.14.6</version>
+			<groupId>org.eclipse.packager</groupId>
+			<artifactId>packager-rpm</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

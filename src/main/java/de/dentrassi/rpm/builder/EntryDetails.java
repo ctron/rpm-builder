@@ -15,8 +15,8 @@ package de.dentrassi.rpm.builder;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.eclipse.packagedrone.utils.rpm.FileFlags;
-import org.eclipse.packagedrone.utils.rpm.build.FileInformation;
+import org.eclipse.packager.rpm.FileFlags;
+import org.eclipse.packager.rpm.build.FileInformation;
 
 public class EntryDetails
 {
@@ -147,7 +147,7 @@ public class EntryDetails
         this.skip = skip;
     }
 
-    public Boolean getSkip()
+    public Boolean getSkip ()
     {
         return this.skip;
     }

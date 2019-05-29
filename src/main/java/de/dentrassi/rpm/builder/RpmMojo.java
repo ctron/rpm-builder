@@ -15,7 +15,7 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-import static com.google.common.io.Files.readFirstLine;
+import static com.google.common.io.Files.asCharSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,19 +50,19 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.eclipse.packagedrone.utils.rpm.Architecture;
-import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
-import org.eclipse.packagedrone.utils.rpm.OperatingSystem;
-import org.eclipse.packagedrone.utils.rpm.RpmLead;
-import org.eclipse.packagedrone.utils.rpm.RpmVersion;
-import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
-import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
-import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
-import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.Version;
-import org.eclipse.packagedrone.utils.rpm.build.RpmFileNameProvider;
-import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
-import org.eclipse.packagedrone.utils.rpm.signature.RsaHeaderSignatureProcessor;
-import org.eclipse.packagedrone.utils.rpm.signature.SignatureProcessor;
+import org.eclipse.packager.rpm.Architecture;
+import org.eclipse.packager.rpm.HashAlgorithm;
+import org.eclipse.packager.rpm.OperatingSystem;
+import org.eclipse.packager.rpm.RpmLead;
+import org.eclipse.packager.rpm.RpmVersion;
+import org.eclipse.packager.rpm.build.BuilderContext;
+import org.eclipse.packager.rpm.build.RpmBuilder;
+import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
+import org.eclipse.packager.rpm.build.RpmBuilder.Version;
+import org.eclipse.packager.rpm.build.RpmFileNameProvider;
+import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
+import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
+import org.eclipse.packager.rpm.signature.SignatureProcessor;
 
 import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
@@ -675,7 +675,7 @@ public class RpmMojo extends AbstractMojo
             }
             catch ( final IOException ioe )
             {
-                this.logger.debug ( "Unable to create target directory {}", targetDir );
+                this.logger.debug ( "Unable to create target directory %s", targetDir );
                 throw new MojoExecutionException ( "RPM build failed.", ioe );
 
             }
@@ -715,7 +715,6 @@ public class RpmMojo extends AbstractMojo
             fillScripts ( builder );
             fillDependencies ( builder );
             fillPayload ( builder );
-            fillPrefixes ( builder );
 
             // add signer
 
@@ -952,33 +951,20 @@ public class RpmMojo extends AbstractMojo
 
         for ( final PackageEntry entry : this.entries )
         {
-            if (!entry.getSkip())
+            if ( !entry.getSkip () )
             {
-                try {
-                    entry.validate();
-                } catch (final IllegalStateException e) {
-                    throw new MojoFailureException(e.getMessage());
+                try
+                {
+                    entry.validate ();
+                }
+                catch ( final IllegalStateException e )
+                {
+                    throw new MojoFailureException ( e.getMessage () );
                 }
 
-                fillFromEntry(ctx, entry);
+                fillFromEntry ( ctx, entry );
             }
         }
-    }
-
-    private void fillPrefixes ( final RpmBuilder builder )
-    {
-        if ( this.prefixes == null || this.prefixes.isEmpty () )
-        {
-            return;
-        }
-
-        this.logger.debug ( "Building relocatable package: {}", this.prefixes );
-
-        builder.setHeaderCustomizer ( rpmTagHeader -> {
-            // TODO: migrate to flags once https://github.com/eclipse/packagedrone/issues/130 is fixed
-            final int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
-            rpmTagHeader.putStringArray ( RPMTAG_PREFIXES, this.prefixes.toArray ( new String[0] ) );
-        } );
     }
 
     private void fillFromEntry ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
@@ -1204,6 +1190,12 @@ public class RpmMojo extends AbstractMojo
         ifSet ( pinfo::setPackager, this.packager, this::makePackager );
 
         ifSet ( pinfo::setLicense, this.license, this::makeLicense );
+
+        if ( this.prefixes != null && !this.prefixes.isEmpty () )
+        {
+            this.logger.debug ( "Building relocatable package: %s", this.prefixes );
+            pinfo.setPrefixes ( this.prefixes );
+        }
     }
 
     private String generateDefaultSourcePackageName ()
@@ -1249,7 +1241,7 @@ public class RpmMojo extends AbstractMojo
 
         try
         {
-            hostname = readFirstLine ( new File ( "/etc/hostname" ), StandardCharsets.US_ASCII );
+            hostname = asCharSource ( new File ( "/etc/hostname" ), StandardCharsets.US_ASCII ).readFirstLine ();
 
             if ( hostname != null && !hostname.isEmpty () )
             {

@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.packagedrone.utils.rpm.build.FileInformation;
-import org.eclipse.packagedrone.utils.rpm.build.PayloadEntryType;
+import org.eclipse.packager.rpm.build.FileInformation;
+import org.eclipse.packager.rpm.build.PayloadEntryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

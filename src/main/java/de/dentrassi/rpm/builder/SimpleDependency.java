@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
+import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
 
 public class SimpleDependency
 {
