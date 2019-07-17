@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.dentrassi.maven.rpm.test</groupId>
+	<artifactId>test14-primaryname</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>rpm</packaging>
+
+	<name>Test Package #14</name>
+	<description>
+	Test primary name
+	</description>
+
+	<url>http://dentrassi.de</url>
+
+	<organization>
+		<name>Jens Reimann</name>
+		<url>http://dentrassi.de</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<distribution>repo</distribution>
+			<url>https://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<skipSigning>true</skipSigning>
+		<rpm.skipSigning>true</rpm.skipSigning>
+	</properties>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>de.dentrassi.maven</groupId>
+				<artifactId>rpm</artifactId>
+				<extensions>true</extensions>
+				<version>@project.version@</version>
+				<executions>
+					<execution>
+						<configuration>
+							<group>Application/Misc</group>
+
+							<forceRelease>false</forceRelease>
+							<version>1.0.0</version>
+
+							<signature>
+								<keyId>${keyId}</keyId>
+								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
+								<passphrase>${passphrase}</passphrase>
+								<hashAlgorithm>SHA1</hashAlgorithm>
+								<skip>${skipSigning}</skip>
+							</signature>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skipSigning>false</skipSigning>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>
