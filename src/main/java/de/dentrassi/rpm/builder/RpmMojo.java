@@ -12,6 +12,7 @@
  *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
  *     Lucian Burja - Added setting for creating relocatable RPM packages
  *     Peter Wilkinson - add skip entry flag
+ *     Daniel Singhal - Added primary artifact support
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
