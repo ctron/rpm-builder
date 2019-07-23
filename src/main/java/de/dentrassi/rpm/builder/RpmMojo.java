@@ -12,6 +12,7 @@
  *     Oliver Richter - Made packageName & defaultScriptInterpreter configurable
  *     Lucian Burja - Added setting for creating relocatable RPM packages
  *     Peter Wilkinson - add skip entry flag
+ *     Daniel Singhal - Added primary artifact support
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -740,7 +741,13 @@ public class RpmMojo extends AbstractMojo
 
             if ( this.attach )
             {
-                this.projectHelper.attachArtifact ( this.project, "rpm", this.classifier, builder.getTargetFile ().toFile () );
+                this.logger.info ( "attaching %s", this.classifier);
+                if ( "rpm".equals( project.getPackaging() ) ){
+                    project.getArtifact().setFile( builder.getTargetFile().toFile() );
+                } else {
+                    this.projectHelper.attachArtifact ( this.project, "rpm", this.classifier, builder.getTargetFile ().toFile () );
+                }
+
             }
         }
         catch ( final IOException e )
@@ -749,8 +756,7 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private Path makeTargetFile ( final Path targetDir )
-    {
+    private String makeTargetFilename() {
         String outputFileName = this.outputFileName;
 
         if ( outputFileName == null || outputFileName.isEmpty () )
@@ -766,7 +772,11 @@ public class RpmMojo extends AbstractMojo
             }
             this.logger.debug ( "Using generated file name - %s", outputFileName, outputFileName );
         }
+        return outputFileName;
+    }
 
+    private Path makeTargetFile ( final Path targetDir ) {
+        String outputFileName = makeTargetFilename();
         final Path targetFile = targetDir.resolve ( outputFileName );;
         this.logger.debug ( "Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
         return targetFile;
