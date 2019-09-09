@@ -18,7 +18,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.eclipse.packagedrone.utils.security.pgp.PgpHelper;
+import org.eclipse.packager.security.pgp.PgpHelper;
 
 public final class SigningHelper
 {

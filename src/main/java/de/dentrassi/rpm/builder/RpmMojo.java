@@ -16,13 +16,13 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-import static com.google.common.io.Files.readFirstLine;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.file.Files.readAllLines;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,19 +51,19 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.eclipse.packagedrone.utils.rpm.Architecture;
-import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
-import org.eclipse.packagedrone.utils.rpm.OperatingSystem;
-import org.eclipse.packagedrone.utils.rpm.RpmLead;
-import org.eclipse.packagedrone.utils.rpm.RpmVersion;
-import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
-import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder;
-import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.PackageInformation;
-import org.eclipse.packagedrone.utils.rpm.build.RpmBuilder.Version;
-import org.eclipse.packagedrone.utils.rpm.build.RpmFileNameProvider;
-import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
-import org.eclipse.packagedrone.utils.rpm.signature.RsaHeaderSignatureProcessor;
-import org.eclipse.packagedrone.utils.rpm.signature.SignatureProcessor;
+import org.eclipse.packager.rpm.Architecture;
+import org.eclipse.packager.rpm.HashAlgorithm;
+import org.eclipse.packager.rpm.OperatingSystem;
+import org.eclipse.packager.rpm.RpmLead;
+import org.eclipse.packager.rpm.RpmVersion;
+import org.eclipse.packager.rpm.build.BuilderContext;
+import org.eclipse.packager.rpm.build.RpmBuilder;
+import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
+import org.eclipse.packager.rpm.build.RpmBuilder.Version;
+import org.eclipse.packager.rpm.build.RpmFileNameProvider;
+import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
+import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
+import org.eclipse.packager.rpm.signature.SignatureProcessor;
 
 import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
@@ -741,10 +741,13 @@ public class RpmMojo extends AbstractMojo
 
             if ( this.attach )
             {
-                this.logger.info ( "attaching %s", this.classifier);
-                if ( "rpm".equals( project.getPackaging() ) ){
-                    project.getArtifact().setFile( builder.getTargetFile().toFile() );
-                } else {
+                this.logger.info ( "attaching %s", this.classifier );
+                if ( "rpm".equals ( this.project.getPackaging () ) )
+                {
+                    this.project.getArtifact ().setFile ( builder.getTargetFile ().toFile () );
+                }
+                else
+                {
                     this.projectHelper.attachArtifact ( this.project, "rpm", this.classifier, builder.getTargetFile ().toFile () );
                 }
 
@@ -756,7 +759,8 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private String makeTargetFilename() {
+    private String makeTargetFilename ()
+    {
         String outputFileName = this.outputFileName;
 
         if ( outputFileName == null || outputFileName.isEmpty () )
@@ -775,8 +779,9 @@ public class RpmMojo extends AbstractMojo
         return outputFileName;
     }
 
-    private Path makeTargetFile ( final Path targetDir ) {
-        String outputFileName = makeTargetFilename();
+    private Path makeTargetFile ( final Path targetDir )
+    {
+        final String outputFileName = makeTargetFilename ();
         final Path targetFile = targetDir.resolve ( outputFileName );;
         this.logger.debug ( "Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
         return targetFile;
@@ -962,15 +967,18 @@ public class RpmMojo extends AbstractMojo
 
         for ( final PackageEntry entry : this.entries )
         {
-            if (!entry.getSkip())
+            if ( !entry.getSkip () )
             {
-                try {
-                    entry.validate();
-                } catch (final IllegalStateException e) {
-                    throw new MojoFailureException(e.getMessage());
+                try
+                {
+                    entry.validate ();
+                }
+                catch ( final IllegalStateException e )
+                {
+                    throw new MojoFailureException ( e.getMessage () );
                 }
 
-                fillFromEntry(ctx, entry);
+                fillFromEntry ( ctx, entry );
             }
         }
     }
@@ -1259,7 +1267,7 @@ public class RpmMojo extends AbstractMojo
 
         try
         {
-            hostname = readFirstLine ( new File ( "/etc/hostname" ), StandardCharsets.US_ASCII );
+            hostname = readAllLines ( Paths.get ( "/etc/hostname" ), US_ASCII ).stream ().findFirst ().orElse ( null );
 
             if ( hostname != null && !hostname.isEmpty () )
             {

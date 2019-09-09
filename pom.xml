@@ -3,7 +3,7 @@
 
 	<groupId>de.dentrassi.maven</groupId>
 	<artifactId>rpm</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 
 	<packaging>maven-plugin</packaging>
 
@@ -102,9 +102,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.packagedrone</groupId>
-			<artifactId>org.eclipse.packagedrone.utils.rpm</artifactId>
-			<version>0.14.6</version>
+			<groupId>org.eclipse.packager</groupId>
+			<artifactId>packager-rpm</artifactId>
+			<version>0.15.0</version>
 		</dependency>
 
 		<dependency>

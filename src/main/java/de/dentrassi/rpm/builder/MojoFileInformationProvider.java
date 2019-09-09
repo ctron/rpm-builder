@@ -15,10 +15,10 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import org.eclipse.packagedrone.utils.rpm.build.BuilderContext;
-import org.eclipse.packagedrone.utils.rpm.build.FileInformation;
-import org.eclipse.packagedrone.utils.rpm.build.FileInformationProvider;
-import org.eclipse.packagedrone.utils.rpm.build.PayloadEntryType;
+import org.eclipse.packager.rpm.build.BuilderContext;
+import org.eclipse.packager.rpm.build.FileInformation;
+import org.eclipse.packager.rpm.build.FileInformationProvider;
+import org.eclipse.packager.rpm.build.PayloadEntryType;
 
 public class MojoFileInformationProvider implements FileInformationProvider<Object>
 {

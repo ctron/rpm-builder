@@ -15,7 +15,7 @@
 package de.dentrassi.rpm.builder;
 
 import static java.util.Collections.singletonMap;
-import static org.eclipse.packagedrone.utils.rpm.HashAlgorithm.SHA256;
+import static org.eclipse.packager.rpm.HashAlgorithm.SHA256;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,16 +45,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.eclipse.packagedrone.utils.io.FileSystemSpoolOutTarget;
-import org.eclipse.packagedrone.utils.rpm.HashAlgorithm;
-import org.eclipse.packagedrone.utils.rpm.info.RpmInformation;
-import org.eclipse.packagedrone.utils.rpm.info.RpmInformations;
-import org.eclipse.packagedrone.utils.rpm.parse.RpmInputStream;
-import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator;
-import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.Builder;
-import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.Context;
-import org.eclipse.packagedrone.utils.rpm.yum.RepositoryCreator.FileInformation;
-import org.eclipse.packagedrone.utils.security.pgp.SigningStream;
+import org.eclipse.packager.io.FileSystemSpoolOutTarget;
+import org.eclipse.packager.rpm.HashAlgorithm;
+import org.eclipse.packager.rpm.info.RpmInformation;
+import org.eclipse.packager.rpm.info.RpmInformations;
+import org.eclipse.packager.rpm.parse.RpmInputStream;
+import org.eclipse.packager.rpm.yum.RepositoryCreator;
+import org.eclipse.packager.rpm.yum.RepositoryCreator.Builder;
+import org.eclipse.packager.rpm.yum.RepositoryCreator.Context;
+import org.eclipse.packager.rpm.yum.RepositoryCreator.FileInformation;
+import org.eclipse.packager.security.pgp.SigningStream;
 
 import com.google.common.collect.Lists;
 

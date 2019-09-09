@@ -10,7 +10,7 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-import org.eclipse.packagedrone.utils.rpm.build.PayloadEntryType;
+import org.eclipse.packager.rpm.build.PayloadEntryType;
 import org.slf4j.LoggerFactory;
 
 public class Rule extends EntryDetails

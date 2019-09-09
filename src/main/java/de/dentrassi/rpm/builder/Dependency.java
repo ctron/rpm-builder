@@ -12,7 +12,7 @@ package de.dentrassi.rpm.builder;
 
 import java.util.Set;
 
-import org.eclipse.packagedrone.utils.rpm.deps.RpmDependencyFlags;
+import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
 
 import com.google.common.base.Strings;
 
