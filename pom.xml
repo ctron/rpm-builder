@@ -106,7 +106,7 @@
         <dependency>
             <groupId>org.eclipse.packager</groupId>
             <artifactId>packager-rpm</artifactId>
-            <version>0.15.0</version>
+            <version>0.15.1</version>
         </dependency>
 
         <dependency>
