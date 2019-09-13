@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.Set;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class de.dentrassi.rpm.builder.EntryDetails.
@@ -20,7 +21,7 @@ public class EntryDetailsTest
    public void applyEmpty()
    {
       final EntryDetails entryDetails = new EntryDetails();
-      doTest(new FileFlags[] {}, entryDetails);
+      doTest(new FileFlags[] {}, false, entryDetails);
    }
 
    /**
@@ -31,7 +32,7 @@ public class EntryDetailsTest
    {
       final EntryDetails entryDetails = new EntryDetails();
       entryDetails.setReadme(true);
-      doTest(new FileFlags[] {FileFlags.README}, entryDetails);
+      doTest(new FileFlags[] {FileFlags.README}, true, entryDetails);
    }
 
    /**
@@ -42,13 +43,18 @@ public class EntryDetailsTest
    {
       final EntryDetails entryDetails = new EntryDetails();
       entryDetails.setReadme(false);
-      doTest(new FileFlags[] {FileFlags.README}, entryDetails); // questionable
+      doTest(new FileFlags[] {FileFlags.README}, true, entryDetails); // questionable
    }
 
-   private static void doTest(FileFlags[] expectedResult, final EntryDetails entryDetails)
+   /**
+    * invokes {@link EntryDetails#apply(org.eclipse.packager.rpm.build.FileInformation)}
+    * @param expectedResult expected return value of {@link FileInformation#getFileFlags()}
+    * @param expectedApplied expected return value of {@link de.dentrassi.rpm.builder.EntryDetails#apply(org.eclipse.packager.rpm.build.FileInformation)}
+    */
+   private static void doTest(FileFlags[] expectedResult, boolean expectedApplied, final EntryDetails entryDetails)
    {
       final FileInformation fileInformation = new FileInformation();
-      entryDetails.apply(fileInformation);
+      assertEquals(expectedApplied, entryDetails.apply(fileInformation));
       final Set<FileFlags> fileFlags = fileInformation.getFileFlags();
       assertArrayEquals(expectedResult, fileFlags.toArray());
    }
