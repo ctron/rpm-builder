@@ -106,8 +106,7 @@
         <dependency>
             <groupId>org.eclipse.packager</groupId>
             <artifactId>packager-rpm</artifactId>
-            <!-- Requires modifications from https://github.com/eclipse/packager/pull/6 ! -->
-            <version>0.15.2-SNAPSHOT</version>
+            <version>0.16.0</version>
         </dependency>
 
         <dependency>
