@@ -1,6 +1,15 @@
+/*
+ * Copyright (c) 2019 IBH SYSTEMS GmbH and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * Contributors:
+ *     Oliver Matz - initial API and implementation
+ *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-import org.eclipse.packager.rpm.FileFlags;
 import org.eclipse.packager.rpm.VerifyFlags;
 import org.eclipse.packager.rpm.build.FileInformation;
 import org.junit.Test;
