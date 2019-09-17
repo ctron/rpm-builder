@@ -17,8 +17,4 @@ jobs:
         java-version: 11
 
     - name: Build with Maven
-      run: mvn -B package
-
-    - name: Deploy to repository
-      if: github.ref == 'refs/heads/master'
-      run: mvn -B deploy -Dregistry=https://maven.pkg.github.com/ctron -Dtoken=${{ secrets.GITHUB_TOKEN }}
+      run: mvn -B test
