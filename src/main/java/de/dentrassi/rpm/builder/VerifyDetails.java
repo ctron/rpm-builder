@@ -12,7 +12,7 @@ import java.util.Set;
  * See https://github.com/ctron/rpm-builder/issues/41
  */
 public final class VerifyDetails {
-   private Boolean md5;
+   private Boolean fileDigest;
    private Boolean size;
    private Boolean linkto;
    private Boolean user;
@@ -22,93 +22,146 @@ public final class VerifyDetails {
    private Boolean rdev;
    private Boolean caps;
 
-   public Boolean getMd5() {
-      return md5;
+   /**
+    * Corresponds to rpm verify option --nofiledigest.
+    */
+   public Boolean getFileDigest() {
+      return fileDigest;
    }
 
-   public void setMd5(Boolean md5) {
-      this.md5 = md5;
+   /**
+    * Corresponds to rpm verify option --nofiledigest.
+    */
+   public void setFileDigest(Boolean fileDigest) {
+      this.fileDigest = fileDigest;
    }
 
+   /**
+    * Corresponds to rpm verify option --nosize.
+    */
    public Boolean getSize() {
       return size;
    }
 
+   /**
+    * Corresponds to rpm verify option --nosize.
+    */
    public void setSize(Boolean size) {
       this.size = size;
    }
 
+   /**
+    * Corresponds to rpm verify option --nolinkto.
+    */
    public Boolean getLinkto() {
       return linkto;
    }
 
+   /**
+    * Corresponds to rpm verify option --nolinkto.
+    */
    public void setLinkto(Boolean linkto) {
       this.linkto = linkto;
    }
 
+   /**
+    * Corresponds to rpm verify option --nouser.
+    */
    public Boolean getUser() {
       return user;
    }
 
+   /**
+    * Corresponds to rpm verify option --nouser.
+    */
    public void setUser(Boolean user) {
       this.user = user;
    }
 
+   /**
+    * Corresponds to rpm verify option --nogroup.
+    */
    public Boolean getGroup() {
       return group;
    }
 
+   /**
+    * Corresponds to rpm verify option --nogroup.
+    */
    public void setGroup(Boolean group) {
       this.group = group;
    }
 
+   /**
+    * Corresponds to rpm verify option --nomtime.
+    */
    public Boolean getMtime() {
       return mtime;
    }
 
+   /**
+    * Corresponds to rpm verify option --nomtime.
+    */
    public void setMtime(Boolean mtime) {
       this.mtime = mtime;
    }
 
+   /**
+    * Corresponds to rpm verify option --nomode.
+    */
    public Boolean getMode() {
       return mode;
    }
 
+   /**
+    * Corresponds to rpm verify option --nomode.
+    */
    public void setMode(Boolean mode) {
       this.mode = mode;
    }
 
+   /**
+    * Corresponds to rpm verify option --nordev.
+    */
    public Boolean getRdev() {
       return rdev;
    }
 
+   /**
+    * Corresponds to rpm verify option --nordev.
+    */
    public void setRdev(Boolean rdev) {
       this.rdev = rdev;
    }
 
+   /**
+    * Corresponds to rpm verify option --nocaps.
+    */
    public Boolean getCaps() {
       return caps;
    }
 
+   /**
+    * Corresponds to rpm verify option --nocaps.
+    */
    public void setCaps(Boolean caps) {
       this.caps = caps;
    }
 
    /**
     * @see EntryDetails#apply(org.eclipse.packager.rpm.build.FileInformation)
-    * @return true if at least one flag has been set.
     */
    void apply ( final FileInformation info )
    {
       final Set<VerifyFlags> verifyFlags = EnumSet.noneOf(VerifyFlags.class);
-      transfer(verifyFlags, this.md5,    VerifyFlags.MD5 );
-      transfer(verifyFlags, this.size,   VerifyFlags.SIZE );
-      transfer(verifyFlags, this.linkto, VerifyFlags.LINKTO );
-      transfer(verifyFlags, this.user,   VerifyFlags.USER );
-      transfer(verifyFlags, this.group,  VerifyFlags.GROUP );
-      transfer(verifyFlags, this.mtime,  VerifyFlags.MTIME );
-      transfer(verifyFlags, this.mode,   VerifyFlags.MODE );
-      transfer(verifyFlags, this.caps,   VerifyFlags.CAPS );
+      transfer(verifyFlags, this.fileDigest, VerifyFlags.MD5 );
+      transfer(verifyFlags, this.size,       VerifyFlags.SIZE );
+      transfer(verifyFlags, this.linkto,     VerifyFlags.LINKTO );
+      transfer(verifyFlags, this.user,       VerifyFlags.USER );
+      transfer(verifyFlags, this.group,      VerifyFlags.GROUP );
+      transfer(verifyFlags, this.mtime,      VerifyFlags.MTIME );
+      transfer(verifyFlags, this.mode,       VerifyFlags.MODE );
+      transfer(verifyFlags, this.caps,       VerifyFlags.CAPS );
       info.setVerifyFlags ( verifyFlags );
    }
 
@@ -129,8 +182,8 @@ public final class VerifyDetails {
    @Override
    public String toString() {
       final StringBuilder ret = new StringBuilder("VerifyDetails{");
-      if (md5 != null) {
-         ret.append("md5,");
+      if (fileDigest != null) {
+         ret.append("fileDigest,");
       }
       if (size != null) {
          ret.append("size,");
