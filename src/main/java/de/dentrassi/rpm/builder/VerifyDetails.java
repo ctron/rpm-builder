@@ -22,139 +22,157 @@ import java.util.Set;
  * See https://github.com/ctron/rpm-builder/issues/41
  */
 public final class VerifyDetails {
-   private Boolean fileDigest;
-   private Boolean size;
-   private Boolean linkto;
-   private Boolean user;
-   private Boolean group;
-   private Boolean mtime;
-   private Boolean mode;
-   private Boolean rdev;
-   private Boolean caps;
+   private boolean fileDigest;
+   private boolean size;
+   private boolean linkto;
+   private boolean user;
+   private boolean group;
+   private boolean mtime;
+   private boolean mode;
+   private boolean rdev;
+   private boolean caps;
 
    /**
     * Corresponds to rpm verify option --nofiledigest.
+    * @return true iff fileDigest shall be verified
     */
-   public Boolean getFileDigest() {
+   public boolean getFileDigest() {
       return fileDigest;
    }
 
    /**
     * Corresponds to rpm verify option --nofiledigest.
+    * @param fileDigest true iff fileDigest shall be verified
     */
-   public void setFileDigest(Boolean fileDigest) {
+   public void setFileDigest(boolean fileDigest) {
       this.fileDigest = fileDigest;
    }
 
    /**
     * Corresponds to rpm verify option --nosize.
+    * @return true iff file size shall be verified
     */
-   public Boolean getSize() {
+   public boolean getSize() {
       return size;
    }
 
    /**
     * Corresponds to rpm verify option --nosize.
+    * @param size true iff file size shall be verified
     */
-   public void setSize(Boolean size) {
+   public void setSize(boolean size) {
       this.size = size;
    }
 
    /**
     * Corresponds to rpm verify option --nolinkto.
+    * @return true iff linkto shall be verified
     */
-   public Boolean getLinkto() {
+   public boolean getLinkto() {
       return linkto;
    }
 
    /**
     * Corresponds to rpm verify option --nolinkto.
+    * @param linkto true iff linkto shall be verified
     */
-   public void setLinkto(Boolean linkto) {
+   public void setLinkto(boolean linkto) {
       this.linkto = linkto;
    }
 
    /**
     * Corresponds to rpm verify option --nouser.
+    * @return true iff user shall be verified
     */
-   public Boolean getUser() {
+   public boolean getUser() {
       return user;
    }
 
    /**
     * Corresponds to rpm verify option --nouser.
+    * @param user true iff user shall be verified
     */
-   public void setUser(Boolean user) {
+   public void setUser(boolean user) {
       this.user = user;
    }
 
    /**
     * Corresponds to rpm verify option --nogroup.
+    * @return true iff group shall be verified
     */
-   public Boolean getGroup() {
+   public boolean getGroup() {
       return group;
    }
 
    /**
     * Corresponds to rpm verify option --nogroup.
+    * @param group true iff group shall be verified
     */
-   public void setGroup(Boolean group) {
+   public void setGroup(boolean group) {
       this.group = group;
    }
 
    /**
     * Corresponds to rpm verify option --nomtime.
+    * @return true iff mtime shall be verified
     */
-   public Boolean getMtime() {
+   public boolean getMtime() {
       return mtime;
    }
 
    /**
     * Corresponds to rpm verify option --nomtime.
+    * @param mtime true iff mtime shall be verified
     */
-   public void setMtime(Boolean mtime) {
+   public void setMtime(boolean mtime) {
       this.mtime = mtime;
    }
 
    /**
     * Corresponds to rpm verify option --nomode.
+    * @return true iff mode shall be verified
     */
-   public Boolean getMode() {
+   public boolean getMode() {
       return mode;
    }
 
    /**
     * Corresponds to rpm verify option --nomode.
+    * @param mode true iff mode shall be verified
     */
-   public void setMode(Boolean mode) {
+   public void setMode(boolean mode) {
       this.mode = mode;
    }
 
    /**
     * Corresponds to rpm verify option --nordev.
+    * @return true iff rdev shall be verified
     */
-   public Boolean getRdev() {
+   public boolean getRdev() {
       return rdev;
    }
 
    /**
     * Corresponds to rpm verify option --nordev.
+    * @param rdev true iff rdev shall be verified
     */
-   public void setRdev(Boolean rdev) {
+   public void setRdev(boolean rdev) {
       this.rdev = rdev;
    }
 
    /**
     * Corresponds to rpm verify option --nocaps.
+    * @return true iff caps shall be verified
     */
-   public Boolean getCaps() {
+   public boolean getCaps() {
       return caps;
    }
 
    /**
     * Corresponds to rpm verify option --nocaps.
+    * @param caps true iff caps shall be verified
     */
-   public void setCaps(Boolean caps) {
+   public void setCaps(boolean caps) {
       this.caps = caps;
    }
 
@@ -175,12 +193,8 @@ public final class VerifyDetails {
       info.setVerifyFlags ( verifyFlags );
    }
 
-   private static void transfer(Set<VerifyFlags> target, Boolean val, VerifyFlags flag)
+   private static void transfer(Set<VerifyFlags> target, boolean val, VerifyFlags flag)
    {
-      if (val == null)
-      {
-         return;
-      }
       if (!val)
       {
          // target.remove(val); // not needed, target cannot contain flag
@@ -192,28 +206,28 @@ public final class VerifyDetails {
    @Override
    public String toString() {
       final StringBuilder ret = new StringBuilder("VerifyDetails{");
-      if (fileDigest != null) {
+      if (fileDigest) {
          ret.append("fileDigest,");
       }
-      if (size != null) {
+      if (size) {
          ret.append("size,");
       }
-      if (linkto != null) {
+      if (linkto) {
          ret.append("linkto,");
       }
-      if (user != null) {
+      if (user) {
          ret.append("user,");
       }
-      if (group != null) {
+      if (group) {
          ret.append("group,");
       }
-      if (mode != null) {
+      if (mode) {
          ret.append("mode,");
       }
-      if (rdev != null) {
+      if (rdev) {
          ret.append("rdev,");
       }
-      if (caps != null) {
+      if (caps) {
          ret.append("caps,");
       }
       ret.append("}");

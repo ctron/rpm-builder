@@ -44,7 +44,7 @@ public class VerifyDetailsTest
    }
 
    /**
-    * Verify that {@link VerifyDetails#setLinkto(java.lang.Boolean)} with value true correctly controls {@link VerifyFlags#LINKTO}.
+    * Verify that {@link VerifyDetails#setLinkto(boolean)} with value true correctly controls {@link VerifyFlags#LINKTO}.
     */
    @Test
    public void applyLinktoTrue()
@@ -55,7 +55,7 @@ public class VerifyDetailsTest
    }
 
    /**
-    * Verify that {@link VerifyDetails#setLinkto(java.lang.Boolean)} with value false does not influence {@link VerifyFlags#LINKTO}.
+    * Verify that {@link VerifyDetails#setLinkto(boolean)} with value false does not influence {@link VerifyFlags#LINKTO}.
     * @see EntryDetailsTest#applyReadmeFalse()
     */
    @Test
