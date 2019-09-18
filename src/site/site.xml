@@ -19,6 +19,7 @@
 			<item name="Signing" href="signing.html" />
 			<item name="Naming" href="naming.html" />
 			<item name="Lead information" href="lead.html" />
+			<item name="Verification flags" href="verify.html" />
 		</menu>
 
 		<menu ref="reports" />

@@ -26,6 +26,7 @@ Both ways however use the same way to specify the information:
     <documentation>true</documentation> <!-- mark as documentation -->
     <readme>true</readme>               <!-- mark as readme -->
     <ghost>true</ghost>                 <!-- mark as ghost -->
+    <verify>…</verify>                  <!-- verification flags -->
 
 Either of these elements may be specified exactly once.
     
@@ -76,5 +77,6 @@ A boolean flag (`true` or `false`) which marks the entry as a ghost entry.
 For more information about ghost, see
 "[The %ghost Directive](http://ftp.rpm.org/max-rpm/s1-rpm-inside-files-list-directives.html#S3-RPM-INSIDE-FLIST-GHOST-DIRECTIVE)". 
 
+## `<verify>`
 
- 
+Configure verification flags. Also see [verification flags](verify.html).

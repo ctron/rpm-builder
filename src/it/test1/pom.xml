@@ -73,6 +73,11 @@
 												<prefix>/etc/</prefix>
 											</when>
 											<configuration>true</configuration>
+											<verify>
+												<user>true</user>
+												<group>true</group>
+												<linkto>true</linkto>
+											</verify>
 										</rule>
 										<rule>
 											<when>
