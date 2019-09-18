@@ -42,6 +42,35 @@ public class EntryDetails
 
     private Boolean skip = false;
 
+    /**
+     * Controls verify flags.
+     * If null, the behaviour is unchanged, the verify flags bitmap will be set to -1, meaning: verify everthing.
+     * If (for example) empty, the verify flags bitmap will be set to 0, meaning: verify nothing.
+     * See https://github.com/ctron/rpm-builder/issues/41.
+     * <br>
+     * The following combination is a reasonable example in the sense of https://stackoverflow.com/a/38996621/11917731:
+     * <entry>
+     *    ...
+     *    <configuration>true</configuration>
+     *    <noreplace>true</noreplace>
+     *    <verify>
+     *      <user>true</user>
+     *      <group>true</group>
+     *    </verify>
+     * </entry>
+     */
+    private VerifyDetails verify;
+
+    public final VerifyDetails getVerify ()
+    {
+        return verify;
+    }
+
+    public final void setVerify ( final VerifyDetails verify )
+    {
+        this.verify = verify;
+    }
+
     public void setMode ( final String mode )
     {
         this.mode = Short.parseShort ( mode, 8 );
@@ -208,6 +237,11 @@ public class EntryDetails
         if ( this.mode != null )
         {
             info.setMode ( this.mode );
+            didApply = true;
+        }
+        if ( this.verify != null )
+        {
+            this.verify.apply ( info );
             didApply = true;
         }
         return didApply;
