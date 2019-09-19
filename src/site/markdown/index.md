@@ -43,4 +43,4 @@ All contributions are welcome!
 ## See also
 
  * [RPM home page](http://www.rpm.org ) 
- * [Eclipse Package Drone™](http://eclipse.org/package-drone) – the source of the library implementing RPM write support
+ * [Eclipse Packager™](http://eclipse.org/packager) – the source of the library implementing RPM write support
