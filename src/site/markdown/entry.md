@@ -40,6 +40,29 @@ There is no need for additional source information.
 Adding a single file is done by: `<file>path/to/file</file>`. The path to the file is relative
 to the Maven project.
 
+Since version `1.3.1`, you can add `<filterFile>true</filterFile>`,
+if you want the file content to be filtered before being added to the RPM.
+This allows you to place variables (`${varname}`) in the file and have them
+expanded on-the-fly.
+
+In terms of what variables are supported, there are two types:
+The *first* type being POM related ones, that start with `project.` like
+`project.name` or `project.version`. Sub-properties from properties
+in the POM that allow multiple values, like `licenses` can access these
+via `[index]`, with the index being 0-based. The *second* type are
+ones specific to this plugin. Here is a list of supported variables:
+
+```
+description
+distribution
+group
+packageName
+packager
+sourcePackage
+vendor
+version
+```
+
 ### Symbolic link
 
 Adding a single file is done by: `<linkTo>link/target</linkTo>`. The path where the

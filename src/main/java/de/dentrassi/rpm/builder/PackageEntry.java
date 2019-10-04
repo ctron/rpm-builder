@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016,2019 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
+ *     University of Waikato - added filterFile flag
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -95,6 +96,8 @@ public class PackageEntry extends EntryDetails
 
     private String ruleset;
 
+    private boolean filterFile;
+
     public String getName ()
     {
         return this.name;
@@ -153,6 +156,16 @@ public class PackageEntry extends EntryDetails
     public String getRuleset ()
     {
         return this.ruleset;
+    }
+
+    public void setFilterFile( final boolean filterFile )
+    {
+        this.filterFile = filterFile;
+    }
+
+    public boolean getFilterFile()
+    {
+        return this.filterFile;
     }
 
     @Override
