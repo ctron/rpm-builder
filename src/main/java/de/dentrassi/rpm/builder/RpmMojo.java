@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
+import com.github.fracpete.simplemavenfilefiltering.FilterUtils;
 import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
 import de.dentrassi.rpm.builder.Naming.Case;
