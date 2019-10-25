@@ -1,5 +1,5 @@
 
-# RPM builder plugin
+# RPM builder plugin ![Maven Central](https://img.shields.io/maven-central/v/com.github.fracpete/rpm-maven-plugin.svg "Maven Central Status")
 
 This is a Maven Plugin which can build RPM files using plain Java.
 It does not require the `rpmbuild` command line tool.
