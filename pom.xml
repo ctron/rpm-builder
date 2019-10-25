@@ -3,7 +3,7 @@
 
     <groupId>com.github.fracpete</groupId>
     <artifactId>rpm-maven-plugin</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0</version>
 
     <packaging>maven-plugin</packaging>
 
@@ -28,7 +28,7 @@
         <url>https://github.com/fracpete/rpm-builder</url>
         <connection>scm:git:git://github.com/fracpete/rpm-builder.git</connection>
         <developerConnection>scm:git:git@github.com:fracpete/rpm-builder.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>rpm-maven-plugin-1.4.0</tag>
     </scm>
 
     <issueManagement>
