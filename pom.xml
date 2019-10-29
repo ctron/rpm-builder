@@ -1,16 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.dentrassi.maven</groupId>
-    <artifactId>rpm</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <groupId>com.github.fracpete</groupId>
+    <artifactId>rpm-maven-plugin</artifactId>
+    <version>1.4.1-SNAPSHOT</version>
 
     <packaging>maven-plugin</packaging>
 
     <name>Java RPM builder</name>
-    <description>Build RPM packages using plain Java on any platform</description>
+    <description>Build RPM packages using plain Java on any platform.
+        Fork of https://github.com/ctron/rpm-builder</description>
 
-    <url>https://ctron.github.io/rpm-builder</url>
+    <url>https://fracpete.github.io/rpm-builder</url>
 
     <inceptionYear>2016</inceptionYear>
 
@@ -24,14 +25,14 @@
     </developers>
 
     <scm>
-        <url>https://github.com/ctron/rpm-builder</url>
-        <connection>scm:git:git://github.com/ctron/rpm-builder.git</connection>
-        <developerConnection>scm:git:git@github.com:ctron/rpm-builder.git</developerConnection>
-        <tag>HEAD</tag>
+        <url>https://github.com/fracpete/rpm-builder</url>
+        <connection>scm:git:git://github.com/fracpete/rpm-builder.git</connection>
+        <developerConnection>scm:git:git@github.com:fracpete/rpm-builder.git</developerConnection>
+        <tag>rpm-maven-plugin-1.4.0</tag>
     </scm>
 
     <issueManagement>
-        <url>https://github.com/ctron/rpm-builder/issues</url>
+        <url>https://github.com/fracpete/rpm-builder/issues</url>
         <system>GitHub</system>
     </issueManagement>
 
@@ -39,6 +40,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
         <maven.version>3.3.9</maven.version>
 
@@ -122,6 +125,12 @@
             <version>1.12</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.fracpete</groupId>
+            <artifactId>simple-maven-file-filtering</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+
         <!-- EOTD -->
 
         <dependency>
@@ -143,6 +152,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.0</version>
                     <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
                         <release>8</release>
                     </configuration>
                 </plugin>
@@ -405,7 +416,7 @@
                             <execution>
                                 <goals>
                                     <goal>install</goal>
-                                    <goal>integration-test</goal>
+                                    <!--goal>integration-test</goal-->
                                     <goal>verify</goal>
                                 </goals>
                             </execution>

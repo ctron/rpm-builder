@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2018, 2019 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -13,32 +13,15 @@
  *     Lucian Burja - Added setting for creating relocatable RPM packages
  *     Peter Wilkinson - add skip entry flag
  *     Daniel Singhal - Added primary artifact support
+ *     University of Waikato - applying the filterFile flag in fillFromEntryFile
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
-import static java.nio.file.Files.readAllLines;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
+import com.github.fracpete.simplemavenfilefiltering.FilterUtils;
+import com.google.common.base.Strings;
+import com.google.common.io.CharSource;
+import de.dentrassi.rpm.builder.Naming.Case;
+import de.dentrassi.rpm.builder.PackageEntry.Collector;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -65,11 +48,30 @@ import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
 import org.eclipse.packager.rpm.signature.SignatureProcessor;
 
-import com.google.common.base.Strings;
-import com.google.common.io.CharSource;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-import de.dentrassi.rpm.builder.Naming.Case;
-import de.dentrassi.rpm.builder.PackageEntry.Collector;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.file.Files.readAllLines;
 
 /**
  * Build an RPM file
@@ -1027,17 +1029,48 @@ public class RpmMojo extends AbstractMojo
         ctx.addDirectory ( entry.getName (), makeProvider ( entry, "      - " ) );
     }
 
+    private Map<String,String> getAdditionalVars()
+    {
+        HashMap<String,String> additional = new HashMap<>();
+        additional.put("packageName", packageName);
+        additional.put("packager", packager);
+        additional.put("description", description);
+        additional.put("distribution", distribution);
+        additional.put("group", group);
+        additional.put("sourcePackage", sourcePackage);
+        additional.put("vendor", vendor);
+        additional.put("version", version);
+        return additional;
+    }
+
     private void fillFromEntryFile ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
     {
         this.logger.debug ( "    as file:" );
         final Path source = entry.getFile ().toPath ().toAbsolutePath ();
         this.logger.debug ( "      - source: %s", source );
 
-        ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
+        if (entry.getFilterFile())
+        {
+            File tmpFile = new File( System.getProperty( "java.io.tmpdir" ) + File.separator + "rpm-" + System.currentTimeMillis() + "-" + entry.getFile().getName() );
+            tmpFile.deleteOnExit();
+            final Path filtered = tmpFile.toPath();
+            FilterUtils.filterFile( getLog(), source, filtered, project.getModel(), getAdditionalVars() );
+            this.logger.debug ( "      - filtered: %s", filtered );
+            ctx.addFile ( entry.getName (), filtered, makeProvider ( entry, "      - " ) );
+        }
+        else
+        {
+            ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
+        }
     }
 
     private void fillFromEntryLinkTo ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
     {
+        if (entry.getFilterFile())
+        {
+            getLog().error( "Cannot filter symbolic link: " + entry.getLinkTo() );
+        }
+
         this.logger.debug ( "    as symbolic link:" );
         this.logger.debug ( "      - linkTo: %s", entry.getLinkTo () );
         ctx.addSymbolicLink ( entry.getName (), entry.getLinkTo (), makeProvider ( entry, "      - " ) );
@@ -1045,6 +1078,12 @@ public class RpmMojo extends AbstractMojo
 
     private void fillFromEntryCollect ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
     {
+
+        if (entry.getFilterFile())
+        {
+            getLog().error( "Cannot filter from collect: " + entry.getName() );
+        }
+
         this.logger.debug ( "    as collector:" );
 
         final Collector collector = entry.getCollect ();
@@ -1110,7 +1149,6 @@ public class RpmMojo extends AbstractMojo
             {
                 RpmMojo.this.logger.debug ( "%s%s (file)", padding, file );
                 RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
-
                 ctx.addFile ( targetName, file, provider );
             }
         }

@@ -8,7 +8,16 @@ Ensure that `.m2/settings.xml` contains the GitHub credentials:
 
     <server>
       <id>github</id>
-      <password><!-- access key --></password>
+      <username><!-- github user --></username>
+      <password><!-- password --></password>
+    </server>
+
+And also your Sonatype account:
+
+    <server>
+      <id>ossrh</id>
+      <username><!-- sonatype user --></username>
+      <password><!-- password --></password>
     </server>
 
 
