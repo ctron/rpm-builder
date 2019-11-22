@@ -4,6 +4,7 @@ dist: xenial
 
 jdk:
   - openjdk11
+  - openjdk8
 
 cache:
   directories:
