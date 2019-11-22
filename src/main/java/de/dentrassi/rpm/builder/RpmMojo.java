@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -70,6 +71,7 @@ import com.google.common.io.CharSource;
 
 import de.dentrassi.rpm.builder.Naming.Case;
 import de.dentrassi.rpm.builder.PackageEntry.Collector;
+import de.dentrassi.rpm.builder.signatures.SignatureConfiguration;
 
 /**
  * Build an RPM file
@@ -537,7 +539,7 @@ public class RpmMojo extends AbstractMojo
     private final List<SimpleDependency> recommends = new LinkedList<> ();;
 
     /**
-     * An optional signature descriptor for GPP signing the final RPM
+     * An optional signature descriptor for GPG signing the final RPM
      * <p>
      * Also see <a href="signing.html">signing</a>
      * </p>
@@ -640,6 +642,40 @@ public class RpmMojo extends AbstractMojo
         this.maximumSupportedRpmVersion = Version.fromVersionString ( maximumSupportedRpmVersion ).orElseThrow ( () -> new IllegalArgumentException ( String.format ( "Version '%s' is unknown", maximumSupportedRpmVersion ) ) );
     }
 
+    /**
+     * Specify the "hint" for a provider of a signature configuration.
+     * <p>
+     * By default the RPM writer will calculate and add information like MD5,
+     * SHA1, SHA256, etc. to the signature header of the RPM file. However,
+     * some, especially older (really old) RPM versions, have issues when the
+     * encounter signature information they don't understand. This parameter
+     * allows you to configure this process.
+     * <p>
+     * What you configure here is the so called "hint" (Plexus component
+     * name/hint) of the provider to use. This plexus component has to be found
+     * in the class path of the plugin, during runtime. There are two default
+     * providers available, one is <code>default</code> and the other is
+     * <code>md5-only</code>. The latter only adds MD5 checksum information.
+     * <p>
+     * The default is to add as much information as possible to the RPM. So
+     * normally you don't need this parameter.
+     * <p>
+     * Specifying a configuration provider which cannot be found during the
+     * build, will fail the build.
+     *
+     * @since 1.4.0
+     */
+    @Parameter
+    private String signatureConfiguration;
+
+    public void setSignatureConfiguration ( final String signatureConfiguration )
+    {
+        this.signatureConfiguration = signatureConfiguration;
+    }
+
+    @Component ( role = SignatureConfiguration.class )
+    protected Map<String, SignatureConfiguration> signatureConfigurationProviders;
+
     @Override
     public void execute () throws MojoExecutionException, MojoFailureException
     {
@@ -718,7 +754,18 @@ public class RpmMojo extends AbstractMojo
             fillPayload ( builder );
             fillPrefixes ( builder );
 
-            // add signer
+            // setup basic signature processors
+
+            if ( this.signatureConfiguration != null )
+            {
+                this.logger.info ( "Initialize with custom signature configuration: %s (%s)", this.signatureConfiguration, this.signatureConfiguration.getClass () );
+                final SignatureConfiguration provider = this.signatureConfigurationProviders.get ( this.signatureConfiguration );
+                if ( provider == null )
+                {
+                    throw new MojoExecutionException ( String.format ( "Unable to find requested signature configuration provider '%s', have: %s", this.signatureConfiguration, this.signatureConfigurationProviders.keySet () ) );
+                }
+                provider.apply ( builder );
+            }
 
             if ( !this.skipSigning && this.signature != null )
             {
