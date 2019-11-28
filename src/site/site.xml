@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/DECORATION/1.7.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.7.0 https://maven.apache.org/xsd/decoration-1.7.0.xsd">
-	<body>
-		<menu name="Overview" inherit="top">
-			<item name="Introduction" href="index.html" />
-			<item name="Goals" href="plugin-info.html" />
-			<item name="Usage" href="usage.html" />
-			<item name="Example" href="example.html" />
-		</menu>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.7.0 https://maven.apache.org/xsd/decoration-1.7.0.xsd">
+    <body>
+        <menu name="Overview" inherit="top">
+            <item name="Introduction" href="index.html" />
+            <item name="Goals" href="plugin-info.html" />
+            <item name="Usage" href="usage.html" />
+            <item name="Example" href="example.html" />
+        </menu>
 
-		<menu name="Configuration">
-			<item name="Payload Entries" href="entry.html" />
-			<item name="Rulesets" href="rulesets.html" />
-			<item name="Payload information" href="payload_information.html" />
-			<item name="Scripts" href="scripts.html" />
-			<item name="Dependencies" href="deps.html" />
-			<item name="Signing" href="signing.html" />
-			<item name="Naming" href="naming.html" />
-			<item name="Lead information" href="lead.html" />
-			<item name="Verification flags" href="verify.html" />
-		</menu>
+        <menu name="Configuration">
+            <item name="Payload Entries" href="entry.html" />
+            <item name="Rulesets" href="rulesets.html" />
+            <item name="Payload information"
+                href="payload_information.html" />
+            <item name="Scripts" href="scripts.html" />
+            <item name="Dependencies" href="deps.html" />
+            <item name="Signing" href="signing.html" />
+            <item name="Naming" href="naming.html" />
+            <item name="Lead information" href="lead.html" />
+            <item name="Verification flags" href="verify.html" />
+        </menu>
 
-		<menu ref="reports" />
-	</body>
-	<skin>
-		<groupId>org.apache.maven.skins</groupId>
-		<artifactId>maven-fluido-skin</artifactId>
-		<version>1.8</version>
-	</skin>
-	<custom>
-		<fluidoSkin>
-			<twitter>
-				<user>ctron</user>
-				<showUser>true</showUser>
-				<showFollowers>false</showFollowers>
-			</twitter>
-		</fluidoSkin>
-	</custom>
+        <menu ref="reports" />
+    </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.8</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <twitter>
+                <user>ctron</user>
+                <showUser>true</showUser>
+                <showFollowers>false</showFollowers>
+            </twitter>
+        </fluidoSkin>
+    </custom>
 </project>
