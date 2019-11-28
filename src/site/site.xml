@@ -7,7 +7,8 @@
             <item name="Introduction" href="index.html" />
             <item name="Goals" href="plugin-info.html" />
             <item name="Usage" href="usage.html" />
-            <item name="Example" href="example.html" />
+            <item name="Example (primary artifact)" href="example-primary.html" />
+            <item name="Example (secondary artifact)" href="example.html" />
         </menu>
 
         <menu name="Configuration">
