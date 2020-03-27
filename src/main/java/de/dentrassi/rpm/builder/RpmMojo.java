@@ -443,6 +443,24 @@ public class RpmMojo extends AbstractMojo
     private Script afterRemoval;
 
     /**
+     * A script which is run before the entire transaction starts
+     * <p>
+     * Also see <a href="rulesets.html">scripts</a>
+     * </p>
+     */
+    @Parameter
+    private Script beforeTransaction;
+
+    /**
+     * A script which is run after the entire transaction finishes
+     * <p>
+     * Also see <a href="rulesets.html">scripts</a>
+     * </p>
+     */
+    @Parameter
+    private Script afterTransaction;
+
+    /**
      * The default script interpreter which is used if neither the script has
      * one set explicitly, nor one could be detected
      */
@@ -950,6 +968,8 @@ public class RpmMojo extends AbstractMojo
         setScript ( "postin", this.afterInstallation, builder::setPostInstallationScript );
         setScript ( "prerm", this.beforeRemoval, builder::setPreRemoveScript );
         setScript ( "postrm", this.afterRemoval, builder::setPostRemoveScript );
+        setScript ( "pretrans", this.beforeTransaction, builder::setPreTransactionScript );
+        setScript ( "posttrans", this.afterTransaction, builder::setPostTransactionScript );
     }
 
     private void setScript ( final String scriptName, final Script script, final ScriptSetter setter ) throws IOException
