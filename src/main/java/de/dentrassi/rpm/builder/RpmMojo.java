@@ -30,12 +30,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -50,6 +45,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.Settings;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.packager.rpm.Architecture;
@@ -691,6 +688,21 @@ public class RpmMojo extends AbstractMojo
         this.signatureConfiguration = signatureConfiguration;
     }
 
+    /**
+     * The prefix to use when reading signing variables
+     * from Maven's settings.xml.
+     *
+     * The signing variables are: keyId, keyringFile, passphrase, hashAlgorithm.
+     */
+    @Parameter(defaultValue = "rpm.")
+    private String signCfgPrefix;
+
+    /**
+     * The settings.
+     */
+    @Parameter(defaultValue = "${settings}")
+    private Settings settings;
+
     @Component ( role = SignatureConfiguration.class )
     protected Map<String, SignatureConfiguration> signatureConfigurationProviders;
 
@@ -772,8 +784,7 @@ public class RpmMojo extends AbstractMojo
             fillPayload ( builder );
             fillPrefixes ( builder );
 
-            // setup basic signature processors
-
+            // setup signature providers
             if ( this.signatureConfiguration != null )
             {
                 this.logger.info ( "Initialize with custom signature configuration: %s (%s)", this.signatureConfiguration, this.signatureConfiguration.getClass () );
@@ -785,6 +796,47 @@ public class RpmMojo extends AbstractMojo
                 provider.apply ( builder );
             }
 
+            // load any default signing properties from settings.xml
+            final Map<String, String> properties =
+                    readPropertiesFromActiveProfiles(signCfgPrefix, "keyId", "keyringFile", "passphrase", "hashAlgorithm");
+            final String keyId = properties.get("keyId");
+            if (keyId != null) {
+                if (signature == null) {
+                    signature = new Signature();
+                }
+                if (signature.getKeyId() == null) {
+                    signature.setKeyId(keyId);
+                }
+            }
+            final String keyringFile = properties.get("keyringFile");
+            if (keyringFile != null) {
+                if (signature == null) {
+                    signature = new Signature();
+                }
+                if (signature.getKeyringFile() == null) {
+                    signature.setKeyringFile(new File(keyringFile));
+                }
+            }
+            final String passphrase = properties.get("passphrase");
+            if (passphrase != null) {
+                if (signature == null) {
+                    signature = new Signature();
+                }
+                if (signature.getPassphrase() == null) {
+                    signature.setPassphrase(passphrase);
+                }
+            }
+            final String hashAlgorithm = properties.get("hashAlgorithm");
+            if (hashAlgorithm != null) {
+                if (signature == null) {
+                    signature = new Signature();
+                }
+                if (signature.getHashAlgorithm() == null) {
+                    signature.setHashAlgorithm(hashAlgorithm);
+                }
+            }
+
+            // setup basic signature processors
             if ( !this.skipSigning && this.signature != null )
             {
                 final SignatureProcessor signer = makeRsaSigner ( this.signature );
@@ -1394,6 +1446,56 @@ public class RpmMojo extends AbstractMojo
                 return;
             }
         }
+    }
+
+    /**
+     * Read properties from the active profiles.
+     *
+     * Goes through all active profiles (in the order the
+     * profiles are defined in settings.xml) and extracts
+     * the desired properties (if present). The prefix is
+     * used when looking up properties in the profile but
+     * not in the returned map.
+     *
+     * @param prefix The prefix to use or null if no prefix should be used
+     * @param properties The properties to read
+     *
+     * @return A map containing the values for the properties that were found
+     */
+    public Map<String, String> readPropertiesFromActiveProfiles(final String prefix,
+                                                                 final String... properties) {
+        if (settings == null) {
+            this.logger.debug("No maven setting injected");
+            return Collections.emptyMap();
+        }
+
+        final List<String> activeProfilesList = settings.getActiveProfiles();
+        if (activeProfilesList.isEmpty()) {
+            this.logger.debug("No active profiles found");
+            return Collections.emptyMap();
+        }
+
+        final Map<String, String> map = new HashMap<String, String>();
+        final Set<String> activeProfiles = new HashSet<String>(activeProfilesList);
+
+        // Iterate over all active profiles in order
+        for (final Profile profile : settings.getProfiles()) {
+            // Check if the profile is active
+            final String profileId = profile.getId();
+            if (activeProfiles.contains(profileId)) {
+                this.logger.debug("Trying active profile " + profileId);
+                for (final String property : properties) {
+                    final String propKey = prefix != null ? prefix + property : property;
+                    final String value = profile.getProperties().getProperty(propKey);
+                    if (value != null) {
+                        this.logger.debug("Found property " + property + " in profile " + profileId);
+                        map.put(property, value);
+                    }
+                }
+            }
+        }
+
+        return map;
     }
 
 }
