@@ -30,7 +30,15 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -694,8 +702,8 @@ public class RpmMojo extends AbstractMojo
      *
      * The signing variables are: keyId, keyringFile, passphrase, hashAlgorithm.
      */
-    @Parameter(defaultValue = "rpm.")
-    private String signCfgPrefix;
+    @Parameter(defaultValue = "rpm.", property = "rpm.signConfigurationPrefix")
+    private String signConfigurationPrefix;
 
     /**
      * The settings.
@@ -797,44 +805,7 @@ public class RpmMojo extends AbstractMojo
             }
 
             // load any default signing properties from settings.xml
-            final Map<String, String> properties =
-                    readPropertiesFromActiveProfiles(signCfgPrefix, "keyId", "keyringFile", "passphrase", "hashAlgorithm");
-            final String keyId = properties.get("keyId");
-            if (keyId != null) {
-                if (signature == null) {
-                    signature = new Signature();
-                }
-                if (signature.getKeyId() == null) {
-                    signature.setKeyId(keyId);
-                }
-            }
-            final String keyringFile = properties.get("keyringFile");
-            if (keyringFile != null) {
-                if (signature == null) {
-                    signature = new Signature();
-                }
-                if (signature.getKeyringFile() == null) {
-                    signature.setKeyringFile(new File(keyringFile));
-                }
-            }
-            final String passphrase = properties.get("passphrase");
-            if (passphrase != null) {
-                if (signature == null) {
-                    signature = new Signature();
-                }
-                if (signature.getPassphrase() == null) {
-                    signature.setPassphrase(passphrase);
-                }
-            }
-            final String hashAlgorithm = properties.get("hashAlgorithm");
-            if (hashAlgorithm != null) {
-                if (signature == null) {
-                    signature = new Signature();
-                }
-                if (signature.getHashAlgorithm() == null) {
-                    signature.setHashAlgorithm(hashAlgorithm);
-                }
-            }
+            loadDefaultSigningFromSettings();
 
             // setup basic signature processors
             if ( !this.skipSigning && this.signature != null )
@@ -873,6 +844,47 @@ public class RpmMojo extends AbstractMojo
         catch ( final IOException e )
         {
             throw new MojoExecutionException ( "Failed to write RPM", e );
+        }
+    }
+
+    private void loadDefaultSigningFromSettings() {
+        final Map<String, String> properties =
+                readPropertiesFromActiveProfiles(signConfigurationPrefix, "keyId", "keyringFile", "passphrase", "hashAlgorithm");
+        final String keyId = properties.get("keyId");
+        if (keyId != null) {
+            if (signature == null) {
+                signature = new Signature();
+            }
+            if (signature.getKeyId() == null) {
+                signature.setKeyId(keyId);
+            }
+        }
+        final String keyringFile = properties.get("keyringFile");
+        if (keyringFile != null) {
+            if (signature == null) {
+                signature = new Signature();
+            }
+            if (signature.getKeyringFile() == null) {
+                signature.setKeyringFile(new File(keyringFile));
+            }
+        }
+        final String passphrase = properties.get("passphrase");
+        if (passphrase != null) {
+            if (signature == null) {
+                signature = new Signature();
+            }
+            if (signature.getPassphrase() == null) {
+                signature.setPassphrase(passphrase);
+            }
+        }
+        final String hashAlgorithm = properties.get("hashAlgorithm");
+        if (hashAlgorithm != null) {
+            if (signature == null) {
+                signature = new Signature();
+            }
+            if (signature.getHashAlgorithm() == null) {
+                signature.setHashAlgorithm(hashAlgorithm);
+            }
         }
     }
 
@@ -1475,8 +1487,8 @@ public class RpmMojo extends AbstractMojo
             return Collections.emptyMap();
         }
 
-        final Map<String, String> map = new HashMap<String, String>();
-        final Set<String> activeProfiles = new HashSet<String>(activeProfilesList);
+        final Map<String, String> map = new HashMap<>();
+        final Set<String> activeProfiles = new HashSet<>(activeProfilesList);
 
         // Iterate over all active profiles in order
         for (final Profile profile : settings.getProfiles()) {
