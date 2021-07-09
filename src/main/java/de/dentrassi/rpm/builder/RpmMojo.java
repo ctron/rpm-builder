@@ -93,6 +93,11 @@ public class RpmMojo extends AbstractMojo
     private MavenProjectHelper projectHelper;
 
     /**
+     * Keeps the version information after the initial calculation.
+     */
+    private RpmVersion rpmVersion;
+
+    /**
      * The version string to be processed in case of a release build
      *
      * @see #snapshotVersion
@@ -1241,6 +1246,11 @@ public class RpmMojo extends AbstractMojo
 
     private RpmVersion makeVersion ()
     {
+        if ( rpmVersion != null )
+        {
+            return rpmVersion;
+        }
+
         if ( !this.forceRelease && isSnapshotVersion () )
         {
             if (this.snapshotVersion != null && !this.snapshotVersion.isEmpty()) {
