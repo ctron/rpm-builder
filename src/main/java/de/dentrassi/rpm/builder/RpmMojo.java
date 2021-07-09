@@ -547,7 +547,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> enhances = new LinkedList<> ();;
+    private final List<SimpleDependency> enhances = new LinkedList<> ();
 
     /**
      * Weak backward dependency.
@@ -558,7 +558,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> supplements = new LinkedList<> ();;
+    private final List<SimpleDependency> supplements = new LinkedList<> ();
 
     /**
      * Weak forward dependency.
@@ -569,7 +569,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> recommends = new LinkedList<> ();;
+    private final List<SimpleDependency> recommends = new LinkedList<> ();
 
     /**
      * An optional signature descriptor for GPG signing the final RPM
@@ -862,7 +862,7 @@ public class RpmMojo extends AbstractMojo
     private Path makeTargetFile ( final Path targetDir )
     {
         final String outputFileName = makeTargetFilename ();
-        final Path targetFile = targetDir.resolve ( outputFileName );;
+        final Path targetFile = targetDir.resolve ( outputFileName );
         this.logger.debug ( "Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
         return targetFile;
     }
@@ -918,7 +918,7 @@ public class RpmMojo extends AbstractMojo
     @FunctionalInterface
     private interface DependencyAdder
     {
-        public void add ( String name, String version, RpmDependencyFlags[] flags );
+        void add ( String name, String version, RpmDependencyFlags[] flags );
     }
 
     private void fillDependencies ( final RpmBuilder builder )
@@ -1162,7 +1162,7 @@ public class RpmMojo extends AbstractMojo
 
                 RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
                 final Path relative = from.relativize ( dir );
-                final String targetName = makeUnix ( targetPrefix + relative.toString () );
+                final String targetName = makeUnix ( targetPrefix + relative );
                 RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
                 ctx.addDirectory ( targetName, provider );
             }
@@ -1369,6 +1369,7 @@ public class RpmMojo extends AbstractMojo
         }
         catch ( final IOException e )
         {
+            // ignore and try one of the following ways to detect the hostname
         }
 
         hostname = System.getenv ( "COMPUTERNAME" );
@@ -1398,7 +1399,7 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private static interface StringSupplier extends Supplier<String>
+    private interface StringSupplier extends Supplier<String>
     {
     }
 
