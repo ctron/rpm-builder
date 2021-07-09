@@ -93,10 +93,20 @@ public class RpmMojo extends AbstractMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The version string to process
+     * The version string to be processed in case of a release build
+     *
+     * @see #snapshotVersion
      */
     @Parameter ( defaultValue = "${project.version}" )
     private String version;
+
+    /**
+     * The version string to be processed in case of a SNAPSHOT build
+     *
+     * @see #version
+     */
+    @Parameter ( property = "rpm.snapshotVersion" )
+    private String snapshotVersion;
 
     /**
      * The RPM package name
@@ -1233,9 +1243,14 @@ public class RpmMojo extends AbstractMojo
     {
         if ( !this.forceRelease && isSnapshotVersion () )
         {
-            this.logger.info ( "Building with SNAPSHOT version" );
-            final String baseVersion = this.project.getVersion ().substring ( 0, this.project.getVersion ().length () - SNAPSHOT_SUFFIX.length () );
-            return new RpmVersion ( this.epoch, baseVersion, makeSnapshotReleaseString () );
+            if (this.snapshotVersion != null && !this.snapshotVersion.isEmpty()) {
+                this.logger.info("Building with SNAPSHOT version from <snapshotVersion> parameter: %s", this.snapshotVersion);
+                return new RpmVersion(this.epoch, this.snapshotVersion, makeSnapshotReleaseString());
+            }
+
+            final String baseVersion = this.project.getVersion().substring(0, this.project.getVersion().length() - SNAPSHOT_SUFFIX.length());
+            this.logger.info("Building with SNAPSHOT version from project: %s", baseVersion);
+            return new RpmVersion(this.epoch, baseVersion, makeSnapshotReleaseString());
         }
         return new RpmVersion ( this.epoch, this.version, this.release );
     }
