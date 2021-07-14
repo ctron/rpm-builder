@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.dentrassi.maven.rpm.test</groupId>
-	<artifactId>test14-primaryname</artifactId>
+	<artifactId>test14-forcerelease</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>rpm</packaging>
 
 	<name>Test Package #14</name>
 	<description>
-	Test primary name
+	Test snapshotVersion parameter with foreceRelease
 	</description>
 
 	<url>http://dentrassi.de</url>
@@ -51,8 +51,9 @@
 						<configuration>
 							<group>Application/Misc</group>
 
-							<forceRelease>false</forceRelease>
-							<version>1.2.3</version>
+							<forceRelease>true</forceRelease>
+							<snapshotVersion>1.2.3</snapshotVersion>
+							<version>4.5.6</version>
 
 							<signature>
 								<keyId>${keyId}</keyId>

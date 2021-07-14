@@ -93,10 +93,25 @@ public class RpmMojo extends AbstractMojo
     private MavenProjectHelper projectHelper;
 
     /**
-     * The version string to process
+     * Keeps the version information after the initial calculation.
+     */
+    private RpmVersion rpmVersion;
+
+    /**
+     * The version string to be processed in case of a release build
+     *
+     * @see #snapshotVersion
      */
     @Parameter ( defaultValue = "${project.version}" )
     private String version;
+
+    /**
+     * The version string to be processed in case of a SNAPSHOT build
+     *
+     * @see #version
+     */
+    @Parameter ( property = "rpm.snapshotVersion" )
+    private String snapshotVersion;
 
     /**
      * The RPM package name
@@ -532,7 +547,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> enhances = new LinkedList<> ();;
+    private final List<SimpleDependency> enhances = new LinkedList<> ();
 
     /**
      * Weak backward dependency.
@@ -543,7 +558,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> supplements = new LinkedList<> ();;
+    private final List<SimpleDependency> supplements = new LinkedList<> ();
 
     /**
      * Weak forward dependency.
@@ -554,7 +569,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> recommends = new LinkedList<> ();;
+    private final List<SimpleDependency> recommends = new LinkedList<> ();
 
     /**
      * An optional signature descriptor for GPG signing the final RPM
@@ -847,7 +862,7 @@ public class RpmMojo extends AbstractMojo
     private Path makeTargetFile ( final Path targetDir )
     {
         final String outputFileName = makeTargetFilename ();
-        final Path targetFile = targetDir.resolve ( outputFileName );;
+        final Path targetFile = targetDir.resolve ( outputFileName );
         this.logger.debug ( "Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
         return targetFile;
     }
@@ -903,7 +918,7 @@ public class RpmMojo extends AbstractMojo
     @FunctionalInterface
     private interface DependencyAdder
     {
-        public void add ( String name, String version, RpmDependencyFlags[] flags );
+        void add ( String name, String version, RpmDependencyFlags[] flags );
     }
 
     private void fillDependencies ( final RpmBuilder builder )
@@ -1147,7 +1162,7 @@ public class RpmMojo extends AbstractMojo
 
                 RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
                 final Path relative = from.relativize ( dir );
-                final String targetName = makeUnix ( targetPrefix + relative.toString () );
+                final String targetName = makeUnix ( targetPrefix + relative );
                 RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
                 ctx.addDirectory ( targetName, provider );
             }
@@ -1231,11 +1246,21 @@ public class RpmMojo extends AbstractMojo
 
     private RpmVersion makeVersion ()
     {
+        if ( rpmVersion != null )
+        {
+            return rpmVersion;
+        }
+
         if ( !this.forceRelease && isSnapshotVersion () )
         {
-            this.logger.info ( "Building with SNAPSHOT version" );
-            final String baseVersion = this.project.getVersion ().substring ( 0, this.project.getVersion ().length () - SNAPSHOT_SUFFIX.length () );
-            return new RpmVersion ( this.epoch, baseVersion, makeSnapshotReleaseString () );
+            if (this.snapshotVersion != null && !this.snapshotVersion.isEmpty()) {
+                this.logger.info("Building with SNAPSHOT version from <snapshotVersion> parameter: %s", this.snapshotVersion);
+                return new RpmVersion(this.epoch, this.snapshotVersion, makeSnapshotReleaseString());
+            }
+
+            final String baseVersion = this.project.getVersion().substring(0, this.project.getVersion().length() - SNAPSHOT_SUFFIX.length());
+            this.logger.info("Building with SNAPSHOT version from project: %s", baseVersion);
+            return new RpmVersion(this.epoch, baseVersion, makeSnapshotReleaseString());
         }
         return new RpmVersion ( this.epoch, this.version, this.release );
     }
@@ -1344,6 +1369,7 @@ public class RpmMojo extends AbstractMojo
         }
         catch ( final IOException e )
         {
+            // ignore and try one of the following ways to detect the hostname
         }
 
         hostname = System.getenv ( "COMPUTERNAME" );
@@ -1373,7 +1399,7 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private static interface StringSupplier extends Supplier<String>
+    private interface StringSupplier extends Supplier<String>
     {
     }
 
