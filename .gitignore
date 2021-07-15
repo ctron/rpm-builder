@@ -2,5 +2,14 @@
 /pom.xml.releaseBackup
 /release.properties
 *~
+
+# IntelliJ
+
 .idea
 *.iml
+
+# Eclipse
+
+.classpath
+.project
+.settings/
