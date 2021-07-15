@@ -2,16 +2,6 @@
 
 This is my cheat sheet for doing a release.
 
-## Prepare
-
-Ensure that `.m2/settings.xml` contains the GitHub credentials:
-
-    <server>
-      <id>github</id>
-      <password><!-- access key --></password>
-    </server>
-
-
 ## Do the release
 
     mvn release:clean release:prepare release:perform
@@ -24,6 +14,9 @@ Head over to http://oss.sonatype.org/ and do the release
 
     git checkout <tag>
     # prepare and maybe modify site.xml
-    mvn site -Ppages
+    mvn site:site site:staging
+    git checkout gh-pages
+    cp target/* . -a
+    git commit -a
+    git push
     git checkout master
-
