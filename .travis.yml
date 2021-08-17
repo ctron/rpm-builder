@@ -14,9 +14,9 @@ sudo: false
 
 install: true # Travis idea of install doesn't fit here
 
-before_script: travis_retry mvn -B help:active-profiles
+before_script: mvn -B help:active-profiles
 
-script: travis_retry mvn -B verify -Pits -Dinvoker.streamLogs=true -Dinvoker.debug=false
+script: mvn -B verify -Pits -Dinvoker.streamLogs=true -Dinvoker.debug=false
 
 addons:
    apt:
