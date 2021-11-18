@@ -12,17 +12,19 @@ The RPM builder current does support the following script types of RPM:
 
 | Type | Tag | Spec Name | Description |
 | ----- | ----- | ---------------- | ------------- |
+| Before Transaction | `<beforeTransaction>` | `%pretrans` | Run before the transaction |
 | Before Installation | `<beforeInstallation>` | `%pre` | Run before the installation of the package |
 | After Installation | `<afterInstallation>` | `%post` | Run after the installation of the package |
 | Before Removal | `<beforeRemoval>` | `%preun` | Run before the removal of the package |
 | After Removal | `<afterRemoval>` | `%postun` | Run after the removal of the package |
+| After Transaction | `<afterTransaction>` | `%posttrans ` | Run after the transaction |
 
 Please note that RPM has a few things you might not expected from your scripts. For example is it possible
 to have multiple RPMs with the same package name, but different versions, installed. This will
-still call you "After removal" script, even when there is still one or more other versions of
+still call your "After removal" script, even when there is still one or more other versions of
 your package left. Please consult the RPM documentation for more information about scripts.
 
-There are a few other script types and triggered. These are currently not supported by the RPM builder.
+There are also a couple triggers, which are currently not supported by the RPM builder.
 
 **Note: ** In the following examples `<script>` will be used to represent any script type. 
 
@@ -61,12 +63,16 @@ The `<interpreter>` elements specifies the script interpreter to use. If it is l
 the RPM builder will peek into the first line of the script in try to evaluate the script from the
 `#!` marker. (`#!/bin/bash` will result in `/bin/bash`).
 
+The `<beforeTransaction>` element can not have have dependencies and so must be written in Lua
+to avoid issues with kickstarting a system.  RPM builder will not verify or ensure this and uses its
+above logic to determine the interpreter, so be sure to specify it.
+
 If this fails, then the value of the `<defaultInterpreter>` element from the main configuration is used,
 which defaults to `/bin/sh`.
 
 ## Remarks
 
-The RPM builder currently does not support triggers or the `pretrans` script combination.
+The RPM builder currently does not support triggers.
 
 If using inline scripts, then the XML formatting might add a few extra whitespaces to your
 inline script content. Depending on the script language this may be problem. It is possible
