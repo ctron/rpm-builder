@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1101,6 +1102,10 @@ public class RpmMojo extends AbstractMojo
         {
             fillFromEntryCollect ( ctx, entry );
         }
+        else if ( Boolean.TRUE.equals ( entry.getGhost () ) )
+        {
+            fillFromEntryGhost ( ctx, entry );
+        }
     }
 
     private void fillFromEntryDirectory ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
@@ -1116,6 +1121,13 @@ public class RpmMojo extends AbstractMojo
         this.logger.debug ( "      - source: %s", source );
 
         ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
+    }
+
+    private void fillFromEntryGhost ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
+    {
+        this.logger.debug ( "    as ghost:" );
+
+        ctx.addFile ( entry.getName (), ByteBuffer.allocate ( 0 ), makeProvider ( entry, "      - " ) );
     }
 
     private void fillFromEntryLinkTo ( final BuilderContext ctx, final PackageEntry entry ) throws IOException

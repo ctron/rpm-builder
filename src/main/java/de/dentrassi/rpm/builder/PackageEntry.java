@@ -169,10 +169,11 @@ public class PackageEntry extends EntryDetails
         sources += this.file != null ? 1 : 0;
         sources += this.collect != null ? 1 : 0;
         sources += this.linkTo != null ? 1 : 0;
+        sources += Boolean.TRUE.equals ( this.getGhost () ) ? 1 : 0;
 
         if ( sources != 1 )
         {
-            throw new IllegalStateException ( "Exactly one of 'file', 'directory', 'linkTo' or 'collect' must be specified." );
+            throw new IllegalStateException ( "Exactly one of 'file', 'directory', 'linkTo', 'collect' or 'ghost' must be specified." );
         }
 
         super.validate ();
