@@ -22,3 +22,6 @@ jobs:
 
     - name: Build with Maven
       run: mvn -B test
+
+    - name: Run integration tests
+      run: mvn -B verify -Pits -Dinvoker.streamLogs=true -Dinvoker.debug=false
