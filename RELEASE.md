@@ -14,9 +14,9 @@ Head over to http://oss.sonatype.org/ and do the release
 
     git checkout <tag>
     # prepare and maybe modify site.xml
-    mvn site:site site:staging
+    mvn site:site site:stage
     git checkout gh-pages
-    cp target/* . -a
+    cp target/staging/* . -a
     git commit -a
     git push
     git checkout master
