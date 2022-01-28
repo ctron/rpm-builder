@@ -73,6 +73,7 @@
 											<exclude>bar.*</exclude>
 											<exclude>exclude/**</exclude>
 										</excludes>
+                    <symbolicLinks>true</symbolicLinks>
 									</collect>
 								</entry>
 							</entries>
