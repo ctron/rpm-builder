@@ -1194,6 +1194,7 @@ public class RpmMojo extends AbstractMojo
                     RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
                     RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
                     RpmMojo.this.logger.debug ( "%s  - linkTo: %s", padding, sym.toString () );
+                    ctx.addSymbolicLink(targetName, sym.toString(), provider);
                 }
                 else
                 {
