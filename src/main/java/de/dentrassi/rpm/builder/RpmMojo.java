@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -1188,7 +1189,9 @@ public class RpmMojo extends AbstractMojo
 
         if ( collector.isDirectories () )
         {
-            for ( final String directory : scanner.getIncludedDirectories () )
+            String[] includedDirectories = scanner.getIncludedDirectories ();
+            Arrays.sort ( includedDirectories );
+            for ( final String directory : includedDirectories)
             {
                 final Path dir = from.resolve ( directory );
                 if ( dir.equals ( from ) )
@@ -1204,7 +1207,9 @@ public class RpmMojo extends AbstractMojo
             }
         }
 
-        for ( final String relative : scanner.getIncludedFiles () )
+        String[] includedFiles = scanner.getIncludedFiles ();
+        Arrays.sort ( includedFiles );
+        for ( final String relative : includedFiles)
         {
             final Path file = from.resolve ( relative );
             final String targetName = makeUnix ( targetPrefix + relative );
