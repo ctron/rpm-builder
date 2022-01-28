@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -41,6 +42,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -57,6 +59,7 @@ import org.eclipse.packager.rpm.Architecture;
 import org.eclipse.packager.rpm.HashAlgorithm;
 import org.eclipse.packager.rpm.OperatingSystem;
 import org.eclipse.packager.rpm.RpmLead;
+import org.eclipse.packager.rpm.RpmTag;
 import org.eclipse.packager.rpm.RpmVersion;
 import org.eclipse.packager.rpm.build.BuilderContext;
 import org.eclipse.packager.rpm.build.RpmBuilder;
@@ -707,6 +710,18 @@ public class RpmMojo extends AbstractMojo
         this.signatureConfiguration = signatureConfiguration;
     }
 
+      /**
+     * Timestamp for reproducible output archive entries, either formatted as ISO 8601
+     * <code>yyyy-MM-dd'T'HH:mm:ssXXX</code> or as an int representing seconds since the epoch (like
+     * <a href="https://reproducible-builds.org/docs/source-date-epoch/">SOURCE_DATE_EPOCH</a>).
+     *
+     * @since XXX
+     */
+    @Parameter( defaultValue = "${project.build.outputTimestamp}" )
+    private String outputTimestamp;
+
+    private Instant outputTimestampInstant;
+
     @Component ( role = SignatureConfiguration.class )
     protected Map<String, SignatureConfiguration> signatureConfigurationProviders;
 
@@ -752,6 +767,12 @@ public class RpmMojo extends AbstractMojo
             }
         }
 
+        outputTimestampInstant=Optional.ofNullable ( new MavenArchiver ().parseOutputTimestamp ( outputTimestamp ) ).map( Date::toInstant ).orElse( null);
+
+        if ( outputTimestampInstant != null ) {
+            this.logger.info("Creating reproducible RPM at timestamp: %s", outputTimestampInstant);
+        }
+
         final Path targetFile = makeTargetFile ( targetDir );
 
         this.logger.debug ( "Max supported RPM version: %s", this.maximumSupportedRpmVersion );
@@ -786,7 +807,7 @@ public class RpmMojo extends AbstractMojo
             fillScripts ( builder );
             fillDependencies ( builder );
             fillPayload ( builder );
-            fillPrefixes ( builder );
+            customizeHeader( builder );
 
             // setup basic signature processors
 
@@ -1066,19 +1087,22 @@ public class RpmMojo extends AbstractMojo
         }
     }
 
-    private void fillPrefixes ( final RpmBuilder builder )
+    private void customizeHeader ( final RpmBuilder builder )
     {
-        if ( this.prefixes == null || this.prefixes.isEmpty () )
-        {
-            return;
-        }
-
-        this.logger.debug ( "Building relocatable package: {}", this.prefixes );
 
         builder.setHeaderCustomizer ( rpmTagHeader -> {
-            // TODO: migrate to flags once https://github.com/eclipse/packagedrone/issues/130 is fixed
-            final int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
-            rpmTagHeader.putStringArray ( RPMTAG_PREFIXES, this.prefixes.toArray ( new String[0] ) );
+            if ( this.prefixes != null && ! this.prefixes.isEmpty () ) {
+                this.logger.debug ( "Building relocatable package: {}", this.prefixes );
+                // TODO: migrate to flags once https://github.com/eclipse/packagedrone/issues/130 is fixed
+                final int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
+                rpmTagHeader.putStringArray ( RPMTAG_PREFIXES, this.prefixes.toArray ( new String[0] ) );
+            }
+
+            if(outputTimestampInstant!=null)
+            {
+                this.logger.debug ( "Overriding build time: {}", outputTimestampInstant );
+                rpmTagHeader.putInt ( RpmTag.BUILDTIME, (int) ( outputTimestampInstant.toEpochMilli () / 1000 ) );
+            }
         } );
     }
 
@@ -1228,7 +1252,7 @@ public class RpmMojo extends AbstractMojo
         {
             this.logger.debug ( "Using default ruleset: '%s'", this.defaultRuleset );
         }
-        return new MojoFileInformationProvider ( this.eval, ruleset, entry, l -> this.logger.debug ( "%s%s", padding, l ) );
+        return new MojoFileInformationProvider ( this.eval, ruleset, entry, l -> this.logger.debug ( "%s%s", padding, l ), outputTimestampInstant ) ;
     }
 
     private String makePackageName ()
@@ -1288,7 +1312,7 @@ public class RpmMojo extends AbstractMojo
         if ( this.snapshotBuildId == null || this.snapshotBuildId.isEmpty () )
         {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern ( "yyyyMMddHHmm", Locale.ROOT );
-            return this.snapshotReleasePrefix + formatter.format ( Instant.now ().atOffset ( ZoneOffset.UTC ) );
+            return this.snapshotReleasePrefix + formatter.format ( Optional.ofNullable( outputTimestampInstant ).orElse( Instant.now () ).atOffset ( ZoneOffset.UTC ) );
         }
         else
         {

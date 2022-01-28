@@ -12,6 +12,7 @@
 package de.dentrassi.rpm.builder;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -30,13 +31,16 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
 
     private final PackageEntry entry;
 
-    public MojoFileInformationProvider ( final RulesetEvaluator rulesetEval, final String ruleId, final PackageEntry entry, final Consumer<String> logger )
+    private final Instant timestamp;
+
+    public MojoFileInformationProvider(final RulesetEvaluator rulesetEval, final String ruleId, final PackageEntry entry, final Consumer<String> logger, Instant timestamp)
     {
         this.rulesetEval = Objects.requireNonNull ( rulesetEval );
         this.ruleId = ruleId;
         this.entry = entry;
         this.logger = logger != null ? logger : ( s ) -> {
         };
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -55,6 +59,11 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
             {
                 this.logger.accept ( String.format ( "local override = %s", result ) );
             }
+        }
+
+        if ( this.timestamp != null )
+        {
+            result.setTimestamp ( this.timestamp );
         }
 
         return result;
