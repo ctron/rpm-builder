@@ -41,7 +41,7 @@
 
         <maven.version>3.3.9</maven.version>
 
-        <org.bouncycastle.version>1.67</org.bouncycastle.version>
+        <org.bouncycastle.version>1.69</org.bouncycastle.version>
         <packager.version>0.17.0</packager.version>
     </properties>
 
@@ -115,14 +115,14 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.3</version>
+            <version>3.6.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.12</version>
+            <version>1.15</version>
         </dependency>
 
         <!-- EOTD -->
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
