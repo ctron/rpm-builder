@@ -42,7 +42,7 @@
         <maven.version>3.3.9</maven.version>
 
         <org.bouncycastle.version>1.69</org.bouncycastle.version>
-        <packager.version>0.17.0</packager.version>
+        <packager.version>0.18.0</packager.version>
     </properties>
 
     <prerequisites>
