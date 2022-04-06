@@ -43,29 +43,21 @@
 				<artifactId>rpm</artifactId>
 				<extensions>true</extensions>
 				<version>@project.version@</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>rpm</goal>
-						</goals>
-						<configuration>
-							<group>Application/Misc</group>
+				<configuration>
+					<group>Application/Misc</group>
 
-							<forceRelease>true</forceRelease>
-							<snapshotVersion>1.2.3</snapshotVersion>
-							<version>4.5.6</version>
+					<forceRelease>true</forceRelease>
+					<snapshotVersion>1.2.3</snapshotVersion>
+					<version>4.5.6</version>
 
-							<signature>
-								<keyId>${keyId}</keyId>
-								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
-								<passphrase>${passphrase}</passphrase>
-								<hashAlgorithm>SHA1</hashAlgorithm>
-								<skip>${skipSigning}</skip>
-							</signature>
-
-						</configuration>
-					</execution>
-				</executions>
+					<signature>
+						<keyId>${keyId}</keyId>
+						<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
+						<passphrase>${passphrase}</passphrase>
+						<hashAlgorithm>SHA1</hashAlgorithm>
+						<skip>${skipSigning}</skip>
+					</signature>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
