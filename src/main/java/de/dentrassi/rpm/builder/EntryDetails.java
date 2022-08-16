@@ -19,8 +19,7 @@ import java.util.Set;
 import org.eclipse.packager.rpm.FileFlags;
 import org.eclipse.packager.rpm.build.FileInformation;
 
-public class EntryDetails
-{
+public class EntryDetails {
     private Short mode;
 
     private Boolean configuration;
@@ -65,202 +64,161 @@ public class EntryDetails
      */
     private VerifyDetails verify;
 
-    public final VerifyDetails getVerify ()
-    {
+    public final VerifyDetails getVerify() {
         return this.verify;
     }
 
-    public final void setVerify ( final VerifyDetails verify )
-    {
+    public final void setVerify(final VerifyDetails verify) {
         this.verify = verify;
     }
 
-    public void setMode ( final String mode )
-    {
-        this.mode = Short.parseShort ( mode, 8 );
+    public void setMode(final String mode) {
+        this.mode = Short.parseShort(mode, 8);
     }
 
-    public Short getMode ()
-    {
+    public Short getMode() {
         return this.mode;
     }
 
-    public void setConfiguration ( final Boolean configuration )
-    {
+    public void setConfiguration(final Boolean configuration) {
         this.configuration = configuration;
     }
 
-    public Boolean getConfiguration ()
-    {
+    public Boolean getConfiguration() {
         return this.configuration;
     }
 
-    public void setDocumentation ( final Boolean documentation )
-    {
+    public void setDocumentation(final Boolean documentation) {
         this.documentation = documentation;
     }
 
-    public Boolean getDocumentation ()
-    {
+    public Boolean getDocumentation() {
         return this.documentation;
     }
 
-    public void setLicense ( final Boolean license )
-    {
+    public void setLicense(final Boolean license) {
         this.license = license;
     }
 
-    public Boolean getLicense ()
-    {
+    public Boolean getLicense() {
         return this.license;
     }
 
-    public void setReadme ( final Boolean readme )
-    {
+    public void setReadme(final Boolean readme) {
         this.readme = readme;
     }
 
-    public Boolean getReadme ()
-    {
+    public Boolean getReadme() {
         return this.readme;
     }
 
-    public void setGhost ( final Boolean ghost )
-    {
+    public void setGhost(final Boolean ghost) {
         this.ghost = ghost;
     }
 
-    public Boolean getGhost ()
-    {
+    public Boolean getGhost() {
         return this.ghost;
     }
 
-    public void setMissingOk ( final Boolean missingOk )
-    {
+    public void setMissingOk(final Boolean missingOk) {
         this.missingOk = missingOk;
     }
 
-    public Boolean getMissingOk ()
-    {
+    public Boolean getMissingOk() {
         return this.missingOk;
     }
 
-    public void setNoreplace ( final Boolean noreplace )
-    {
+    public void setNoreplace(final Boolean noreplace) {
         this.noreplace = noreplace;
     }
 
-    public Boolean getNoreplace ()
-    {
+    public Boolean getNoreplace() {
         return this.noreplace;
     }
 
-    public void setUser ( final String user )
-    {
+    public void setUser(final String user) {
         this.user = user;
     }
 
-    public String getUser ()
-    {
+    public String getUser() {
         return this.user;
     }
 
-    public void setGroup ( final String group )
-    {
+    public void setGroup(final String group) {
         this.group = group;
     }
 
-    public String getGroup ()
-    {
+    public String getGroup() {
         return this.group;
     }
 
-    public void setSkip ( final Boolean skip )
-    {
+    public void setSkip(final Boolean skip) {
         this.skip = skip;
     }
 
-    public Boolean getSkip ()
-    {
+    public Boolean getSkip() {
         return this.skip;
     }
 
-    public void validate ()
-    {
+    public void validate() {
     }
 
-    public boolean apply ( final FileInformation info )
-    {
+    public boolean apply(final FileInformation info) {
         boolean didApply = false;
 
-        if ( this.configuration != null )
-        {
-            setFlag ( info, FileFlags.CONFIGURATION );
+        if (this.configuration != null) {
+            setFlag(info, FileFlags.CONFIGURATION);
             didApply = true;
         }
-        if ( this.documentation != null )
-        {
-            setFlag ( info, FileFlags.DOC );
+        if (this.documentation != null) {
+            setFlag(info, FileFlags.DOC);
             didApply = true;
         }
-        if ( this.license != null )
-        {
-            setFlag ( info, FileFlags.LICENSE );
+        if (this.license != null) {
+            setFlag(info, FileFlags.LICENSE);
             didApply = true;
         }
-        if ( this.readme != null )
-        {
-            setFlag ( info, FileFlags.README );
+        if (this.readme != null) {
+            setFlag(info, FileFlags.README);
             didApply = true;
         }
-        if ( this.ghost != null )
-        {
-            setFlag ( info, FileFlags.GHOST );
+        if (this.ghost != null) {
+            setFlag(info, FileFlags.GHOST);
             didApply = true;
         }
-        if ( this.missingOk != null )
-        {
-            setFlag ( info, FileFlags.MISSINGOK );
+        if (this.missingOk != null) {
+            setFlag(info, FileFlags.MISSINGOK);
             didApply = true;
         }
-        if ( this.noreplace != null )
-        {
-            setFlag ( info, FileFlags.NOREPLACE );
+        if (this.noreplace != null) {
+            setFlag(info, FileFlags.NOREPLACE);
             didApply = true;
         }
-        if ( this.user != null && !this.user.isEmpty () )
-        {
-            info.setUser ( this.user );
+        if (this.user != null && !this.user.isEmpty()) {
+            info.setUser(this.user);
             didApply = true;
         }
-        if ( this.group != null && !this.group.isEmpty () )
-        {
-            info.setGroup ( this.group );
+        if (this.group != null && !this.group.isEmpty()) {
+            info.setGroup(this.group);
             didApply = true;
         }
-        if ( this.mode != null )
-        {
-            info.setMode ( this.mode );
+        if (this.mode != null) {
+            info.setMode(this.mode);
             didApply = true;
         }
-        if ( this.verify != null )
-        {
-            this.verify.apply ( info );
+        if (this.verify != null) {
+            this.verify.apply(info);
             didApply = true;
         }
         return didApply;
     }
 
-    private void setFlag ( final FileInformation info, final FileFlags flag )
-    {
-        final Set<FileFlags> flags = info.getFileFlags ();
-        if ( flags == null )
-        {
-            info.setFileFlags ( EnumSet.of ( flag ) );
-        }
-        else
-        {
-            flags.add ( flag );
+    private void setFlag(final FileInformation info, final FileFlags flag) {
+        final Set<FileFlags> flags = info.getFileFlags();
+        if (flags == null) {
+            info.setFileFlags(EnumSet.of(flag));
+        } else {
+            flags.add(flag);
         }
     }
 

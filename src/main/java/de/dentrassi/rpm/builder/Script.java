@@ -20,61 +20,49 @@ import java.nio.charset.StandardCharsets;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 
-public class Script
-{
+public class Script {
     private String interpreter;
 
     private File file;
 
     private String script;
 
-    public String getInterpreter ()
-    {
+    public String getInterpreter() {
         return this.interpreter;
     }
 
-    public void setInterpreter ( final String interpreter )
-    {
+    public void setInterpreter(final String interpreter) {
         this.interpreter = interpreter;
     }
 
-    public File getFile ()
-    {
+    public File getFile() {
         return this.file;
     }
 
-    public void setFile ( final File file )
-    {
+    public void setFile(final File file) {
         this.file = file;
     }
 
-    public String getScript ()
-    {
+    public String getScript() {
         return this.script;
     }
 
-    public void setScript ( final String script )
-    {
+    public void setScript(final String script) {
         this.script = script;
     }
 
-    public void set ( final String script )
-    {
-        setScript ( script );
+    public void set(final String script) {
+        setScript(script);
     }
 
-    public String makeScriptContent () throws IOException
-    {
-        if ( this.file != null && !Strings.isNullOrEmpty ( this.script ) )
-        {
-            throw new IllegalStateException ( "Script must not have 'file' and 'script' set at the same time." );
+    public String makeScriptContent() throws IOException {
+        if (this.file != null && !Strings.isNullOrEmpty(this.script)) {
+            throw new IllegalStateException("Script must not have 'file' and 'script' set at the same time.");
         }
 
-        if ( this.file != null )
-        {
-            try ( Reader reader = new InputStreamReader ( new FileInputStream ( this.file ), StandardCharsets.UTF_8 ) )
-            {
-                return CharStreams.toString ( reader );
+        if (this.file != null) {
+            try (Reader reader = new InputStreamReader(new FileInputStream(this.file), StandardCharsets.UTF_8)) {
+                return CharStreams.toString(reader);
             }
         }
 

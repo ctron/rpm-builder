@@ -12,7 +12,6 @@ package de.dentrassi.rpm.builder.signatures;
 
 import org.eclipse.packager.rpm.build.RpmBuilder;
 
-public interface SignatureConfiguration
-{
-    public void apply ( RpmBuilder builder );
+public interface SignatureConfiguration {
+    void apply(RpmBuilder builder);
 }

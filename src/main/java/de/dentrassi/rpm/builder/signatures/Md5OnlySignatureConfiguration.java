@@ -14,17 +14,15 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.eclipse.packager.rpm.build.RpmBuilder;
 import org.eclipse.packager.rpm.signature.SignatureProcessors;
 
-@Component ( role = SignatureConfiguration.class, hint = "md5-only" )
-public class Md5OnlySignatureConfiguration implements SignatureConfiguration
-{
+@Component(role = SignatureConfiguration.class, hint = "md5-only")
+public class Md5OnlySignatureConfiguration implements SignatureConfiguration {
 
     @Override
-    public void apply ( final RpmBuilder builder )
-    {
-        builder.removeAllSignatureProcessors ();
-        builder.addSignatureProcessor ( SignatureProcessors.size () );
-        builder.addSignatureProcessor ( SignatureProcessors.md5 () );
-        builder.addSignatureProcessor ( SignatureProcessors.payloadSize () );
+    public void apply(final RpmBuilder builder) {
+        builder.removeAllSignatureProcessors();
+        builder.addSignatureProcessor(SignatureProcessors.size());
+        builder.addSignatureProcessor(SignatureProcessors.md5());
+        builder.addSignatureProcessor(SignatureProcessors.payloadSize());
     }
 
 }

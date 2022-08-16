@@ -21,8 +21,7 @@ import org.eclipse.packager.rpm.build.FileInformation;
 import org.eclipse.packager.rpm.build.FileInformationProvider;
 import org.eclipse.packager.rpm.build.PayloadEntryType;
 
-public class MojoFileInformationProvider implements FileInformationProvider<Object>
-{
+public class MojoFileInformationProvider implements FileInformationProvider<Object> {
     private final RulesetEvaluator rulesetEval;
 
     private final Consumer<String> logger;
@@ -33,53 +32,45 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
 
     private final Instant timestamp;
 
-    public MojoFileInformationProvider(final RulesetEvaluator rulesetEval, final String ruleId, final PackageEntry entry, final Consumer<String> logger, Instant timestamp)
-    {
-        this.rulesetEval = Objects.requireNonNull ( rulesetEval );
+    public MojoFileInformationProvider(final RulesetEvaluator rulesetEval, final String ruleId, final PackageEntry entry, final Consumer<String> logger, Instant timestamp) {
+        this.rulesetEval = Objects.requireNonNull(rulesetEval);
         this.ruleId = ruleId;
         this.entry = entry;
-        this.logger = logger != null ? logger : ( s ) -> {
+        this.logger = logger != null ? logger : (s) -> {
         };
         this.timestamp = timestamp;
     }
 
     @Override
-    public FileInformation provide ( final String targetName, final Object object, final PayloadEntryType type ) throws IOException
-    {
-        final FileInformation result = provideByRule ( targetName, object, type );
+    public FileInformation provide(final String targetName, final Object object, final PayloadEntryType type) throws IOException {
+        final FileInformation result = provideByRule(targetName, object, type);
 
-        if ( result == null )
-        {
-            throw new IllegalStateException ( "Unable to provide file information" );
+        if (result == null) {
+            throw new IllegalStateException("Unable to provide file information");
         }
 
-        if ( this.entry != null )
-        {
-            if ( this.entry.apply ( result ) )
-            {
-                this.logger.accept ( String.format ( "local override = %s", result ) );
+        if (this.entry != null) {
+            if (this.entry.apply(result)) {
+                this.logger.accept(String.format("local override = %s", result));
             }
         }
 
-        if ( this.timestamp != null )
-        {
-            result.setTimestamp ( this.timestamp );
+        if (this.timestamp != null) {
+            result.setTimestamp(this.timestamp);
         }
 
         return result;
     }
 
-    private FileInformation provideByRule ( final String targetName, final Object object, final PayloadEntryType type ) throws IOException
-    {
-        final FileInformation result = BuilderContext.defaultProvider ().provide ( targetName, object, type );
+    private FileInformation provideByRule(final String targetName, final Object object, final PayloadEntryType type) throws IOException {
+        final FileInformation result = BuilderContext.defaultProvider().provide(targetName, object, type);
 
-        if ( this.ruleId != null && !this.ruleId.isEmpty () )
-        {
-            this.logger.accept ( String.format ( "run ruleset: '%s'", this.ruleId ) );
-            this.rulesetEval.eval ( this.ruleId, object, type, targetName, result );
+        if (this.ruleId != null && !this.ruleId.isEmpty()) {
+            this.logger.accept(String.format("run ruleset: '%s'", this.ruleId));
+            this.rulesetEval.eval(this.ruleId, object, type, targetName, result);
         }
 
-        this.logger.accept ( String.format ( "fileInformation = %s", result ) );
+        this.logger.accept(String.format("fileInformation = %s", result));
 
         return result;
     }

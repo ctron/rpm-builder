@@ -22,8 +22,7 @@ import org.eclipse.packager.rpm.build.FileInformation;
  * See http://ftp.rpm.org/api/4.14.0/group__rpmvf.html.
  * See https://github.com/ctron/rpm-builder/issues/41
  */
-public final class VerifyDetails
-{
+public final class VerifyDetails {
     private boolean fileDigest;
 
     private boolean size;
@@ -47,19 +46,16 @@ public final class VerifyDetails
      *
      * @return true iff fileDigest shall be verified
      */
-    public boolean getFileDigest ()
-    {
+    public boolean getFileDigest() {
         return this.fileDigest;
     }
 
     /**
      * Corresponds to rpm verify option --nofiledigest.
      *
-     * @param fileDigest
-     *            true iff fileDigest shall be verified
+     * @param fileDigest true iff fileDigest shall be verified
      */
-    public void setFileDigest ( final boolean fileDigest )
-    {
+    public void setFileDigest(final boolean fileDigest) {
         this.fileDigest = fileDigest;
     }
 
@@ -68,19 +64,16 @@ public final class VerifyDetails
      *
      * @return true iff file size shall be verified
      */
-    public boolean getSize ()
-    {
+    public boolean getSize() {
         return this.size;
     }
 
     /**
      * Corresponds to rpm verify option --nosize.
      *
-     * @param size
-     *            true iff file size shall be verified
+     * @param size true iff file size shall be verified
      */
-    public void setSize ( final boolean size )
-    {
+    public void setSize(final boolean size) {
         this.size = size;
     }
 
@@ -89,19 +82,16 @@ public final class VerifyDetails
      *
      * @return true iff linkto shall be verified
      */
-    public boolean getLinkto ()
-    {
+    public boolean getLinkto() {
         return this.linkto;
     }
 
     /**
      * Corresponds to rpm verify option --nolinkto.
      *
-     * @param linkto
-     *            true iff linkto shall be verified
+     * @param linkto true iff linkto shall be verified
      */
-    public void setLinkto ( final boolean linkto )
-    {
+    public void setLinkto(final boolean linkto) {
         this.linkto = linkto;
     }
 
@@ -110,19 +100,16 @@ public final class VerifyDetails
      *
      * @return true iff user shall be verified
      */
-    public boolean getUser ()
-    {
+    public boolean getUser() {
         return this.user;
     }
 
     /**
      * Corresponds to rpm verify option --nouser.
      *
-     * @param user
-     *            true iff user shall be verified
+     * @param user true iff user shall be verified
      */
-    public void setUser ( final boolean user )
-    {
+    public void setUser(final boolean user) {
         this.user = user;
     }
 
@@ -131,19 +118,16 @@ public final class VerifyDetails
      *
      * @return true iff group shall be verified
      */
-    public boolean getGroup ()
-    {
+    public boolean getGroup() {
         return this.group;
     }
 
     /**
      * Corresponds to rpm verify option --nogroup.
      *
-     * @param group
-     *            true iff group shall be verified
+     * @param group true iff group shall be verified
      */
-    public void setGroup ( final boolean group )
-    {
+    public void setGroup(final boolean group) {
         this.group = group;
     }
 
@@ -152,19 +136,16 @@ public final class VerifyDetails
      *
      * @return true iff mtime shall be verified
      */
-    public boolean getMtime ()
-    {
+    public boolean getMtime() {
         return this.mtime;
     }
 
     /**
      * Corresponds to rpm verify option --nomtime.
      *
-     * @param mtime
-     *            true iff mtime shall be verified
+     * @param mtime true iff mtime shall be verified
      */
-    public void setMtime ( final boolean mtime )
-    {
+    public void setMtime(final boolean mtime) {
         this.mtime = mtime;
     }
 
@@ -173,19 +154,16 @@ public final class VerifyDetails
      *
      * @return true iff mode shall be verified
      */
-    public boolean getMode ()
-    {
+    public boolean getMode() {
         return this.mode;
     }
 
     /**
      * Corresponds to rpm verify option --nomode.
      *
-     * @param mode
-     *            true iff mode shall be verified
+     * @param mode true iff mode shall be verified
      */
-    public void setMode ( final boolean mode )
-    {
+    public void setMode(final boolean mode) {
         this.mode = mode;
     }
 
@@ -194,19 +172,16 @@ public final class VerifyDetails
      *
      * @return true iff rdev shall be verified
      */
-    public boolean getRdev ()
-    {
+    public boolean getRdev() {
         return this.rdev;
     }
 
     /**
      * Corresponds to rpm verify option --nordev.
      *
-     * @param rdev
-     *            true iff rdev shall be verified
+     * @param rdev true iff rdev shall be verified
      */
-    public void setRdev ( final boolean rdev )
-    {
+    public void setRdev(final boolean rdev) {
         this.rdev = rdev;
     }
 
@@ -215,19 +190,16 @@ public final class VerifyDetails
      *
      * @return true iff caps shall be verified
      */
-    public boolean getCaps ()
-    {
+    public boolean getCaps() {
         return this.caps;
     }
 
     /**
      * Corresponds to rpm verify option --nocaps.
      *
-     * @param caps
-     *            true iff caps shall be verified
+     * @param caps true iff caps shall be verified
      */
-    public void setCaps ( final boolean caps )
-    {
+    public void setCaps(final boolean caps) {
         this.caps = caps;
     }
 
@@ -236,65 +208,53 @@ public final class VerifyDetails
      *
      * @see EntryDetails#apply(org.eclipse.packager.rpm.build.FileInformation)
      */
-    void apply ( final FileInformation info )
-    {
-        final Set<VerifyFlags> verifyFlags = EnumSet.noneOf ( VerifyFlags.class );
-        transfer ( verifyFlags, this.fileDigest, VerifyFlags.MD5 );
-        transfer ( verifyFlags, this.size, VerifyFlags.SIZE );
-        transfer ( verifyFlags, this.linkto, VerifyFlags.LINKTO );
-        transfer ( verifyFlags, this.user, VerifyFlags.USER );
-        transfer ( verifyFlags, this.group, VerifyFlags.GROUP );
-        transfer ( verifyFlags, this.mtime, VerifyFlags.MTIME );
-        transfer ( verifyFlags, this.mode, VerifyFlags.MODE );
-        transfer ( verifyFlags, this.caps, VerifyFlags.CAPS );
-        info.setVerifyFlags ( verifyFlags );
+    void apply(final FileInformation info) {
+        final Set<VerifyFlags> verifyFlags = EnumSet.noneOf(VerifyFlags.class);
+        transfer(verifyFlags, this.fileDigest, VerifyFlags.MD5);
+        transfer(verifyFlags, this.size, VerifyFlags.SIZE);
+        transfer(verifyFlags, this.linkto, VerifyFlags.LINKTO);
+        transfer(verifyFlags, this.user, VerifyFlags.USER);
+        transfer(verifyFlags, this.group, VerifyFlags.GROUP);
+        transfer(verifyFlags, this.mtime, VerifyFlags.MTIME);
+        transfer(verifyFlags, this.mode, VerifyFlags.MODE);
+        transfer(verifyFlags, this.caps, VerifyFlags.CAPS);
+        info.setVerifyFlags(verifyFlags);
     }
 
-    private static void transfer ( final Set<VerifyFlags> target, final boolean val, final VerifyFlags flag )
-    {
-        if ( val )
-        {
-            target.add ( flag );
+    private static void transfer(final Set<VerifyFlags> target, final boolean val, final VerifyFlags flag) {
+        if (val) {
+            target.add(flag);
         }
     }
 
     @Override
-    public String toString ()
-    {
-        final StringBuilder ret = new StringBuilder ( "VerifyDetails{" );
-        if ( this.fileDigest )
-        {
-            ret.append ( "fileDigest," );
+    public String toString() {
+        final StringBuilder ret = new StringBuilder("VerifyDetails{");
+        if (this.fileDigest) {
+            ret.append("fileDigest,");
         }
-        if ( this.size )
-        {
-            ret.append ( "size," );
+        if (this.size) {
+            ret.append("size,");
         }
-        if ( this.linkto )
-        {
-            ret.append ( "linkto," );
+        if (this.linkto) {
+            ret.append("linkto,");
         }
-        if ( this.user )
-        {
-            ret.append ( "user," );
+        if (this.user) {
+            ret.append("user,");
         }
-        if ( this.group )
-        {
-            ret.append ( "group," );
+        if (this.group) {
+            ret.append("group,");
         }
-        if ( this.mode )
-        {
-            ret.append ( "mode," );
+        if (this.mode) {
+            ret.append("mode,");
         }
-        if ( this.rdev )
-        {
-            ret.append ( "rdev," );
+        if (this.rdev) {
+            ret.append("rdev,");
         }
-        if ( this.caps )
-        {
-            ret.append ( "caps," );
+        if (this.caps) {
+            ret.append("caps,");
         }
-        ret.append ( "}" );
-        return ret.toString ();
+        ret.append("}");
+        return ret.toString();
     }
 }

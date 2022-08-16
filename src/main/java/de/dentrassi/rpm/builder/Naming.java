@@ -10,55 +10,42 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-public class Naming
-{
-    public static enum Case
-    {
+public class Naming {
+    public enum Case {
         UNMODIFIED,
         LOWERCASE
     }
 
-    public static enum DefaultFormat
-    {
+    public enum DefaultFormat {
         DEFAULT,
-        LEGACY;
+        LEGACY
     }
 
     private Case caseValue = Case.UNMODIFIED;
 
     private DefaultFormat defaultFormat = DefaultFormat.DEFAULT;
 
-    public void setCase ( final String caseValue )
-    {
-        if ( caseValue != null )
-        {
-            this.caseValue = Case.valueOf ( caseValue.toUpperCase () );
-        }
-        else
-        {
+    public void setCase(final String caseValue) {
+        if (caseValue != null) {
+            this.caseValue = Case.valueOf(caseValue.toUpperCase());
+        } else {
             this.caseValue = Case.UNMODIFIED;
         }
     }
 
-    public Case getCase ()
-    {
+    public Case getCase() {
         return this.caseValue;
     }
 
-    public void setDefaultFormat ( final String defaultFormat )
-    {
-        if ( defaultFormat != null )
-        {
-            this.defaultFormat = DefaultFormat.valueOf ( defaultFormat.toUpperCase () );
-        }
-        else
-        {
+    public void setDefaultFormat(final String defaultFormat) {
+        if (defaultFormat != null) {
+            this.defaultFormat = DefaultFormat.valueOf(defaultFormat.toUpperCase());
+        } else {
             this.defaultFormat = DefaultFormat.DEFAULT;
         }
     }
 
-    public DefaultFormat getDefaultFormat ()
-    {
+    public DefaultFormat getDefaultFormat() {
         return this.defaultFormat;
     }
 }

@@ -83,15 +83,14 @@ import de.dentrassi.rpm.builder.signatures.SignatureConfiguration;
  *
  * @author ctron
  */
-@Mojo ( name = "rpm", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true )
-public class RpmMojo extends AbstractMojo
-{
+@Mojo(name = "rpm", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true)
+public class RpmMojo extends AbstractMojo {
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
     /**
      * The maven project
      */
-    @Parameter ( property = "project", readonly = true, required = true )
+    @Parameter(property = "project", readonly = true, required = true)
     protected MavenProject project;
 
     @Component
@@ -107,7 +106,7 @@ public class RpmMojo extends AbstractMojo
      *
      * @see #snapshotVersion
      */
-    @Parameter ( defaultValue = "${project.version}" )
+    @Parameter(defaultValue = "${project.version}")
     private String version;
 
     /**
@@ -115,20 +114,20 @@ public class RpmMojo extends AbstractMojo
      *
      * @see #version
      */
-    @Parameter ( property = "rpm.snapshotVersion" )
+    @Parameter(property = "rpm.snapshotVersion")
     private String snapshotVersion;
 
     /**
      * The RPM package name
      */
-    @Parameter ( defaultValue = "${project.artifactId}", property = "rpm.packageName" )
+    @Parameter(defaultValue = "${project.artifactId}", property = "rpm.packageName")
     private String packageName;
 
     /**
      * The architecture
      */
-    @Parameter ( defaultValue = "noarch", property = "rpm.architecture" )
-    private String architecture = "noarch";
+    @Parameter(defaultValue = "noarch", property = "rpm.architecture")
+    private final String architecture = "noarch";
 
     /**
      * Override the lead architecture value.
@@ -138,11 +137,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.10.2
      */
-    @Parameter ( property = "rpm.leadOverride.architecture" )
+    @Parameter(property = "rpm.leadOverride.architecture")
     private Architecture leadOverrideArchitecture;
 
-    public void setLeadOverrideArchitecture ( final Architecture leadOverrideArchitecture )
-    {
+    public void setLeadOverrideArchitecture(final Architecture leadOverrideArchitecture) {
         this.leadOverrideArchitecture = leadOverrideArchitecture;
     }
 
@@ -151,11 +149,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.10.2
      */
-    @Parameter ( property = "rpm.operatingSystem" )
+    @Parameter(property = "rpm.operatingSystem")
     private String operatingSystem = "linux";
 
-    public void setOperatingSystem ( final String operatingSystem )
-    {
+    public void setOperatingSystem(final String operatingSystem) {
         this.operatingSystem = operatingSystem;
     }
 
@@ -167,11 +164,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.10.2
      */
-    @Parameter ( property = "rpm.leadOverride.operatingSystem" )
+    @Parameter(property = "rpm.leadOverride.operatingSystem")
     private OperatingSystem leadOverrideOperatingSystem;
 
-    public void setLeadOverrideOperatingSystem ( final OperatingSystem leadOverrideOperatingSystem )
-    {
+    public void setLeadOverrideOperatingSystem(final OperatingSystem leadOverrideOperatingSystem) {
         this.leadOverrideOperatingSystem = leadOverrideOperatingSystem;
     }
 
@@ -180,11 +176,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.11.0
      */
-    @Parameter ( property = "rpm.sourcePackage" )
+    @Parameter(property = "rpm.sourcePackage")
     private String sourcePackage;
 
-    public void setSourcePackage ( final String sourcePackage )
-    {
+    public void setSourcePackage(final String sourcePackage) {
         this.sourcePackage = sourcePackage;
     }
 
@@ -211,11 +206,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.11.0
      */
-    @Parameter ( property = "rpm.generateDefaultSourcePackage", defaultValue = "true" )
+    @Parameter(property = "rpm.generateDefaultSourcePackage", defaultValue = "true")
     private boolean generateDefaultSourcePackage = true;
 
-    public void setGenerateDefaultSourcePackage ( final boolean generateDefaultSourcePackage )
-    {
+    public void setGenerateDefaultSourcePackage(final boolean generateDefaultSourcePackage) {
         this.generateDefaultSourcePackage = generateDefaultSourcePackage;
     }
 
@@ -226,8 +220,8 @@ public class RpmMojo extends AbstractMojo
      * Also see: {@link #snapshotBuildId}
      * </p>
      */
-    @Parameter ( defaultValue = "0.", property = "rpm.snapshotReleasePrefix" )
-    private String snapshotReleasePrefix = "0.";
+    @Parameter(defaultValue = "0.", property = "rpm.snapshotReleasePrefix")
+    private final String snapshotReleasePrefix = "0.";
 
     /**
      * Set the build id which is used when a snapshot build is active.
@@ -238,14 +232,14 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.6.0
      */
-    @Parameter ( property = "rpm.snapshotBuildId", required = false )
+    @Parameter(property = "rpm.snapshotBuildId", required = false)
     private String snapshotBuildId;
 
     /**
      * The release which will be used if this is not a snapshot build
      */
-    @Parameter ( property = "rpm.release", defaultValue = "1" )
-    private String release = "1";
+    @Parameter(property = "rpm.release", defaultValue = "1")
+    private final String release = "1";
 
     /**
      * Always use the "release" string
@@ -257,25 +251,25 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.6.0
      */
-    @Parameter ( property = "rpm.forceRelease", defaultValue = "false" )
-    private boolean forceRelease = false;
+    @Parameter(property = "rpm.forceRelease", defaultValue = "false")
+    private final boolean forceRelease = false;
 
     /**
      * The classifier of the attached rpm
      */
-    @Parameter ( property = "rpm.classifier", defaultValue = "rpm" )
-    private String classifier = "rpm";
+    @Parameter(property = "rpm.classifier", defaultValue = "rpm")
+    private final String classifier = "rpm";
 
     /**
      * Whether to attach the output file
      */
-    @Parameter ( property = "rpm.attach", defaultValue = "true" )
-    private boolean attach = true;
+    @Parameter(property = "rpm.attach", defaultValue = "true")
+    private final boolean attach = true;
 
     /**
      * The RPM epoch, leave unset for default
      */
-    @Parameter ( property = "rpm.epoch" )
+    @Parameter(property = "rpm.epoch")
     private Integer epoch;
 
     /**
@@ -284,7 +278,7 @@ public class RpmMojo extends AbstractMojo
      * This defaults to the project name
      * </p>
      */
-    @Parameter ( property = "rpm.summary", defaultValue = "${project.name}" )
+    @Parameter(property = "rpm.summary", defaultValue = "${project.name}")
     private String summary;
 
     /**
@@ -293,7 +287,7 @@ public class RpmMojo extends AbstractMojo
      * This defaults to the Maven project description
      * </p>
      */
-    @Parameter ( property = "rpm.description", defaultValue = "${project.description}" )
+    @Parameter(property = "rpm.description", defaultValue = "${project.description}")
     private String description;
 
     /**
@@ -304,13 +298,13 @@ public class RpmMojo extends AbstractMojo
      * org/wiki/RPMGroups</a>
      * </p>
      */
-    @Parameter ( property = "rpm.group", defaultValue = "Unspecified" )
+    @Parameter(property = "rpm.group", defaultValue = "Unspecified")
     private String group;
 
     /**
      * The "distribution" field in the RPM file
      */
-    @Parameter ( property = "rpm.distribution" )
+    @Parameter(property = "rpm.distribution")
     private String distribution;
 
     /**
@@ -320,8 +314,8 @@ public class RpmMojo extends AbstractMojo
      * used instead of the actual hostname
      * </p>
      */
-    @Parameter ( property = "rpm.evalHostname", defaultValue = "true" )
-    private boolean evalHostname = true;
+    @Parameter(property = "rpm.evalHostname", defaultValue = "true")
+    private final boolean evalHostname = true;
 
     /**
      * The license of the RPM file
@@ -330,7 +324,7 @@ public class RpmMojo extends AbstractMojo
      * the projects POM file.
      * </p>
      */
-    @Parameter ( property = "rpm.license" )
+    @Parameter(property = "rpm.license")
     private String license;
 
     /**
@@ -339,7 +333,7 @@ public class RpmMojo extends AbstractMojo
      * This defaults to the name of the organization in the POM file.
      * </p>
      */
-    @Parameter ( property = "rpm.vendor" )
+    @Parameter(property = "rpm.vendor")
     private String vendor;
 
     /**
@@ -355,7 +349,7 @@ public class RpmMojo extends AbstractMojo
      * -TAG</a>
      * </p>
      */
-    @Parameter ( property = "rpm.packager" )
+    @Parameter(property = "rpm.packager")
     private String packager;
 
     /**
@@ -367,14 +361,14 @@ public class RpmMojo extends AbstractMojo
      *           &lt;prefix>/var/log&lt;/prefix&gt;
      *       &lt;/prefixes&gt;
      * </pre>
-     *
+     * <p>
      * See also
      * <a href="http://ftp.rpm.org/max-rpm/s1-rpm-reloc-prefix-tag.html">The
      * prefix tag</a>
      *
      * @since 1.1.0
      */
-    @Parameter ( property = "rpm.prefixes" )
+    @Parameter(property = "rpm.prefixes")
     private List<String> prefixes;
 
     /**
@@ -405,7 +399,7 @@ public class RpmMojo extends AbstractMojo
      * </pre>
      */
     @Parameter
-    private List<PackageEntry> entries = new LinkedList<> ();
+    private final List<PackageEntry> entries = new LinkedList<>();
 
     /**
      * Rulesets to configure the file information like "user", "modes", etc.
@@ -414,7 +408,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private List<Ruleset> rulesets = new LinkedList<> ();
+    private final List<Ruleset> rulesets = new LinkedList<>();
 
     /**
      * The default ruleset to use if no other is specified
@@ -484,7 +478,7 @@ public class RpmMojo extends AbstractMojo
      * The default script interpreter which is used if neither the script has
      * one set explicitly, nor one could be detected
      */
-    @Parameter ( property = "rpm.defaultScriptInterpreter", defaultValue = "/bin/sh" )
+    @Parameter(property = "rpm.defaultScriptInterpreter", defaultValue = "/bin/sh")
     private String defaultScriptInterpreter;
 
     /**
@@ -494,7 +488,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<Dependency> requires = new LinkedList<> ();
+    private final List<Dependency> requires = new LinkedList<>();
 
     /**
      * RPM provides information
@@ -503,7 +497,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> provides = new LinkedList<> ();
+    private final List<SimpleDependency> provides = new LinkedList<>();
 
     /**
      * RPM package conflicts
@@ -512,7 +506,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> conflicts = new LinkedList<> ();
+    private final List<SimpleDependency> conflicts = new LinkedList<>();
 
     /**
      * RPM obsoletes information
@@ -521,7 +515,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> obsoletes = new LinkedList<> ();
+    private final List<SimpleDependency> obsoletes = new LinkedList<>();
 
     /**
      * RPM package requirements needed before the installation starts
@@ -530,7 +524,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> prerequisites = new LinkedList<> ();
+    private final List<SimpleDependency> prerequisites = new LinkedList<>();
 
     /**
      * Hint forward dependency.
@@ -541,7 +535,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> suggests = new LinkedList<> ();
+    private final List<SimpleDependency> suggests = new LinkedList<>();
 
     /**
      * Hint backward dependency.
@@ -552,7 +546,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> enhances = new LinkedList<> ();
+    private final List<SimpleDependency> enhances = new LinkedList<>();
 
     /**
      * Weak backward dependency.
@@ -563,7 +557,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> supplements = new LinkedList<> ();
+    private final List<SimpleDependency> supplements = new LinkedList<>();
 
     /**
      * Weak forward dependency.
@@ -574,7 +568,7 @@ public class RpmMojo extends AbstractMojo
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> recommends = new LinkedList<> ();
+    private final List<SimpleDependency> recommends = new LinkedList<>();
 
     /**
      * An optional signature descriptor for GPG signing the final RPM
@@ -582,7 +576,7 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="signing.html">signing</a>
      * </p>
      */
-    @Parameter ( property = "rpm.signature" )
+    @Parameter(property = "rpm.signature")
     private Signature signature;
 
     /**
@@ -590,22 +584,20 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 1.1.1
      */
-    @Parameter ( property = "rpm.skip", defaultValue = "false" )
+    @Parameter(property = "rpm.skip", defaultValue = "false")
     private boolean skip = false;
 
-    public void setSkip ( final boolean skip )
-    {
+    public void setSkip(final boolean skip) {
         this.skip = skip;
     }
 
     /**
      * Disable all package signing
      */
-    @Parameter ( property = "rpm.skipSigning", defaultValue = "false" )
+    @Parameter(property = "rpm.skipSigning", defaultValue = "false")
     private boolean skipSigning = false;
 
-    public void setSkipSigning ( final boolean skipSigning )
-    {
+    public void setSkipSigning(final boolean skipSigning) {
         this.skipSigning = skipSigning;
     }
 
@@ -615,11 +607,10 @@ public class RpmMojo extends AbstractMojo
      * Also see <a href="naming.html">naming</a>
      * </p>
      */
-    @Parameter ( property = "rpm.naming" )
+    @Parameter(property = "rpm.naming")
     private Naming naming;
 
-    public void setNaming ( final Naming naming )
-    {
+    public void setNaming(final Naming naming) {
         this.naming = naming;
     }
 
@@ -628,11 +619,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.10.1
      */
-    @Parameter ( property = "rpm.targetDir", defaultValue = "${project.build.directory}" )
+    @Parameter(property = "rpm.targetDir", defaultValue = "${project.build.directory}")
     private File targetDir;
 
-    public void setTargetDir ( final File targetDir )
-    {
+    public void setTargetDir(final File targetDir) {
         this.targetDir = targetDir;
     }
 
@@ -650,11 +640,10 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.10.1
      */
-    @Parameter ( property = "rpm.outputFileName" )
+    @Parameter(property = "rpm.outputFileName")
     private String outputFileName;
 
-    public void setOutputFileName ( final String outputFileName )
-    {
+    public void setOutputFileName(final String outputFileName) {
         this.outputFileName = outputFileName;
     }
 
@@ -667,17 +656,15 @@ public class RpmMojo extends AbstractMojo
      *
      * @since 0.11.0
      */
-    @Parameter ( property = "rpm.maximumSupportedRpmVersion" )
+    @Parameter(property = "rpm.maximumSupportedRpmVersion")
     private Version maximumSupportedRpmVersion;
 
-    public void setMaximumSupportedRpmVersion ( final Version maximumSupportedRpmVersion )
-    {
+    public void setMaximumSupportedRpmVersion(final Version maximumSupportedRpmVersion) {
         this.maximumSupportedRpmVersion = maximumSupportedRpmVersion;
     }
 
-    public void setMaximumSupportedRpmVersion ( final String maximumSupportedRpmVersion )
-    {
-        this.maximumSupportedRpmVersion = Version.fromVersionString ( maximumSupportedRpmVersion ).orElseThrow ( () -> new IllegalArgumentException ( String.format ( "Version '%s' is unknown", maximumSupportedRpmVersion ) ) );
+    public void setMaximumSupportedRpmVersion(final String maximumSupportedRpmVersion) {
+        this.maximumSupportedRpmVersion = Version.fromVersionString(maximumSupportedRpmVersion).orElseThrow(() -> new IllegalArgumentException(String.format("Version '%s' is unknown", maximumSupportedRpmVersion)));
     }
 
     /**
@@ -706,595 +693,486 @@ public class RpmMojo extends AbstractMojo
     @Parameter
     private String signatureConfiguration;
 
-    public void setSignatureConfiguration ( final String signatureConfiguration )
-    {
+    public void setSignatureConfiguration(final String signatureConfiguration) {
         this.signatureConfiguration = signatureConfiguration;
     }
 
-      /**
+    /**
      * Timestamp for reproducible output archive entries, either formatted as ISO 8601
      * <code>yyyy-MM-dd'T'HH:mm:ssXXX</code> or as an int representing seconds since the epoch (like
      * <a href="https://reproducible-builds.org/docs/source-date-epoch/">SOURCE_DATE_EPOCH</a>).
      *
      * @since XXX
      */
-    @Parameter( defaultValue = "${project.build.outputTimestamp}" )
+    @Parameter(defaultValue = "${project.build.outputTimestamp}")
     private String outputTimestamp;
 
     private Instant outputTimestampInstant;
 
-    @Component ( role = SignatureConfiguration.class )
+    @Component(role = SignatureConfiguration.class)
     protected Map<String, SignatureConfiguration> signatureConfigurationProviders;
 
     @Override
-    public void execute () throws MojoExecutionException, MojoFailureException
-    {
-        this.logger = new Logger ( getLog () );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        this.logger = new Logger(getLog());
 
-        if ( this.skip )
-        {
-            this.logger.debug ( "Skipping execution" );
+        if (this.skip) {
+            this.logger.debug("Skipping execution");
             return;
         }
 
-        this.eval = new RulesetEvaluator ( this.rulesets );
+        this.eval = new RulesetEvaluator(this.rulesets);
 
         final Path targetDir;
 
-        if ( this.targetDir != null )
-        {
-            targetDir = this.targetDir.toPath ();
-        }
-        else
-        {
-            targetDir = Paths.get ( this.project.getBuild ().getDirectory () );
+        if (this.targetDir != null) {
+            targetDir = this.targetDir.toPath();
+        } else {
+            targetDir = Paths.get(this.project.getBuild().getDirectory());
         }
 
-        if ( !Files.exists ( targetDir ) )
-        {
-            try
-            {
-                Files.createDirectories ( targetDir );
-            }
-            catch ( final FileAlreadyExistsException e )
-            {
+        if (!Files.exists(targetDir)) {
+            try {
+                Files.createDirectories(targetDir);
+            } catch (final FileAlreadyExistsException e) {
                 // silently ignore
-            }
-            catch ( final IOException ioe )
-            {
-                this.logger.debug ( "Unable to create target directory {}", targetDir );
-                throw new MojoExecutionException ( "RPM build failed.", ioe );
+            } catch (final IOException ioe) {
+                this.logger.debug("Unable to create target directory {}", targetDir);
+                throw new MojoExecutionException("RPM build failed.", ioe);
 
             }
         }
 
-        outputTimestampInstant=Optional.ofNullable ( new MavenArchiver ().parseOutputTimestamp ( outputTimestamp ) ).map( Date::toInstant ).orElse( null);
+        outputTimestampInstant = Optional.ofNullable(new MavenArchiver().parseOutputTimestamp(outputTimestamp)).map(Date::toInstant).orElse(null);
 
-        if ( outputTimestampInstant != null ) {
+        if (outputTimestampInstant != null) {
             this.logger.info("Creating reproducible RPM at timestamp: %s", outputTimestampInstant);
         }
 
-        final Path targetFile = makeTargetFile ( targetDir );
+        final Path targetFile = makeTargetFile(targetDir);
 
-        this.logger.debug ( "Max supported RPM version: %s", this.maximumSupportedRpmVersion );
+        this.logger.debug("Max supported RPM version: %s", this.maximumSupportedRpmVersion);
 
-        this.logger.info ( "Writing to target to: %s", targetFile );
-        this.logger.debug ( "Default script interpreter: %s", this.defaultScriptInterpreter );
-        this.logger.debug ( "Default ruleset: %s", this.defaultRuleset );
+        this.logger.info("Writing to target to: %s", targetFile);
+        this.logger.debug("Default script interpreter: %s", this.defaultScriptInterpreter);
+        this.logger.debug("Default ruleset: %s", this.defaultRuleset);
 
-        final String packageName = makePackageName ();
-        final RpmVersion version = makeVersion ();
+        final String packageName = makePackageName();
+        final RpmVersion version = makeVersion();
 
-        this.logger.info ( "RPM base information - name: %s, version: %s, arch: %s", packageName, version, this.architecture );
+        this.logger.info("RPM base information - name: %s, version: %s, arch: %s", packageName, version, this.architecture);
 
-        testLeadFlags ();
+        testLeadFlags();
 
-        try ( final RpmBuilder builder = new RpmBuilder ( packageName, version, this.architecture, targetFile ) )
-        {
-            this.logger.info ( "Writing target file: %s", builder.getTargetFile () );
+        try (final RpmBuilder builder = new RpmBuilder(packageName, version, this.architecture, targetFile)) {
+            this.logger.info("Writing target file: %s", builder.getTargetFile());
 
-            if ( this.leadOverrideArchitecture != null )
-            {
-                this.logger.info ( "Override RPM lead architecture: %s", this.leadOverrideArchitecture );
-                builder.setLeadOverrideArchitecture ( this.leadOverrideArchitecture );
+            if (this.leadOverrideArchitecture != null) {
+                this.logger.info("Override RPM lead architecture: %s", this.leadOverrideArchitecture);
+                builder.setLeadOverrideArchitecture(this.leadOverrideArchitecture);
             }
-            if ( this.leadOverrideOperatingSystem != null )
-            {
-                this.logger.info ( "Override RPM lead operating system: %s", this.leadOverrideOperatingSystem );
-                builder.setLeadOverrideOperatingSystem ( this.leadOverrideOperatingSystem );
+            if (this.leadOverrideOperatingSystem != null) {
+                this.logger.info("Override RPM lead operating system: %s", this.leadOverrideOperatingSystem);
+                builder.setLeadOverrideOperatingSystem(this.leadOverrideOperatingSystem);
             }
 
-            fillPackageInformation ( builder );
-            fillScripts ( builder );
-            fillDependencies ( builder );
-            fillPayload ( builder );
-            customizeHeader( builder );
+            fillPackageInformation(builder);
+            fillScripts(builder);
+            fillDependencies(builder);
+            fillPayload(builder);
+            customizeHeader(builder);
 
             // setup basic signature processors
 
-            if ( this.signatureConfiguration != null )
-            {
-                this.logger.info ( "Initialize with custom signature configuration: %s (%s)", this.signatureConfiguration, this.signatureConfiguration.getClass () );
-                final SignatureConfiguration provider = this.signatureConfigurationProviders.get ( this.signatureConfiguration );
-                if ( provider == null )
-                {
-                    throw new MojoExecutionException ( String.format ( "Unable to find requested signature configuration provider '%s', have: %s", this.signatureConfiguration, this.signatureConfigurationProviders.keySet () ) );
+            if (this.signatureConfiguration != null) {
+                this.logger.info("Initialize with custom signature configuration: %s (%s)", this.signatureConfiguration, this.signatureConfiguration.getClass());
+                final SignatureConfiguration provider = this.signatureConfigurationProviders.get(this.signatureConfiguration);
+                if (provider == null) {
+                    throw new MojoExecutionException(String.format("Unable to find requested signature configuration provider '%s', have: %s", this.signatureConfiguration, this.signatureConfigurationProviders.keySet()));
                 }
-                provider.apply ( builder );
+                provider.apply(builder);
             }
 
-            if ( !this.skipSigning && this.signature != null )
-            {
-                final SignatureProcessor signer = makeRsaSigner ( this.signature );
-                if ( signer != null )
-                {
-                    builder.addSignatureProcessor ( signer );
+            if (!this.skipSigning && this.signature != null) {
+                final SignatureProcessor signer = makeRsaSigner(this.signature);
+                if (signer != null) {
+                    builder.addSignatureProcessor(signer);
                 }
             }
 
             // finally build the file
 
-            builder.build ();
+            builder.build();
 
             // version check
 
-            checkVersion ( builder );
+            checkVersion(builder);
 
             // attach when necessary
 
-            if ( this.attach )
-            {
-                this.logger.info ( "attaching %s", this.classifier );
-                if ( "rpm".equals ( this.project.getPackaging () ) )
-                {
-                    this.project.getArtifact ().setFile ( builder.getTargetFile ().toFile () );
-                }
-                else
-                {
-                    this.projectHelper.attachArtifact ( this.project, "rpm", this.classifier, builder.getTargetFile ().toFile () );
+            if (this.attach) {
+                this.logger.info("attaching %s", this.classifier);
+                if ("rpm".equals(this.project.getPackaging())) {
+                    this.project.getArtifact().setFile(builder.getTargetFile().toFile());
+                } else {
+                    this.projectHelper.attachArtifact(this.project, "rpm", this.classifier, builder.getTargetFile().toFile());
                 }
 
             }
-        }
-        catch ( final IOException e )
-        {
-            throw new MojoExecutionException ( "Failed to write RPM", e );
+        } catch (final IOException e) {
+            throw new MojoExecutionException("Failed to write RPM", e);
         }
     }
 
-    private String makeTargetFilename ()
-    {
+    private String makeTargetFilename() {
         String outputFileName = this.outputFileName;
 
-        if ( outputFileName == null || outputFileName.isEmpty () )
-        {
-            switch ( this.naming.getDefaultFormat () )
-            {
-                case LEGACY:
-                    outputFileName = RpmFileNameProvider.LEGACY_FILENAME_PROVIDER.getRpmFileName ( makePackageName (), makeVersion (), this.architecture );
-                    break;
-                default:
-                    outputFileName = RpmFileNameProvider.DEFAULT_FILENAME_PROVIDER.getRpmFileName ( makePackageName (), makeVersion (), this.architecture );
-                    break;
+        if (outputFileName == null || outputFileName.isEmpty()) {
+            if (this.naming.getDefaultFormat() == Naming.DefaultFormat.LEGACY) {
+                outputFileName = RpmFileNameProvider.LEGACY_FILENAME_PROVIDER.getRpmFileName(makePackageName(), makeVersion(), this.architecture);
+            } else {
+                outputFileName = RpmFileNameProvider.DEFAULT_FILENAME_PROVIDER.getRpmFileName(makePackageName(), makeVersion(), this.architecture);
             }
-            this.logger.debug ( "Using generated file name - %s", outputFileName, outputFileName );
+            this.logger.debug("Using generated file name - %s", outputFileName, outputFileName);
         }
         return outputFileName;
     }
 
-    private Path makeTargetFile ( final Path targetDir )
-    {
-        final String outputFileName = makeTargetFilename ();
-        final Path targetFile = targetDir.resolve ( outputFileName );
-        this.logger.debug ( "Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile );
+    private Path makeTargetFile(final Path targetDir) {
+        final String outputFileName = makeTargetFilename();
+        final Path targetFile = targetDir.resolve(outputFileName);
+        this.logger.debug("Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile);
         return targetFile;
     }
 
-    protected void checkVersion ( final RpmBuilder builder ) throws MojoFailureException
-    {
-        final Version version = builder.getRequiredRpmVersion ();
-        this.logger.info ( "Required RPM version: %s", version );
+    protected void checkVersion(final RpmBuilder builder) throws MojoFailureException {
+        final Version version = builder.getRequiredRpmVersion();
+        this.logger.info("Required RPM version: %s", version);
 
-        if ( this.maximumSupportedRpmVersion == null )
-        {
+        if (this.maximumSupportedRpmVersion == null) {
             return;
         }
 
-        if ( version.compareTo ( this.maximumSupportedRpmVersion ) > 0 )
-        {
-            throw new MojoFailureException ( builder.getTargetFile (), "Generated RPM file not compatible with version " + this.maximumSupportedRpmVersion, String.format ( "The generated RPM package would require at least version %1$s, however the build limits the supported RPM version to %2$s. Either raise the support RPM version or remove features requiring a more recent version of RPM.", version, this.maximumSupportedRpmVersion ) );
+        if (version.compareTo(this.maximumSupportedRpmVersion) > 0) {
+            throw new MojoFailureException(builder.getTargetFile(), "Generated RPM file not compatible with version " + this.maximumSupportedRpmVersion, String.format("The generated RPM package would require at least version %1$s, however the build limits the supported RPM version to %2$s. Either raise the support RPM version or remove features requiring a more recent version of RPM.", version, this.maximumSupportedRpmVersion));
         }
     }
 
-    private void testLeadFlags ()
-    {
-        if ( this.leadOverrideArchitecture == null )
-        {
-            final Optional<Architecture> arch = Architecture.fromAlias ( this.architecture );
-            if ( !arch.isPresent () )
-            {
-                this.logger.warn ( "Architecture '%s' cannot be mapped to lead information. Consider using setting 'leadOverrideArchitecture'.", this.architecture );
+    private void testLeadFlags() {
+        if (this.leadOverrideArchitecture == null) {
+            final Optional<Architecture> arch = Architecture.fromAlias(this.architecture);
+            if (!arch.isPresent()) {
+                this.logger.warn("Architecture '%s' cannot be mapped to lead information. Consider using setting 'leadOverrideArchitecture'.", this.architecture);
             }
         }
 
-        if ( this.leadOverrideOperatingSystem == null )
-        {
-            final Optional<OperatingSystem> os = OperatingSystem.fromAlias ( this.operatingSystem );
-            if ( !os.isPresent () )
-            {
-                this.logger.warn ( "OperatingSystem '%s' cannot be mapped to lead information. Consider using setting 'leadOverrideOperatingSystem'.", this.operatingSystem );
+        if (this.leadOverrideOperatingSystem == null) {
+            final Optional<OperatingSystem> os = OperatingSystem.fromAlias(this.operatingSystem);
+            if (!os.isPresent()) {
+                this.logger.warn("OperatingSystem '%s' cannot be mapped to lead information. Consider using setting 'leadOverrideOperatingSystem'.", this.operatingSystem);
             }
         }
 
     }
 
-    private SignatureProcessor makeRsaSigner ( final Signature signature ) throws MojoExecutionException, MojoFailureException
-    {
-        final PGPPrivateKey privateKey = SigningHelper.loadKey ( signature, this.logger );
-        if ( privateKey == null )
-        {
+    private SignatureProcessor makeRsaSigner(final Signature signature) throws MojoExecutionException, MojoFailureException {
+        final PGPPrivateKey privateKey = SigningHelper.loadKey(signature, this.logger);
+        if (privateKey == null) {
             return null;
         }
-        return new RsaHeaderSignatureProcessor ( privateKey, HashAlgorithm.from ( signature.getHashAlgorithm () ) );
+        return new RsaHeaderSignatureProcessor(privateKey, HashAlgorithm.from(signature.getHashAlgorithm()));
     }
 
     @FunctionalInterface
-    private interface DependencyAdder
-    {
-        void add ( String name, String version, RpmDependencyFlags[] flags );
+    private interface DependencyAdder {
+        void add(String name, String version, RpmDependencyFlags[] flags);
     }
 
-    private void fillDependencies ( final RpmBuilder builder )
-    {
-        addAllDependencies ( "require", this.requires, builder::addRequirement, RpmMojo::validateName, null );
-        addAllDependencies ( "prerequire", this.prerequisites, builder::addRequirement, RpmMojo::validateName, flags -> flags.add ( RpmDependencyFlags.PREREQ ) );
-        addAllDependencies ( "provide", this.provides, builder::addProvides, ( (Consumer<SimpleDependency>)RpmMojo::validateName ).andThen ( this::validateNoVersion ), null );
-        addAllDependencies ( "conflict", this.conflicts, builder::addConflicts, RpmMojo::validateName, null );
-        addAllDependencies ( "obsolete", this.obsoletes, builder::addObsoletes, RpmMojo::validateName, null );
+    private void fillDependencies(final RpmBuilder builder) {
+        addAllDependencies("require", this.requires, builder::addRequirement, RpmMojo::validateName, null);
+        addAllDependencies("prerequire", this.prerequisites, builder::addRequirement, RpmMojo::validateName, flags -> flags.add(RpmDependencyFlags.PREREQ));
+        addAllDependencies("provide", this.provides, builder::addProvides, ((Consumer<SimpleDependency>) RpmMojo::validateName).andThen(this::validateNoVersion), null);
+        addAllDependencies("conflict", this.conflicts, builder::addConflicts, RpmMojo::validateName, null);
+        addAllDependencies("obsolete", this.obsoletes, builder::addObsoletes, RpmMojo::validateName, null);
 
-        addAllDependencies ( "suggest", this.suggests, builder::addSuggests, RpmMojo::validateName, null );
-        addAllDependencies ( "enhance", this.enhances, builder::addEnhances, RpmMojo::validateName, null );
-        addAllDependencies ( "supplement", this.supplements, builder::addSupplements, RpmMojo::validateName, null );
-        addAllDependencies ( "recommends", this.recommends, builder::addRecommends, RpmMojo::validateName, null );
+        addAllDependencies("suggest", this.suggests, builder::addSuggests, RpmMojo::validateName, null);
+        addAllDependencies("enhance", this.enhances, builder::addEnhances, RpmMojo::validateName, null);
+        addAllDependencies("supplement", this.supplements, builder::addSupplements, RpmMojo::validateName, null);
+        addAllDependencies("recommends", this.recommends, builder::addRecommends, RpmMojo::validateName, null);
     }
 
-    private static void validateName ( final SimpleDependency dep )
-    {
-        if ( Strings.isNullOrEmpty ( dep.getName () ) )
-        {
-            throw new IllegalStateException ( "'name' of dependency must be set" );
+    private static void validateName(final SimpleDependency dep) {
+        if (Strings.isNullOrEmpty(dep.getName())) {
+            throw new IllegalStateException("'name' of dependency must be set");
         }
     }
 
-    private void validateNoVersion ( final SimpleDependency dep )
-    {
-        if ( !Strings.isNullOrEmpty ( dep.getVersion () ) )
-        {
-            getLog ().warn ( String.format ( "Provides should not have a version: %s : %s. Use at your own risk!", dep.getName (), dep.getVersion () ) );
+    private void validateNoVersion(final SimpleDependency dep) {
+        if (!Strings.isNullOrEmpty(dep.getVersion())) {
+            getLog().warn(String.format("Provides should not have a version: %s : %s. Use at your own risk!", dep.getName(), dep.getVersion()));
         }
     }
 
-    private <T extends SimpleDependency> void addAllDependencies ( final String depName, final List<T> deps, final DependencyAdder adder, final Consumer<T> validator, final Consumer<Set<RpmDependencyFlags>> flagsCustomizer )
-    {
-        if ( deps == null )
-        {
+    private <T extends SimpleDependency> void addAllDependencies(final String depName, final List<T> deps, final DependencyAdder adder, final Consumer<T> validator, final Consumer<Set<RpmDependencyFlags>> flagsCustomizer) {
+        if (deps == null) {
             return;
         }
 
-        for ( final T dep : deps )
-        {
-            validator.accept ( dep );
+        for (final T dep : deps) {
+            validator.accept(dep);
 
-            final String name = dep.getName ();
-            final String version = dep.getVersion ();
-            final Set<RpmDependencyFlags> flags = dep.getFlags ();
+            final String name = dep.getName();
+            final String version = dep.getVersion();
+            final Set<RpmDependencyFlags> flags = dep.getFlags();
 
-            if ( flagsCustomizer != null )
-            {
-                flagsCustomizer.accept ( flags );
+            if (flagsCustomizer != null) {
+                flagsCustomizer.accept(flags);
             }
 
-            this.logger.info ( "Adding dependency [%s]: name = %s, version = %s, flags = %s", depName, name, version, flags );
+            this.logger.info("Adding dependency [%s]: name = %s, version = %s, flags = %s", depName, name, version, flags);
 
-            adder.add ( name, version, flags.toArray ( new RpmDependencyFlags[0] ) );
+            adder.add(name, version, flags.toArray(new RpmDependencyFlags[0]));
         }
     }
 
-    private void fillScripts ( final RpmBuilder builder ) throws IOException
-    {
-        setScript ( "prein", this.beforeInstallation, builder::setPreInstallationScript );
-        setScript ( "postin", this.afterInstallation, builder::setPostInstallationScript );
-        setScript ( "prerm", this.beforeRemoval, builder::setPreRemoveScript );
-        setScript ( "postrm", this.afterRemoval, builder::setPostRemoveScript );
-        setScript ( "pretrans", this.beforeTransaction, builder::setPreTransactionScript );
-        setScript ( "posttrans", this.afterTransaction, builder::setPostTransactionScript );
+    private void fillScripts(final RpmBuilder builder) throws IOException {
+        setScript("prein", this.beforeInstallation, builder::setPreInstallationScript);
+        setScript("postin", this.afterInstallation, builder::setPostInstallationScript);
+        setScript("prerm", this.beforeRemoval, builder::setPreRemoveScript);
+        setScript("postrm", this.afterRemoval, builder::setPostRemoveScript);
+        setScript("pretrans", this.beforeTransaction, builder::setPreTransactionScript);
+        setScript("posttrans", this.afterTransaction, builder::setPostTransactionScript);
     }
 
-    private void setScript ( final String scriptName, final Script script, final ScriptSetter setter ) throws IOException
-    {
-        if ( script == null )
-        {
+    private void setScript(final String scriptName, final Script script, final ScriptSetter setter) throws IOException {
+        if (script == null) {
             return;
         }
 
-        final String scriptContent = script.makeScriptContent ();
+        final String scriptContent = script.makeScriptContent();
 
-        if ( Strings.isNullOrEmpty ( scriptContent ) )
-        {
+        if (Strings.isNullOrEmpty(scriptContent)) {
             return;
         }
 
-        String interpreter = script.getInterpreter ();
-        this.logger.debug ( "[script %s:]: explicit interpreter: %s", scriptName, interpreter );
+        String interpreter = script.getInterpreter();
+        this.logger.debug("[script %s:]: explicit interpreter: %s", scriptName, interpreter);
 
-        if ( Strings.isNullOrEmpty ( interpreter ) )
-        {
-            interpreter = detectInterpreter ( scriptContent );
-            this.logger.debug ( "[script %s:]: detected interpreter: %s", scriptName, interpreter );
+        if (Strings.isNullOrEmpty(interpreter)) {
+            interpreter = detectInterpreter(scriptContent);
+            this.logger.debug("[script %s:]: detected interpreter: %s", scriptName, interpreter);
         }
-        if ( Strings.isNullOrEmpty ( interpreter ) )
-        {
+        if (Strings.isNullOrEmpty(interpreter)) {
             interpreter = this.defaultScriptInterpreter;
-            this.logger.debug ( "[script %s:]: default interpreter: %s", scriptName, interpreter );
+            this.logger.debug("[script %s:]: default interpreter: %s", scriptName, interpreter);
         }
-        this.logger.info ( "[script %s]: Using script interpreter: %s", scriptName, interpreter );
-        this.logger.debug ( "[script %s]: %s", scriptName, scriptContent );
+        this.logger.info("[script %s]: Using script interpreter: %s", scriptName, interpreter);
+        this.logger.debug("[script %s]: %s", scriptName, scriptContent);
 
-        setter.accept ( interpreter, scriptContent );
+        setter.accept(interpreter, scriptContent);
     }
 
-    private String detectInterpreter ( final String scriptContent ) throws IOException
-    {
-        final String firstLine = CharSource.wrap ( scriptContent ).readFirstLine ();
-        if ( Strings.isNullOrEmpty ( firstLine ) )
-        {
+    private String detectInterpreter(final String scriptContent) throws IOException {
+        final String firstLine = CharSource.wrap(scriptContent).readFirstLine();
+        if (Strings.isNullOrEmpty(firstLine)) {
             return null;
         }
 
-        if ( firstLine.startsWith ( "#!" ) && firstLine.length () > 2 )
-        {
-            return firstLine.substring ( 2 );
+        if (firstLine.startsWith("#!") && firstLine.length() > 2) {
+            return firstLine.substring(2);
         }
 
         return null;
     }
 
-    protected void fillPayload ( final RpmBuilder builder ) throws MojoFailureException, IOException
-    {
-        if ( this.entries == null )
-        {
+    protected void fillPayload(final RpmBuilder builder) throws MojoFailureException, IOException {
+        if (this.entries == null) {
             return;
         }
 
-        final BuilderContext ctx = builder.newContext ();
+        final BuilderContext ctx = builder.newContext();
 
-        this.logger.debug ( "Building payload:" );
+        this.logger.debug("Building payload:");
 
-        for ( final PackageEntry entry : this.entries )
-        {
-            if ( !entry.getSkip () )
-            {
-                try
-                {
-                    entry.validate ();
-                }
-                catch ( final IllegalStateException e )
-                {
-                    throw new MojoFailureException ( e.getMessage () );
+        for (final PackageEntry entry : this.entries) {
+            if (!entry.getSkip()) {
+                try {
+                    entry.validate();
+                } catch (final IllegalStateException e) {
+                    throw new MojoFailureException(e.getMessage());
                 }
 
-                fillFromEntry ( ctx, entry );
+                fillFromEntry(ctx, entry);
             }
         }
     }
 
-    private void customizeHeader ( final RpmBuilder builder )
-    {
+    private void customizeHeader(final RpmBuilder builder) {
 
-        builder.setHeaderCustomizer ( rpmTagHeader -> {
-            if ( this.prefixes != null && ! this.prefixes.isEmpty () ) {
-                this.logger.debug ( "Building relocatable package: {}", this.prefixes );
+        builder.setHeaderCustomizer(rpmTagHeader -> {
+            if (this.prefixes != null && !this.prefixes.isEmpty()) {
+                this.logger.debug("Building relocatable package: {}", this.prefixes);
                 // TODO: migrate to flags once https://github.com/eclipse/packagedrone/issues/130 is fixed
                 final int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
-                rpmTagHeader.putStringArray ( RPMTAG_PREFIXES, this.prefixes.toArray ( new String[0] ) );
+                rpmTagHeader.putStringArray(RPMTAG_PREFIXES, this.prefixes.toArray(new String[0]));
             }
 
-            if(outputTimestampInstant!=null)
-            {
-                this.logger.debug ( "Overriding build time: {}", outputTimestampInstant );
-                rpmTagHeader.putInt ( RpmTag.BUILDTIME, (int) ( outputTimestampInstant.toEpochMilli () / 1000 ) );
+            if (outputTimestampInstant != null) {
+                this.logger.debug("Overriding build time: {}", outputTimestampInstant);
+                rpmTagHeader.putInt(RpmTag.BUILDTIME, (int) (outputTimestampInstant.toEpochMilli() / 1000));
             }
-        } );
+        });
     }
 
-    private void fillFromEntry ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
-    {
-        this.logger.debug ( "  %s:", entry.getName () );
+    private void fillFromEntry(final BuilderContext ctx, final PackageEntry entry) throws IOException {
+        this.logger.debug("  %s:", entry.getName());
 
-        if ( entry.getDirectory () != null && entry.getDirectory () )
-        {
-            fillFromEntryDirectory ( ctx, entry );
-        }
-        else if ( entry.getFile () != null )
-        {
-            fillFromEntryFile ( ctx, entry );
-        }
-        else if ( entry.getLinkTo () != null )
-        {
-            fillFromEntryLinkTo ( ctx, entry );
-        }
-        else if ( entry.getCollect () != null )
-        {
-            fillFromEntryCollect ( ctx, entry );
-        }
-        else if ( Boolean.TRUE.equals ( entry.getGhost () ) )
-        {
-            fillFromEntryGhost ( ctx, entry );
+        if (entry.getDirectory() != null && entry.getDirectory()) {
+            fillFromEntryDirectory(ctx, entry);
+        } else if (entry.getFile() != null) {
+            fillFromEntryFile(ctx, entry);
+        } else if (entry.getLinkTo() != null) {
+            fillFromEntryLinkTo(ctx, entry);
+        } else if (entry.getCollect() != null) {
+            fillFromEntryCollect(ctx, entry);
+        } else if (Boolean.TRUE.equals(entry.getGhost())) {
+            fillFromEntryGhost(ctx, entry);
         }
     }
 
-    private void fillFromEntryDirectory ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
-    {
-        this.logger.debug ( "    as directory:" );
-        ctx.addDirectory ( entry.getName (), makeProvider ( entry, "      - " ) );
+    private void fillFromEntryDirectory(final BuilderContext ctx, final PackageEntry entry) throws IOException {
+        this.logger.debug("    as directory:");
+        ctx.addDirectory(entry.getName(), makeProvider(entry, "      - "));
     }
 
-    private void fillFromEntryFile ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
-    {
-        this.logger.debug ( "    as file:" );
-        final Path source = entry.getFile ().toPath ().toAbsolutePath ();
-        this.logger.debug ( "      - source: %s", source );
+    private void fillFromEntryFile(final BuilderContext ctx, final PackageEntry entry) throws IOException {
+        this.logger.debug("    as file:");
+        final Path source = entry.getFile().toPath().toAbsolutePath();
+        this.logger.debug("      - source: %s", source);
 
-        ctx.addFile ( entry.getName (), source, makeProvider ( entry, "      - " ) );
+        ctx.addFile(entry.getName(), source, makeProvider(entry, "      - "));
     }
 
-    private void fillFromEntryGhost ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
-    {
-        this.logger.debug ( "    as ghost:" );
+    private void fillFromEntryGhost(final BuilderContext ctx, final PackageEntry entry) throws IOException {
+        this.logger.debug("    as ghost:");
 
-        ctx.addFile ( entry.getName (), ByteBuffer.allocate ( 0 ), makeProvider ( entry, "      - " ) );
+        ctx.addFile(entry.getName(), ByteBuffer.allocate(0), makeProvider(entry, "      - "));
     }
 
-    private void fillFromEntryLinkTo ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
-    {
-        this.logger.debug ( "    as symbolic link:" );
-        this.logger.debug ( "      - linkTo: %s", entry.getLinkTo () );
-        ctx.addSymbolicLink ( entry.getName (), entry.getLinkTo (), makeProvider ( entry, "      - " ) );
+    private void fillFromEntryLinkTo(final BuilderContext ctx, final PackageEntry entry) throws IOException {
+        this.logger.debug("    as symbolic link:");
+        this.logger.debug("      - linkTo: %s", entry.getLinkTo());
+        ctx.addSymbolicLink(entry.getName(), entry.getLinkTo(), makeProvider(entry, "      - "));
     }
 
-    private void fillFromEntryCollect ( final BuilderContext ctx, final PackageEntry entry ) throws IOException
-    {
-        this.logger.debug ( "    as collector:" );
+    private void fillFromEntryCollect(final BuilderContext ctx, final PackageEntry entry) throws IOException {
+        this.logger.debug("    as collector:");
 
-        final Collector collector = entry.getCollect ();
+        final Collector collector = entry.getCollect();
 
-        this.logger.debug ( "      - configuration: %s", collector );
+        this.logger.debug("      - configuration: %s", collector);
 
         final String padding = "          ";
 
-        final Path from = collector.getFrom ().toPath ();
-        final String targetPrefix = entry.getName ().endsWith ( "/" ) ? entry.getName () : entry.getName () + "/";
+        final Path from = collector.getFrom().toPath();
+        final String targetPrefix = entry.getName().endsWith("/") ? entry.getName() : entry.getName() + "/";
 
-        this.logger.debug ( "      - files:" );
+        this.logger.debug("      - files:");
 
-        final MojoFileInformationProvider provider = makeProvider ( entry, "            - " );
+        final MojoFileInformationProvider provider = makeProvider(entry, "            - ");
 
-        final DirectoryScanner scanner = new DirectoryScanner ();
-        scanner.setBasedir ( from.toFile () );
-        scanner.setCaseSensitive ( true );
-        scanner.setFollowSymlinks ( true );
-        scanner.setIncludes ( collector.getIncludes () );
-        scanner.setExcludes ( collector.getExcludes () );
-        scanner.scan ();
+        final DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(from.toFile());
+        scanner.setCaseSensitive(true);
+        scanner.setFollowSymlinks(true);
+        scanner.setIncludes(collector.getIncludes());
+        scanner.setExcludes(collector.getExcludes());
+        scanner.scan();
 
-        if ( collector.isDirectories () )
-        {
-            String[] includedDirectories = scanner.getIncludedDirectories ();
-            Arrays.sort ( includedDirectories );
-            for ( final String directory : includedDirectories)
-            {
-                final Path dir = from.resolve ( directory );
-                if ( dir.equals ( from ) )
-                {
+        if (collector.isDirectories()) {
+            String[] includedDirectories = scanner.getIncludedDirectories();
+            Arrays.sort(includedDirectories);
+            for (final String directory : includedDirectories) {
+                final Path dir = from.resolve(directory);
+                if (dir.equals(from)) {
                     continue;
                 }
 
-                RpmMojo.this.logger.debug ( "%s%s (dir)", padding, dir );
-                final Path relative = from.relativize ( dir );
-                final String targetName = makeUnix ( targetPrefix + relative );
-                RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
-                ctx.addDirectory ( targetName, provider );
+                RpmMojo.this.logger.debug("%s%s (dir)", padding, dir);
+                final Path relative = from.relativize(dir);
+                final String targetName = makeUnix(targetPrefix + relative);
+                RpmMojo.this.logger.debug("%s  - target: %s", padding, targetName);
+                ctx.addDirectory(targetName, provider);
             }
         }
 
-        String[] includedFiles = scanner.getIncludedFiles ();
-        Arrays.sort ( includedFiles );
-        for ( final String relative : includedFiles)
-        {
-            final Path file = from.resolve ( relative );
-            final String targetName = makeUnix ( targetPrefix + relative );
+        String[] includedFiles = scanner.getIncludedFiles();
+        Arrays.sort(includedFiles);
+        for (final String relative : includedFiles) {
+            final Path file = from.resolve(relative);
+            final String targetName = makeUnix(targetPrefix + relative);
 
-            if ( java.nio.file.Files.isSymbolicLink ( file ) )
-            {
-                RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
-                if ( collector.isSymbolicLinks () )
-                {
-                    final Path sym = java.nio.file.Files.readSymbolicLink ( file );
-                    RpmMojo.this.logger.debug ( "%s%s (symlink)", padding, file );
-                    RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
-                    RpmMojo.this.logger.debug ( "%s  - linkTo: %s", padding, sym.toString () );
+            if (java.nio.file.Files.isSymbolicLink(file)) {
+                RpmMojo.this.logger.debug("%s%s (symlink)", padding, file);
+                if (collector.isSymbolicLinks()) {
+                    final Path sym = java.nio.file.Files.readSymbolicLink(file);
+                    RpmMojo.this.logger.debug("%s%s (symlink)", padding, file);
+                    RpmMojo.this.logger.debug("%s  - target: %s", padding, targetName);
+                    RpmMojo.this.logger.debug("%s  - linkTo: %s", padding, sym.toString());
                     ctx.addSymbolicLink(targetName, sym.toString(), provider);
+                } else {
+                    RpmMojo.this.logger.debug("%s%s (symlink) - ignoring symbolic links", padding, file);
                 }
-                else
-                {
-                    RpmMojo.this.logger.debug ( "%s%s (symlink) - ignoring symbolic links", padding, file );
-                }
-            }
-            else
-            {
-                RpmMojo.this.logger.debug ( "%s%s (file)", padding, file );
-                RpmMojo.this.logger.debug ( "%s  - target: %s", padding, targetName );
+            } else {
+                RpmMojo.this.logger.debug("%s%s (file)", padding, file);
+                RpmMojo.this.logger.debug("%s  - target: %s", padding, targetName);
 
-                ctx.addFile ( targetName, file, provider );
+                ctx.addFile(targetName, file, provider);
             }
         }
     }
 
-    protected String makeUnix ( final String path )
-    {
-        return path.replace ( "\\", "/" );
+    protected String makeUnix(final String path) {
+        return path.replace("\\", "/");
     }
 
-    private MojoFileInformationProvider makeProvider ( final PackageEntry entry, final String padding )
-    {
+    private MojoFileInformationProvider makeProvider(final PackageEntry entry, final String padding) {
         String ruleset = this.defaultRuleset;
-        if ( entry.getRuleset () != null && !entry.getRuleset ().isEmpty () )
-        {
-            this.logger.debug ( "Using specified ruleset: '%s'", entry.getRuleset () );
-            ruleset = entry.getRuleset ();
+        if (entry.getRuleset() != null && !entry.getRuleset().isEmpty()) {
+            this.logger.debug("Using specified ruleset: '%s'", entry.getRuleset());
+            ruleset = entry.getRuleset();
+        } else if (this.defaultRuleset != null && !this.defaultRuleset.isEmpty()) {
+            this.logger.debug("Using default ruleset: '%s'", this.defaultRuleset);
         }
-        else if ( this.defaultRuleset != null && !this.defaultRuleset.isEmpty () )
-        {
-            this.logger.debug ( "Using default ruleset: '%s'", this.defaultRuleset );
-        }
-        return new MojoFileInformationProvider ( this.eval, ruleset, entry, l -> this.logger.debug ( "%s%s", padding, l ), outputTimestampInstant ) ;
+        return new MojoFileInformationProvider(this.eval, ruleset, entry, l -> this.logger.debug("%s%s", padding, l), outputTimestampInstant);
     }
 
-    private String makePackageName ()
-    {
+    private String makePackageName() {
         final Case nameCase;
-        if ( this.naming == null )
-        {
+        if (this.naming == null) {
             nameCase = Case.UNMODIFIED;
-            if ( !this.packageName.toLowerCase ().equals ( this.packageName ) )
-            {
-                getLog ().warn ( "Since version 0.9.0 of the RPM builder mojo the default behavior of forcing a lower case package name was removed. This package name seems to contain non-lowercase characters. It is possible to restore the previous behavior by setting the 'case' value in the 'naming' element." );
+            if (!this.packageName.toLowerCase().equals(this.packageName)) {
+                getLog().warn("Since version 0.9.0 of the RPM builder mojo the default behavior of forcing a lower case package name was removed. This package name seems to contain non-lowercase characters. It is possible to restore the previous behavior by setting the 'case' value in the 'naming' element.");
             }
-        }
-        else
-        {
-            nameCase = this.naming.getCase ();
+        } else {
+            nameCase = this.naming.getCase();
         }
 
-        switch ( nameCase )
-        {
+        switch (nameCase) {
             case LOWERCASE:
-                return this.packageName.trim ().toLowerCase ();
+                return this.packageName.trim().toLowerCase();
             case UNMODIFIED:
             default:
-                return this.packageName.trim ();
+                return this.packageName.trim();
         }
     }
 
-    private RpmVersion makeVersion ()
-    {
-        if ( rpmVersion != null )
-        {
+    private RpmVersion makeVersion() {
+        if (rpmVersion != null) {
             return rpmVersion;
         }
 
-        if ( !this.forceRelease && isSnapshotVersion () )
-        {
+        if (!this.forceRelease && isSnapshotVersion()) {
             if (this.snapshotVersion != null && !this.snapshotVersion.isEmpty()) {
                 this.logger.info("Building with SNAPSHOT version from <snapshotVersion> parameter: %s", this.snapshotVersion);
                 return new RpmVersion(this.epoch, this.snapshotVersion, makeSnapshotReleaseString());
@@ -1304,161 +1182,130 @@ public class RpmMojo extends AbstractMojo
             this.logger.info("Building with SNAPSHOT version from project: %s", baseVersion);
             return new RpmVersion(this.epoch, baseVersion, makeSnapshotReleaseString());
         }
-        return new RpmVersion ( this.epoch, this.version, this.release );
+        return new RpmVersion(this.epoch, this.version, this.release);
     }
 
-    private boolean isSnapshotVersion ()
-    {
-        return this.project.getVersion ().endsWith ( SNAPSHOT_SUFFIX );
+    private boolean isSnapshotVersion() {
+        return this.project.getVersion().endsWith(SNAPSHOT_SUFFIX);
     }
 
-    private String makeSnapshotReleaseString ()
-    {
-        if ( this.snapshotBuildId == null || this.snapshotBuildId.isEmpty () )
-        {
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern ( "yyyyMMddHHmm", Locale.ROOT );
-            return this.snapshotReleasePrefix + formatter.format ( Optional.ofNullable( outputTimestampInstant ).orElse( Instant.now () ).atOffset ( ZoneOffset.UTC ) );
-        }
-        else
-        {
+    private String makeSnapshotReleaseString() {
+        if (this.snapshotBuildId == null || this.snapshotBuildId.isEmpty()) {
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm", Locale.ROOT);
+            return this.snapshotReleasePrefix + formatter.format(Optional.ofNullable(outputTimestampInstant).orElse(Instant.now()).atOffset(ZoneOffset.UTC));
+        } else {
             return this.snapshotReleasePrefix + this.snapshotBuildId;
         }
     }
 
-    protected void fillPackageInformation ( final RpmBuilder builder )
-    {
-        final PackageInformation pinfo = builder.getInformation ();
+    protected void fillPackageInformation(final RpmBuilder builder) {
+        final PackageInformation pinfo = builder.getInformation();
 
-        if ( this.sourcePackage == null || this.sourcePackage.isEmpty () )
-        {
-            if ( this.generateDefaultSourcePackage )
-            {
-                final String sourcePackage = generateDefaultSourcePackageName ();
-                this.logger.debug ( "Using generated source package name of '%s'. You can disable this by setting 'generateDefaultSourcePackage' to false.", sourcePackage );
+        if (this.sourcePackage == null || this.sourcePackage.isEmpty()) {
+            if (this.generateDefaultSourcePackage) {
+                final String sourcePackage = generateDefaultSourcePackageName();
+                this.logger.debug("Using generated source package name of '%s'. You can disable this by setting 'generateDefaultSourcePackage' to false.", sourcePackage);
                 this.sourcePackage = sourcePackage;
             }
         }
 
-        ifSet ( pinfo::setDescription, this.description );
-        ifSet ( pinfo::setSummary, this.summary );
-        ifSet ( pinfo::setGroup, this.group );
-        ifSet ( pinfo::setDistribution, this.distribution );
-        ifSet ( pinfo::setOperatingSystem, this.operatingSystem );
-        ifSet ( pinfo::setSourcePackage, this.sourcePackage );
+        ifSet(pinfo::setDescription, this.description);
+        ifSet(pinfo::setSummary, this.summary);
+        ifSet(pinfo::setGroup, this.group);
+        ifSet(pinfo::setDistribution, this.distribution);
+        ifSet(pinfo::setOperatingSystem, this.operatingSystem);
+        ifSet(pinfo::setSourcePackage, this.sourcePackage);
 
-        if ( this.evalHostname )
-        {
-            ifSet ( pinfo::setBuildHost, makeHostname () );
+        if (this.evalHostname) {
+            ifSet(pinfo::setBuildHost, makeHostname());
         }
 
-        ifSet ( pinfo::setUrl, this.project.getUrl () );
-        ifSet ( pinfo::setVendor, this.vendor, this::makeVendor );
-        ifSet ( pinfo::setPackager, this.packager, this::makePackager );
+        ifSet(pinfo::setUrl, this.project.getUrl());
+        ifSet(pinfo::setVendor, this.vendor, this::makeVendor);
+        ifSet(pinfo::setPackager, this.packager, this::makePackager);
 
-        ifSet ( pinfo::setLicense, this.license, this::makeLicense );
+        ifSet(pinfo::setLicense, this.license, this::makeLicense);
     }
 
-    private String generateDefaultSourcePackageName ()
-    {
-        return RpmLead.toLeadName ( makePackageName (), makeVersion () ) + ".src.rpm";
+    private String generateDefaultSourcePackageName() {
+        return RpmLead.toLeadName(makePackageName(), makeVersion()) + ".src.rpm";
     }
 
-    private String makeVendor ()
-    {
-        if ( this.project.getOrganization () != null )
-        {
-            return this.project.getOrganization ().getName ();
+    private String makeVendor() {
+        if (this.project.getOrganization() != null) {
+            return this.project.getOrganization().getName();
         }
         return null;
     }
 
-    private String makePackager ()
-    {
-        if ( this.project.getOrganization () == null )
-        {
+    private String makePackager() {
+        if (this.project.getOrganization() == null) {
             return null;
         }
 
-        final String org = this.project.getOrganization ().getName ();
-        final String url = this.project.getOrganization ().getUrl ();
+        final String org = this.project.getOrganization().getName();
+        final String url = this.project.getOrganization().getUrl();
 
-        if ( org == null || url == null || org.isEmpty () || url.isEmpty () )
-        {
+        if (org == null || url == null || org.isEmpty() || url.isEmpty()) {
             return null;
         }
 
-        return String.format ( "%s <%s>", org, url );
+        return String.format("%s <%s>", org, url);
     }
 
-    private String makeLicense ()
-    {
-        return this.project.getLicenses ().stream ().map ( License::getName ).collect ( Collectors.joining ( ", " ) );
+    private String makeLicense() {
+        return this.project.getLicenses().stream().map(License::getName).collect(Collectors.joining(", "));
     }
 
-    private String makeHostname ()
-    {
+    private String makeHostname() {
         String hostname;
 
-        try
-        {
-            hostname = readAllLines ( Paths.get ( "/etc/hostname" ), US_ASCII ).stream ().findFirst ().orElse ( null );
+        try {
+            hostname = readAllLines(Paths.get("/etc/hostname"), US_ASCII).stream().findFirst().orElse(null);
 
-            if ( hostname != null && !hostname.isEmpty () )
-            {
-                this.logger.debug ( "Hostname: from /etc/hostname -> '%s'", hostname );
+            if (hostname != null && !hostname.isEmpty()) {
+                this.logger.debug("Hostname: from /etc/hostname -> '%s'", hostname);
                 return hostname;
             }
-        }
-        catch ( final IOException e )
-        {
+        } catch (final IOException e) {
             // ignore and try one of the following ways to detect the hostname
         }
 
-        hostname = System.getenv ( "COMPUTERNAME" );
-        if ( hostname != null && !hostname.isEmpty () )
-        {
-            this.logger.debug ( "Hostname: from COMPUTERNAME -> '%s'", hostname );
-            return hostname.toLowerCase ();
+        hostname = System.getenv("COMPUTERNAME");
+        if (hostname != null && !hostname.isEmpty()) {
+            this.logger.debug("Hostname: from COMPUTERNAME -> '%s'", hostname);
+            return hostname.toLowerCase();
         }
 
-        hostname = System.getenv ( "hostname" );
-        if ( hostname != null && !hostname.isEmpty () )
-        {
-            this.logger.debug ( "Hostname: from hostname -> '%s'", hostname );
+        hostname = System.getenv("hostname");
+        if (hostname != null && !hostname.isEmpty()) {
+            this.logger.debug("Hostname: from hostname -> '%s'", hostname);
             return hostname;
         }
 
-        try
-        {
-            hostname = InetAddress.getLocalHost ().getHostName ();
-            this.logger.debug ( "Hostname: from lookup -> '%s'", hostname );
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+            this.logger.debug("Hostname: from lookup -> '%s'", hostname);
             return hostname;
-        }
-        catch ( final UnknownHostException e )
-        {
-            this.logger.debug ( "Hostname: Falling back to 'localhost'" );
+        } catch (final UnknownHostException e) {
+            this.logger.debug("Hostname: Falling back to 'localhost'");
             return "localhost";
         }
     }
 
-    private interface StringSupplier extends Supplier<String>
-    {
+    private interface StringSupplier extends Supplier<String> {
     }
 
-    private static void ifSet ( final Consumer<String> setter, final String value, final StringSupplier... suppliers )
-    {
-        if ( value != null && !value.isEmpty () )
-        {
-            setter.accept ( value );
+    private static void ifSet(final Consumer<String> setter, final String value, final StringSupplier... suppliers) {
+        if (value != null && !value.isEmpty()) {
+            setter.accept(value);
             return;
         }
 
-        for ( final StringSupplier sup : suppliers )
-        {
-            final String v = sup.get ();
-            if ( v != null && !v.isEmpty () )
-            {
-                setter.accept ( v );
+        for (final StringSupplier sup : suppliers) {
+            final String v = sup.get();
+            if (v != null && !v.isEmpty()) {
+                setter.accept(v);
                 return;
             }
         }

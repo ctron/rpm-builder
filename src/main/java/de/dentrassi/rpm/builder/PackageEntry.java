@@ -12,10 +12,8 @@ package de.dentrassi.rpm.builder;
 
 import java.io.File;
 
-public class PackageEntry extends EntryDetails
-{
-    public static class Collector
-    {
+public class PackageEntry extends EntryDetails {
+    public static class Collector {
         private File from;
 
         private boolean directories = true;
@@ -26,60 +24,49 @@ public class PackageEntry extends EntryDetails
 
         private String[] excludes;
 
-        public File getFrom ()
-        {
+        public File getFrom() {
             return this.from;
         }
 
-        public void setFrom ( final File from )
-        {
+        public void setFrom(final File from) {
             this.from = from;
         }
 
-        public void setDirectories ( final boolean directories )
-        {
+        public void setDirectories(final boolean directories) {
             this.directories = directories;
         }
 
-        public boolean isDirectories ()
-        {
+        public boolean isDirectories() {
             return this.directories;
         }
 
-        public void setSymbolicLinks ( final boolean symbolicLinks )
-        {
+        public void setSymbolicLinks(final boolean symbolicLinks) {
             this.symbolicLinks = symbolicLinks;
         }
 
-        public boolean isSymbolicLinks ()
-        {
+        public boolean isSymbolicLinks() {
             return this.symbolicLinks;
         }
 
-        public void setIncludes ( final String[] includes )
-        {
+        public void setIncludes(final String[] includes) {
             this.includes = includes;
         }
 
-        public String[] getIncludes ()
-        {
+        public String[] getIncludes() {
             return this.includes;
         }
 
-        public void setExcludes ( final String[] excludes )
-        {
+        public void setExcludes(final String[] excludes) {
             this.excludes = excludes;
         }
 
-        public String[] getExcludes ()
-        {
+        public String[] getExcludes() {
             return this.excludes;
         }
 
         @Override
-        public String toString ()
-        {
-            return String.format ( "[collector - from: %s,  directories: %s, symLinks: %s, includes: %s, excludes: %s]", this.from, this.directories, this.symbolicLinks, this.includes, this.excludes );
+        public String toString() {
+            return String.format("[collector - from: %s,  directories: %s, symLinks: %s, includes: %s, excludes: %s]", this.from, this.directories, this.symbolicLinks, this.includes, this.excludes);
         }
     }
 
@@ -95,72 +82,58 @@ public class PackageEntry extends EntryDetails
 
     private String ruleset;
 
-    public String getName ()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public void setName ( final String name )
-    {
+    public void setName(final String name) {
         this.name = name;
     }
 
-    public Boolean getDirectory ()
-    {
+    public Boolean getDirectory() {
         return this.directory;
     }
 
-    public void setDirectory ( final Boolean directory )
-    {
+    public void setDirectory(final Boolean directory) {
         this.directory = directory;
     }
 
-    public File getFile ()
-    {
+    public File getFile() {
         return this.file;
     }
 
-    public void setFile ( final File file )
-    {
+    public void setFile(final File file) {
         this.file = file;
     }
 
-    public Collector getCollect ()
-    {
+    public Collector getCollect() {
         return this.collect;
     }
 
-    public void setCollect ( final Collector collect )
-    {
+    public void setCollect(final Collector collect) {
         this.collect = collect;
     }
 
-    public void setLinkTo ( final String linkTo )
-    {
+    public void setLinkTo(final String linkTo) {
         this.linkTo = linkTo;
     }
 
-    public String getLinkTo ()
-    {
+    public String getLinkTo() {
         return this.linkTo;
     }
 
-    public void setRuleset ( final String ruleset )
-    {
+    public void setRuleset(final String ruleset) {
         this.ruleset = ruleset;
     }
 
-    public String getRuleset ()
-    {
+    public String getRuleset() {
         return this.ruleset;
     }
 
     @Override
-    public void validate ()
-    {
-        if ( this.name == null || this.name.isEmpty () )
-        {
-            throw new IllegalStateException ( "'name' must not be empty" );
+    public void validate() {
+        if (this.name == null || this.name.isEmpty()) {
+            throw new IllegalStateException("'name' must not be empty");
         }
 
         int sources = 0;
@@ -169,13 +142,12 @@ public class PackageEntry extends EntryDetails
         sources += this.file != null ? 1 : 0;
         sources += this.collect != null ? 1 : 0;
         sources += this.linkTo != null ? 1 : 0;
-        sources += Boolean.TRUE.equals ( this.getGhost () ) ? 1 : 0;
+        sources += Boolean.TRUE.equals(this.getGhost()) ? 1 : 0;
 
-        if ( sources != 1 )
-        {
-            throw new IllegalStateException ( "Exactly one of 'file', 'directory', 'linkTo', 'collect' or 'ghost' must be specified." );
+        if (sources != 1) {
+            throw new IllegalStateException("Exactly one of 'file', 'directory', 'linkTo', 'collect' or 'ghost' must be specified.");
         }
 
-        super.validate ();
+        super.validate();
     }
 }
