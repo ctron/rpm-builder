@@ -1012,9 +1012,7 @@ public class RpmMojo extends AbstractMojo {
         builder.setHeaderCustomizer(rpmTagHeader -> {
             if (this.prefixes != null && !this.prefixes.isEmpty()) {
                 this.logger.debug("Building relocatable package: {}", this.prefixes);
-                // TODO: migrate to flags once https://github.com/eclipse/packagedrone/issues/130 is fixed
-                final int RPMTAG_PREFIXES = 1098; // see http://ftp.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html
-                rpmTagHeader.putStringArray(RPMTAG_PREFIXES, this.prefixes.toArray(new String[0]));
+                rpmTagHeader.putStringArray(RpmTag.PREFIXES, this.prefixes.toArray(new String[0]));
             }
 
             if (outputTimestampInstant != null) {
