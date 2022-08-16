@@ -69,6 +69,7 @@ import org.eclipse.packager.rpm.build.RpmBuilder.Version;
 import org.eclipse.packager.rpm.build.RpmFileNameProvider;
 import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
+import org.eclipse.packager.rpm.signature.RsaSignatureProcessor;
 import org.eclipse.packager.rpm.signature.SignatureProcessor;
 
 import com.google.common.base.Strings;
@@ -794,9 +795,11 @@ public class RpmMojo extends AbstractMojo {
             }
 
             if (!this.skipSigning && this.signature != null) {
-                final SignatureProcessor signer = makeRsaSigner(this.signature);
-                if (signer != null) {
-                    builder.addSignatureProcessor(signer);
+                final SignatureProcessor[] signers = makeRsaSigners(this.signature);
+                if (signers != null) {
+                    for (SignatureProcessor signer : signers ) {
+                         builder.addSignatureProcessor(signer);
+                    }
                 }
             }
 
@@ -875,12 +878,15 @@ public class RpmMojo extends AbstractMojo {
 
     }
 
-    private SignatureProcessor makeRsaSigner(final Signature signature) throws MojoExecutionException, MojoFailureException {
+    private SignatureProcessor[] makeRsaSigners(final Signature signature) throws MojoExecutionException, MojoFailureException {
         final PGPPrivateKey privateKey = SigningHelper.loadKey(signature, this.logger);
         if (privateKey == null) {
             return null;
         }
-        return new RsaHeaderSignatureProcessor(privateKey, HashAlgorithm.from(signature.getHashAlgorithm()));
+        return new SignatureProcessor[]{
+                new RsaHeaderSignatureProcessor(privateKey, HashAlgorithm.from(signature.getHashAlgorithm())),
+                new RsaSignatureProcessor(privateKey, HashAlgorithm.from(signature.getHashAlgorithm()))
+        };
     }
 
     @FunctionalInterface
