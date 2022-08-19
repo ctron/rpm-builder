@@ -63,6 +63,7 @@ import org.eclipse.packager.rpm.RpmLead;
 import org.eclipse.packager.rpm.RpmTag;
 import org.eclipse.packager.rpm.RpmVersion;
 import org.eclipse.packager.rpm.build.BuilderContext;
+import org.eclipse.packager.rpm.build.BuilderOptions;
 import org.eclipse.packager.rpm.build.RpmBuilder;
 import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packager.rpm.build.RpmBuilder.Version;
@@ -765,7 +766,25 @@ public class RpmMojo extends AbstractMojo {
 
         testLeadFlags();
 
-        try (final RpmBuilder builder = new RpmBuilder(packageName, version, this.architecture, targetFile)) {
+        final BuilderOptions options = new BuilderOptions();
+
+        // setup basic signature processors
+
+        final SignatureConfiguration provider;
+        if (this.signatureConfiguration != null) {
+            this.logger.info("Initialize with custom signature configuration: %s (%s)", this.signatureConfiguration, this.signatureConfiguration.getClass());
+            provider = this.signatureConfigurationProviders.get(this.signatureConfiguration);
+            if (provider == null) {
+                throw new MojoExecutionException(String.format("Unable to find requested signature configuration provider '%s', have: %s", this.signatureConfiguration, this.signatureConfigurationProviders.keySet()));
+            }
+            provider.applyOptions(options);
+        } else {
+            provider = null;
+        }
+
+        // start writing the RPM
+
+        try (final RpmBuilder builder = new RpmBuilder(packageName, version, this.architecture, targetFile, options)) {
             this.logger.info("Writing target file: %s", builder.getTargetFile());
 
             if (this.leadOverrideArchitecture != null) {
@@ -783,22 +802,16 @@ public class RpmMojo extends AbstractMojo {
             fillPayload(builder);
             customizeHeader(builder);
 
-            // setup basic signature processors
-
-            if (this.signatureConfiguration != null) {
-                this.logger.info("Initialize with custom signature configuration: %s (%s)", this.signatureConfiguration, this.signatureConfiguration.getClass());
-                final SignatureConfiguration provider = this.signatureConfigurationProviders.get(this.signatureConfiguration);
-                if (provider == null) {
-                    throw new MojoExecutionException(String.format("Unable to find requested signature configuration provider '%s', have: %s", this.signatureConfiguration, this.signatureConfigurationProviders.keySet()));
-                }
-                provider.apply(builder);
+            // apply signature configuration, if we have one
+            if (provider != null) {
+                provider.applyBuilder(builder);
             }
 
             if (!this.skipSigning && this.signature != null) {
                 final SignatureProcessor[] signers = makeRsaSigners(this.signature);
                 if (signers != null) {
-                    for (SignatureProcessor signer : signers ) {
-                         builder.addSignatureProcessor(signer);
+                    for (SignatureProcessor signer : signers) {
+                        builder.addSignatureProcessor(signer);
                     }
                 }
             }
