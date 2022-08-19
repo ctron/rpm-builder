@@ -96,7 +96,7 @@ public class RpmMojo extends AbstractMojo {
     protected MavenProject project;
 
     @Component
-    private MavenProjectHelper projectHelper;
+    MavenProjectHelper projectHelper;
 
     /**
      * Keeps the version information after the initial calculation.
@@ -109,7 +109,7 @@ public class RpmMojo extends AbstractMojo {
      * @see #snapshotVersion
      */
     @Parameter(defaultValue = "${project.version}")
-    private String version;
+    String version;
 
     /**
      * The version string to be processed in case of a SNAPSHOT build
@@ -117,19 +117,19 @@ public class RpmMojo extends AbstractMojo {
      * @see #version
      */
     @Parameter(property = "rpm.snapshotVersion")
-    private String snapshotVersion;
+    String snapshotVersion;
 
     /**
      * The RPM package name
      */
     @Parameter(defaultValue = "${project.artifactId}", property = "rpm.packageName")
-    private String packageName;
+    String packageName;
 
     /**
      * The architecture
      */
     @Parameter(defaultValue = "noarch", property = "rpm.architecture")
-    private final String architecture = "noarch";
+    String architecture = "noarch";
 
     /**
      * Override the lead architecture value.
@@ -140,7 +140,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.10.2
      */
     @Parameter(property = "rpm.leadOverride.architecture")
-    private Architecture leadOverrideArchitecture;
+    Architecture leadOverrideArchitecture;
 
     public void setLeadOverrideArchitecture(final Architecture leadOverrideArchitecture) {
         this.leadOverrideArchitecture = leadOverrideArchitecture;
@@ -152,7 +152,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.10.2
      */
     @Parameter(property = "rpm.operatingSystem")
-    private String operatingSystem = "linux";
+    String operatingSystem = "linux";
 
     public void setOperatingSystem(final String operatingSystem) {
         this.operatingSystem = operatingSystem;
@@ -167,7 +167,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.10.2
      */
     @Parameter(property = "rpm.leadOverride.operatingSystem")
-    private OperatingSystem leadOverrideOperatingSystem;
+    OperatingSystem leadOverrideOperatingSystem;
 
     public void setLeadOverrideOperatingSystem(final OperatingSystem leadOverrideOperatingSystem) {
         this.leadOverrideOperatingSystem = leadOverrideOperatingSystem;
@@ -179,7 +179,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.11.0
      */
     @Parameter(property = "rpm.sourcePackage")
-    private String sourcePackage;
+    String sourcePackage;
 
     public void setSourcePackage(final String sourcePackage) {
         this.sourcePackage = sourcePackage;
@@ -209,7 +209,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.11.0
      */
     @Parameter(property = "rpm.generateDefaultSourcePackage", defaultValue = "true")
-    private boolean generateDefaultSourcePackage = true;
+    boolean generateDefaultSourcePackage = true;
 
     public void setGenerateDefaultSourcePackage(final boolean generateDefaultSourcePackage) {
         this.generateDefaultSourcePackage = generateDefaultSourcePackage;
@@ -223,7 +223,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(defaultValue = "0.", property = "rpm.snapshotReleasePrefix")
-    private final String snapshotReleasePrefix = "0.";
+    String snapshotReleasePrefix = "0.";
 
     /**
      * Set the build id which is used when a snapshot build is active.
@@ -235,13 +235,13 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.6.0
      */
     @Parameter(property = "rpm.snapshotBuildId", required = false)
-    private String snapshotBuildId;
+    String snapshotBuildId;
 
     /**
      * The release which will be used if this is not a snapshot build
      */
     @Parameter(property = "rpm.release", defaultValue = "1")
-    private final String release = "1";
+    String release = "1";
 
     /**
      * Always use the "release" string
@@ -254,25 +254,25 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.6.0
      */
     @Parameter(property = "rpm.forceRelease", defaultValue = "false")
-    private final boolean forceRelease = false;
+    boolean forceRelease = false;
 
     /**
      * The classifier of the attached rpm
      */
     @Parameter(property = "rpm.classifier", defaultValue = "rpm")
-    private final String classifier = "rpm";
+    String classifier = "rpm";
 
     /**
      * Whether to attach the output file
      */
     @Parameter(property = "rpm.attach", defaultValue = "true")
-    private final boolean attach = true;
+    boolean attach = true;
 
     /**
      * The RPM epoch, leave unset for default
      */
     @Parameter(property = "rpm.epoch")
-    private Integer epoch;
+    Integer epoch;
 
     /**
      * The "summary" field of the RPM file
@@ -281,7 +281,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.summary", defaultValue = "${project.name}")
-    private String summary;
+    String summary;
 
     /**
      * The "description" field of the RPM file
@@ -290,7 +290,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.description", defaultValue = "${project.description}")
-    private String description;
+    String description;
 
     /**
      * The RPM group
@@ -301,13 +301,13 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.group", defaultValue = "Unspecified")
-    private String group;
+    String group;
 
     /**
      * The "distribution" field in the RPM file
      */
     @Parameter(property = "rpm.distribution")
-    private String distribution;
+    String distribution;
 
     /**
      * Whether the plugin should try to evaluate to hostname
@@ -317,7 +317,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.evalHostname", defaultValue = "true")
-    private final boolean evalHostname = true;
+    boolean evalHostname = true;
 
     /**
      * The license of the RPM file
@@ -327,7 +327,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.license")
-    private String license;
+    String license;
 
     /**
      * The vendor name of the RPM file
@@ -336,7 +336,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.vendor")
-    private String vendor;
+    String vendor;
 
     /**
      * The name of the packager in the RPM file
@@ -352,7 +352,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.packager")
-    private String packager;
+    String packager;
 
     /**
      * Build relocatable packages.
@@ -371,7 +371,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 1.1.0
      */
     @Parameter(property = "rpm.prefixes")
-    private List<String> prefixes;
+    List<String> prefixes;
 
     /**
      * The actual payload/file entries
@@ -401,7 +401,7 @@ public class RpmMojo extends AbstractMojo {
      * </pre>
      */
     @Parameter
-    private final List<PackageEntry> entries = new LinkedList<>();
+    List<PackageEntry> entries = new LinkedList<>();
 
     /**
      * Rulesets to configure the file information like "user", "modes", etc.
@@ -410,13 +410,13 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<Ruleset> rulesets = new LinkedList<>();
+    List<Ruleset> rulesets = new LinkedList<>();
 
     /**
      * The default ruleset to use if no other is specified
      */
     @Parameter
-    private String defaultRuleset;
+    String defaultRuleset;
 
     private Logger logger;
 
@@ -429,7 +429,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private Script beforeInstallation;
+    Script beforeInstallation;
 
     /**
      * A script which is run after the installation took place
@@ -438,7 +438,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private Script afterInstallation;
+    Script afterInstallation;
 
     /**
      * A script which is run before the removal takes place
@@ -447,7 +447,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private Script beforeRemoval;
+    Script beforeRemoval;
 
     /**
      * A script which is run after the removal took place
@@ -456,7 +456,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private Script afterRemoval;
+    Script afterRemoval;
 
     /**
      * A script which is run before the entire transaction starts
@@ -465,7 +465,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private Script beforeTransaction;
+    Script beforeTransaction;
 
     /**
      * A script which is run after the entire transaction finishes
@@ -474,14 +474,14 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private Script afterTransaction;
+    Script afterTransaction;
 
     /**
      * The default script interpreter which is used if neither the script has
      * one set explicitly, nor one could be detected
      */
     @Parameter(property = "rpm.defaultScriptInterpreter", defaultValue = "/bin/sh")
-    private String defaultScriptInterpreter;
+    String defaultScriptInterpreter;
 
     /**
      * RPM package requirements
@@ -490,7 +490,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<Dependency> requires = new LinkedList<>();
+    List<Dependency> requires = new LinkedList<>();
 
     /**
      * RPM provides information
@@ -499,7 +499,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> provides = new LinkedList<>();
+    List<SimpleDependency> provides = new LinkedList<>();
 
     /**
      * RPM package conflicts
@@ -508,7 +508,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> conflicts = new LinkedList<>();
+    List<SimpleDependency> conflicts = new LinkedList<>();
 
     /**
      * RPM obsoletes information
@@ -517,7 +517,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> obsoletes = new LinkedList<>();
+    List<SimpleDependency> obsoletes = new LinkedList<>();
 
     /**
      * RPM package requirements needed before the installation starts
@@ -526,7 +526,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> prerequisites = new LinkedList<>();
+    List<SimpleDependency> prerequisites = new LinkedList<>();
 
     /**
      * Hint forward dependency.
@@ -537,7 +537,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> suggests = new LinkedList<>();
+    List<SimpleDependency> suggests = new LinkedList<>();
 
     /**
      * Hint backward dependency.
@@ -548,7 +548,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> enhances = new LinkedList<>();
+    List<SimpleDependency> enhances = new LinkedList<>();
 
     /**
      * Weak backward dependency.
@@ -559,7 +559,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> supplements = new LinkedList<>();
+    List<SimpleDependency> supplements = new LinkedList<>();
 
     /**
      * Weak forward dependency.
@@ -570,7 +570,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private final List<SimpleDependency> recommends = new LinkedList<>();
+    List<SimpleDependency> recommends = new LinkedList<>();
 
     /**
      * An optional signature descriptor for GPG signing the final RPM
@@ -579,7 +579,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.signature")
-    private Signature signature;
+    Signature signature;
 
     /**
      * Disable the mojo altogether.
@@ -587,7 +587,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 1.1.1
      */
     @Parameter(property = "rpm.skip", defaultValue = "false")
-    private boolean skip = false;
+    boolean skip = false;
 
     public void setSkip(final boolean skip) {
         this.skip = skip;
@@ -597,7 +597,7 @@ public class RpmMojo extends AbstractMojo {
      * Disable all package signing
      */
     @Parameter(property = "rpm.skipSigning", defaultValue = "false")
-    private boolean skipSigning = false;
+    boolean skipSigning = false;
 
     public void setSkipSigning(final boolean skipSigning) {
         this.skipSigning = skipSigning;
@@ -610,7 +610,7 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.naming")
-    private Naming naming;
+    Naming naming;
 
     public void setNaming(final Naming naming) {
         this.naming = naming;
@@ -622,7 +622,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.10.1
      */
     @Parameter(property = "rpm.targetDir", defaultValue = "${project.build.directory}")
-    private File targetDir;
+    File targetDir;
 
     public void setTargetDir(final File targetDir) {
         this.targetDir = targetDir;
@@ -643,7 +643,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.10.1
      */
     @Parameter(property = "rpm.outputFileName")
-    private String outputFileName;
+    String outputFileName;
 
     public void setOutputFileName(final String outputFileName) {
         this.outputFileName = outputFileName;
@@ -659,7 +659,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 0.11.0
      */
     @Parameter(property = "rpm.maximumSupportedRpmVersion")
-    private Version maximumSupportedRpmVersion;
+    Version maximumSupportedRpmVersion;
 
     public void setMaximumSupportedRpmVersion(final Version maximumSupportedRpmVersion) {
         this.maximumSupportedRpmVersion = maximumSupportedRpmVersion;
@@ -693,7 +693,7 @@ public class RpmMojo extends AbstractMojo {
      * @since 1.4.0
      */
     @Parameter
-    private String signatureConfiguration;
+    String signatureConfiguration;
 
     public void setSignatureConfiguration(final String signatureConfiguration) {
         this.signatureConfiguration = signatureConfiguration;
@@ -707,7 +707,7 @@ public class RpmMojo extends AbstractMojo {
      * @since XXX
      */
     @Parameter(defaultValue = "${project.build.outputTimestamp}")
-    private String outputTimestamp;
+    String outputTimestamp;
 
     private Instant outputTimestampInstant;
 
