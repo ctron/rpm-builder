@@ -11,13 +11,18 @@
 package de.dentrassi.rpm.builder.signatures;
 
 import org.codehaus.plexus.component.annotations.Component;
+import org.eclipse.packager.rpm.build.BuilderOptions;
 import org.eclipse.packager.rpm.build.RpmBuilder;
 
 @Component(role = SignatureConfiguration.class, hint = "default")
 public class DefaultSignatureConfiguration implements SignatureConfiguration {
 
     @Override
-    public void apply(final RpmBuilder builder) {
+    public void applyOptions(final BuilderOptions options) {
+    }
+
+    @Override
+    public void applyBuilder(final RpmBuilder builder) {
         builder.removeAllSignatureProcessors();
         builder.addDefaultSignatureProcessors();
     }
