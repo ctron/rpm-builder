@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2022 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -77,10 +77,10 @@ public class YumMojo extends AbstractMojo {
     protected MavenProject project;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
+    MavenSession session;
 
     @Component
-    private MavenProjectHelper projectHelper;
+    MavenProjectHelper projectHelper;
 
     /**
      * The location of the output directory.
@@ -89,7 +89,7 @@ public class YumMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "yum.repository.output", defaultValue = "${project.build.directory}/yum")
-    private File outputDirectory;
+    File outputDirectory;
 
     /**
      * A list of files to be added
@@ -98,7 +98,7 @@ public class YumMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private List<File> files;
+    List<File> files;
 
     /**
      * A list of directories
@@ -109,7 +109,7 @@ public class YumMojo extends AbstractMojo {
      * </p>
      */
     @Parameter
-    private List<File> directories;
+    List<File> directories;
 
     private File packagesPath;
 
@@ -120,19 +120,19 @@ public class YumMojo extends AbstractMojo {
      * </p>
      */
     @Parameter(property = "rpm.signature")
-    private Signature signature;
+    Signature signature;
 
     /**
      * Disable all repository signing
      */
     @Parameter(property = "rpm.skipSigning", defaultValue = "false")
-    private final boolean skipSigning = false;
+    boolean skipSigning = false;
 
     /**
      * Disable the use of RPMs from maven dependency artifacts
      */
     @Parameter(property = "rpm.skipDependencies", defaultValue = "false")
-    private final boolean skipDependencies = false;
+    boolean skipDependencies = false;
 
     /**
      * Disable the mojo altogether.
@@ -140,7 +140,7 @@ public class YumMojo extends AbstractMojo {
      * @since 1.1.1
      */
     @Parameter(property = "yum.skip", defaultValue = "false")
-    private boolean skip;
+    boolean skip;
 
     public void setSkip(final boolean skip) {
         this.skip = skip;

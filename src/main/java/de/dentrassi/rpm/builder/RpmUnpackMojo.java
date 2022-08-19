@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2021 dranuhl@users.noreply.github.com.
+ * Copyright (c) 2021, 2022 dranuhl@users.noreply.github.com and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-2.0
- */
+ *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
 import java.io.BufferedInputStream;
@@ -114,13 +114,13 @@ public final class RpmUnpackMojo extends AbstractMojo {
      * RPM file to unpack.
      */
     @Parameter(property = "rpm.file", required = true)
-    private File rpmFile;
+    File rpmFile;
 
     /**
      * Directory to unpack to.
      */
     @Parameter(property = "rpm.unpackDirectory", defaultValue = "${project.build.directory}/rpm/unpack")
-    private File unpackDirectory;
+    File unpackDirectory;
 
     /**
      * Retain file modification times from the RPM when creating files.
@@ -129,7 +129,7 @@ public final class RpmUnpackMojo extends AbstractMojo {
      * If {@code false} or the user or system does not support it, the time will reflect the time of unpacking.</p>
      */
     @Parameter(property = "rpm.preserveLastModificationTime", defaultValue = "true")
-    private boolean preserveLastModificationTime;
+    boolean preserveLastModificationTime;
 
     /**
      * Specifies whether to change the ownership of the files.
@@ -144,7 +144,7 @@ public final class RpmUnpackMojo extends AbstractMojo {
      * <p><strong>Warning:</strong> Use with caution.</p>
      */
     @Parameter(property = "rpm.preserveOwner", defaultValue = "false")
-    private boolean preserveOwner;
+    boolean preserveOwner;
 
     public RpmUnpackMojo() {
         super();
