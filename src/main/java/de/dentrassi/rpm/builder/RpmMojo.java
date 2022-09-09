@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2018, 2022 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Lucian Burja - Added setting for creating relocatable RPM packages
  *     Peter Wilkinson - add skip entry flag
  *     Daniel Singhal - Added primary artifact support
+ *     Jarkko Sonninen - Added outputFileNameProperty
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
