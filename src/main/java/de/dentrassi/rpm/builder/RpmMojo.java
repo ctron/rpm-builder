@@ -650,6 +650,18 @@ public class RpmMojo extends AbstractMojo {
     }
 
     /**
+     * Name of the property, which is set according to the final outputFileName
+     *
+     * @since 1.9.1
+     */
+    @Parameter(property = "rpm.outputFileNameProperty", defaultValue="project.build.rpm.outputFileName")
+    String outputFileNameProperty = "project.build.rpm.outputFileName";
+
+    public void setOutputFileNameProperty(final String outputFileNameProperty) {
+        this.outputFileNameProperty = outputFileNameProperty;
+    }
+
+    /**
      * The highest supported RPM version this package must conform to.
      * <p>
      * This allows to set a maximum version of RPM this package must be
@@ -751,7 +763,9 @@ public class RpmMojo extends AbstractMojo {
             this.logger.info("Creating reproducible RPM at timestamp: %s", outputTimestampInstant);
         }
 
-        final Path targetFile = makeTargetFile(targetDir);
+        final String outputFileName = makeTargetFilename();
+        project.getProperties().setProperty(outputFileNameProperty, outputFileName);
+        final Path targetFile = makeTargetFile(targetDir, outputFileName);
 
         this.logger.debug("Max supported RPM version: %s", this.maximumSupportedRpmVersion);
 
@@ -854,8 +868,7 @@ public class RpmMojo extends AbstractMojo {
         return outputFileName;
     }
 
-    private Path makeTargetFile(final Path targetDir) {
-        final String outputFileName = makeTargetFilename();
+    private Path makeTargetFile(final Path targetDir, final String outputFileName) {
         final Path targetFile = targetDir.resolve(outputFileName);
         this.logger.debug("Resolved output file name - fileName: %s, fullName: %s", this.outputFileName, targetFile);
         return targetFile;
