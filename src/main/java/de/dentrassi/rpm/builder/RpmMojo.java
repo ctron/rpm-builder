@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018, 2022 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2023 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -97,11 +97,6 @@ public class RpmMojo extends AbstractMojo {
 
     @Component
     MavenProjectHelper projectHelper;
-
-    /**
-     * Keeps the version information after the initial calculation.
-     */
-    private RpmVersion rpmVersion;
 
     /**
      * The version string to be processed in case of a release build
@@ -1198,10 +1193,6 @@ public class RpmMojo extends AbstractMojo {
     }
 
     private RpmVersion makeVersion() {
-        if (rpmVersion != null) {
-            return rpmVersion;
-        }
-
         if (!this.forceRelease && isSnapshotVersion()) {
             if (this.snapshotVersion != null && !this.snapshotVersion.isEmpty()) {
                 this.logger.info("Building with SNAPSHOT version from <snapshotVersion> parameter: %s", this.snapshotVersion);
