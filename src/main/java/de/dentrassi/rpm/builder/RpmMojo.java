@@ -679,13 +679,13 @@ public class RpmMojo extends AbstractMojo {
     /**
      * Specify the "hint" for a provider of a signature configuration.
      * <p>
-     * By default the RPM writer will calculate and add information like MD5,
+     * By default, the RPM writer will calculate and add information like MD5,
      * SHA1, SHA256, etc. to the signature header of the RPM file. However,
      * some, especially older (really old) RPM versions, have issues when the
      * encounter signature information they don't understand. This parameter
      * allows you to configure this process.
      * <p>
-     * What you configure here is the so called "hint" (Plexus component
+     * What you configure here is the so-called "hint" (Plexus component
      * name/hint) of the provider to use. This plexus component has to be found
      * in the class path of the plugin, during runtime. There are two default
      * providers available, one is <code>default</code> and the other is
