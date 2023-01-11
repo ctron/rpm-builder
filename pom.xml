@@ -3,7 +3,7 @@
 
     <groupId>de.dentrassi.maven</groupId>
     <artifactId>rpm</artifactId>
-    <version>1.10.0</version>
+    <version>1.10.1-SNAPSHOT</version>
 
     <packaging>maven-plugin</packaging>
 
@@ -27,7 +27,7 @@
         <url>https://github.com/ctron/rpm-builder</url>
         <connection>scm:git:git://github.com/ctron/rpm-builder.git</connection>
         <developerConnection>scm:git:git@github.com:ctron/rpm-builder.git</developerConnection>
-        <tag>rpm-1.10.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
