@@ -722,6 +722,30 @@ public class RpmMojo extends AbstractMojo {
      * </p>
      *
      * <p>
+     * The following variants are possible (from {@link DigestAlgorithm}, in no particular order):
+     * </p>
+     * <ul>
+     *     <li><code>MD2</code></li>
+     *     <li><code>MD5</code></li>
+     *     <li><code>SHA1</code></li>
+     *     <li><code>Double-SHA</code></li>
+     *     <li><code>SHA-224</code></li>
+     *     <li><code>SHA-256</code> (default)</li>
+     *     <li><code>SHA-384</code></li>
+     *     <li><code>SHA-512</code></li>
+     *     <li><code>RIPE-MD160</code></li>
+     *     <li><code>Tiger-192</code></li>
+     *     <li><code>Haval-5-160</code></li>
+     * </ul>
+     *
+     * <p>
+     *     <strong>NOTE:</strong> This relies on the JVM to provide a {@code MessageDigest} provider. If you choose a
+     *     file digest algorithm for with the JVM doesn't provide an implementation, the build will fail. By default,
+     *     JVMs (as of 1.8) should at least support MD5, SHA1, and SHA256. In practice SHA-224 to SHA-512 are supported
+     *     by most JVMs.
+     * </p>
+     *
+     * <p>
      *     <strong>NOTE:</strong> This used to be <code>MD5</code> in releases before <code>1.10.0</code>. Starting
      *     with <code>1.10.0</code> this defaults to <code>SHA-256</code> and can be overridden using this setting.
      * </p>
