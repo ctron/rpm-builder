@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.dentrassi.maven.rpm.test</groupId>
+	<artifactId>test18-file-digest-md5</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Test Package #18</name>
+	<description>
+	Test creating an RPM with the default file digest.
+	</description>
+
+	<url>http://dentrassi.de</url>
+
+	<organization>
+		<name>Jens Reimann</name>
+		<url>http://dentrassi.de</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<distribution>repo</distribution>
+			<url>https://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- use a predictable timestamp -->
+		<project.build.outputTimestamp>2009-01-01T12:00:00+01:00</project.build.outputTimestamp>
+		<skipSigning>true</skipSigning>
+		<rpm.skipSigning>true</rpm.skipSigning>
+	</properties>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>de.dentrassi.maven</groupId>
+				<artifactId>rpm</artifactId>
+				<version>@project.version@</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+						<configuration>
+							<group>Application/Misc</group>
+
+							<forceRelease>false</forceRelease>
+							<version>1.0.0</version>
+							<outputFileName>test18.rpm</outputFileName>
+
+							<entries>
+								<entry>
+									<name>/etc/test.txt</name>
+									<file>src/main/resources/test.txt</file>
+									<user>root</user>
+									<group>root</group>
+									<mode>0600</mode>
+								</entry>
+							</entries>
+
+							<signature>
+								<keyId>${keyId}</keyId>
+								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
+								<passphrase>${passphrase}</passphrase>
+								<hashAlgorithm>SHA1</hashAlgorithm>
+								<skip>${skipSigning}</skip>
+							</signature>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skipSigning>false</skipSigning>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>
