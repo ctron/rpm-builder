@@ -3,7 +3,7 @@
 
     <groupId>de.dentrassi.maven</groupId>
     <artifactId>rpm</artifactId>
-    <version>1.9.1-SNAPSHOT</version>
+    <version>1.10.0-SNAPSHOT</version>
 
     <packaging>maven-plugin</packaging>
 
