@@ -790,7 +790,9 @@ public class RpmMojo extends AbstractMojo {
         testLeadFlags();
 
         final BuilderOptions options = new BuilderOptions();
-        options.setFileDigestAlgorithm(evalDigestAlgorithm(this.fileDigestAlgorithm));
+        DigestAlgorithm fileDigestAlgorithm = evalDigestAlgorithm(this.fileDigestAlgorithm);
+        this.logger.info("File Digest Algorithm: %s", fileDigestAlgorithm.getAlgorithm());
+        options.setFileDigestAlgorithm(fileDigestAlgorithm);
 
         // setup basic signature processors
 
