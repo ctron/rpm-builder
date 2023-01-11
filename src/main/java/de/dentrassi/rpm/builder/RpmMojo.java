@@ -728,7 +728,7 @@ public class RpmMojo extends AbstractMojo {
      *
      * @since 1.10.0
      */
-    @Parameter(defaultValue = "SHA-256")
+    @Parameter(defaultValue = "SHA-256", property = "rpm.fileDigestAlgorithm")
     String fileDigestAlgorithm;
 
     private Instant outputTimestampInstant;
