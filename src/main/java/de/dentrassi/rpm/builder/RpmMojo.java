@@ -33,7 +33,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -758,7 +757,7 @@ public class RpmMojo extends AbstractMojo {
             }
         }
 
-        outputTimestampInstant = Optional.ofNullable(new MavenArchiver().parseOutputTimestamp(outputTimestamp)).map(Date::toInstant).orElse(null);
+        outputTimestampInstant = MavenArchiver.parseBuildOutputTimestamp(outputTimestamp).orElse(null);
 
         if (outputTimestampInstant != null) {
             this.logger.info("Creating reproducible RPM at timestamp: %s", outputTimestampInstant);
