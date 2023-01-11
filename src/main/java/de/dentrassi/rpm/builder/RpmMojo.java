@@ -62,12 +62,9 @@ import org.eclipse.packager.rpm.OperatingSystem;
 import org.eclipse.packager.rpm.RpmLead;
 import org.eclipse.packager.rpm.RpmTag;
 import org.eclipse.packager.rpm.RpmVersion;
-import org.eclipse.packager.rpm.build.BuilderContext;
-import org.eclipse.packager.rpm.build.BuilderOptions;
-import org.eclipse.packager.rpm.build.RpmBuilder;
+import org.eclipse.packager.rpm.build.*;
 import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packager.rpm.build.RpmBuilder.Version;
-import org.eclipse.packager.rpm.build.RpmFileNameProvider;
 import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
 import org.eclipse.packager.rpm.signature.RsaSignatureProcessor;
@@ -716,6 +713,24 @@ public class RpmMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.outputTimestamp}")
     String outputTimestamp;
 
+    /**
+     * Configure the digest algorithm for files.
+     *
+     * <p>
+     * This configures the algorithm which is used to calculate a digest for each file. This information is stored
+     * (per file) in the RPM header section.
+     * </p>
+     *
+     * <p>
+     *     <strong>NOTE:</strong> This used to be <code>MD5</code> in releases before <code>1.10.0</code>. Starting
+     *     with <code>1.10.0</code> this defaults to <code>SHA-256</code> and can be overridden using this setting.
+     * </p>
+     *
+     * @since 1.10.0
+     */
+    @Parameter(defaultValue = "SHA-256")
+    String fileDigestAlgorithm;
+
     private Instant outputTimestampInstant;
 
     @Component(role = SignatureConfiguration.class)
@@ -775,6 +790,7 @@ public class RpmMojo extends AbstractMojo {
         testLeadFlags();
 
         final BuilderOptions options = new BuilderOptions();
+        options.setFileDigestAlgorithm(evalDigestAlgorithm(this.fileDigestAlgorithm));
 
         // setup basic signature processors
 
@@ -846,6 +862,24 @@ public class RpmMojo extends AbstractMojo {
         } catch (final IOException e) {
             throw new MojoExecutionException("Failed to write RPM", e);
         }
+    }
+
+    private DigestAlgorithm evalDigestAlgorithm(String algorithm) throws MojoFailureException {
+        try {
+            // try enum literal name first
+            return DigestAlgorithm.valueOf(algorithm);
+        }
+        catch (IllegalArgumentException ignored) {}
+
+        // try algorithm names next
+        for (DigestAlgorithm a : DigestAlgorithm.values()) {
+            if (a.getAlgorithm().equalsIgnoreCase(algorithm)) {
+                return a;
+            }
+        }
+
+        // fail
+        throw new MojoFailureException(String.format("Unknown file digest algorithm: %s", algorithm));
     }
 
     private String makeTargetFilename() {
