@@ -41,7 +41,9 @@
 
         <maven.version>3.3.9</maven.version>
 
-        <org.bouncycastle.version>1.70</org.bouncycastle.version>
+        <org.bouncycastle.bcpg.version>1.72.2</org.bouncycastle.bcpg.version>
+        <org.bouncycastle.bcprov.version>1.72</org.bouncycastle.bcprov.version>
+
         <packager.version>0.19.0</packager.version>
     </properties>
 
@@ -108,13 +110,13 @@
 
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
-            <version>${org.bouncycastle.version}</version>
+            <artifactId>bcpg-jdk18on</artifactId>
+            <version>${org.bouncycastle.bcpg.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>${org.bouncycastle.version}</version>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${org.bouncycastle.bcprov.version}</version>
         </dependency>
 
         <dependency>
