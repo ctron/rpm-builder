@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.dentrassi.maven.rpm.test</groupId>
-	<artifactId>test15-md5-only</artifactId>
+	<artifactId>test15-default</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
