@@ -54,6 +54,7 @@
 							<version>1.0.0</version>
 							<outputFileName>test15.rpm</outputFileName>
 							<signatureConfiguration>md5-only</signatureConfiguration>
+							<fileDigestAlgorithm>MD5</fileDigestAlgorithm>
 
 							<signature>
 								<keyId>${keyId}</keyId>
