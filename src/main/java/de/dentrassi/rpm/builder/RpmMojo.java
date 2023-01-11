@@ -752,10 +752,9 @@ public class RpmMojo extends AbstractMojo {
             }
         }
 
-        outputTimestampInstant = MavenArchiver.parseBuildOutputTimestamp(outputTimestamp).orElse(null);
-
-        if (outputTimestampInstant != null) {
-            this.logger.info("Creating reproducible RPM at timestamp: %s", outputTimestampInstant);
+        this.outputTimestampInstant = MavenArchiver.parseBuildOutputTimestamp(this.outputTimestamp).orElse(null);
+        if (this.outputTimestampInstant != null) {
+            this.logger.info("Creating reproducible RPM at timestamp: %s", this.outputTimestampInstant);
         }
 
         final String outputFileName = makeTargetFilename();
