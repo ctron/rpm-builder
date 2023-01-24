@@ -740,7 +740,7 @@ public class RpmMojo extends AbstractMojo {
      *
      * <p>
      *     <strong>NOTE:</strong> This relies on the JVM to provide a {@code MessageDigest} provider. If you choose a
-     *     file digest algorithm for with the JVM doesn't provide an implementation, the build will fail. By default,
+     *     file digest algorithm for which the JVM doesn't provide an implementation, the build will fail. By default,
      *     JVMs (as of 1.8) should at least support MD5, SHA1, and SHA256. In practice SHA-224 to SHA-512 are supported
      *     by most JVMs.
      * </p>
