@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -234,6 +236,47 @@ public class YumMojo extends AbstractMojo {
         try (RpmInputStream ris = new RpmInputStream(Files.newInputStream(path))) {
             rpmInformation = RpmInformations.makeInformation(ris);
         }
+
+        // Retrieve all the files contained in the rpm (including symlink)
+        List<String> providedFiles = Lists.newArrayList();
+        try (RpmInputStream ris = new RpmInputStream(Files.newInputStream(path))) {
+            ris.getPayloadHeader();
+            ris.getSignatureHeader();
+
+            final CpioArchiveInputStream cpio = ris.getCpioStream();
+            CpioArchiveEntry cpioEntry;
+            while ((cpioEntry = cpio.getNextCPIOEntry()) != null) {
+                providedFiles.add(RpmInformations.normalize(cpioEntry.getName()));
+            }
+            cpio.close();
+        }
+
+        // Remove provided files from the required list
+        List<org.eclipse.packager.rpm.info.RpmInformation.Dependency> requiresToKeep = Lists.newArrayList();
+        for (org.eclipse.packager.rpm.info.RpmInformation.Dependency requiredDep : rpmInformation.getRequires()) {
+            boolean fileProvided = false;
+            
+            for (String providedFile : providedFiles) {
+                if (requiredDep.getName().equals(providedFile)) {
+                   fileProvided = true;
+                    break;
+                }
+            }
+
+            if (!fileProvided) {
+                for (org.eclipse.packager.rpm.info.RpmInformation.Dependency providedDep : rpmInformation.getProvides()) {
+                    if (requiredDep.getName().equals(providedDep.getName())) {
+                        fileProvided = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!fileProvided) {
+                requiresToKeep.add(requiredDep);
+            }
+        }
+        rpmInformation.setRequires(requiresToKeep);
 
         context.addPackage(fileInformation, rpmInformation, singletonMap(SHA256, checksum), SHA256);
 
