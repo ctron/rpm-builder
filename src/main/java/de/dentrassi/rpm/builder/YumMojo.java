@@ -243,12 +243,12 @@ public class YumMojo extends AbstractMojo {
             ris.getPayloadHeader();
             ris.getSignatureHeader();
 
-            final CpioArchiveInputStream cpio = ris.getCpioStream();
-            CpioArchiveEntry cpioEntry;
-            while ((cpioEntry = cpio.getNextCPIOEntry()) != null) {
-                providedFiles.add(RpmInformations.normalize(cpioEntry.getName()));
+            try (CpioArchiveInputStream cpio = ris.getCpioStream()) {
+                CpioArchiveEntry cpioEntry;
+                while ((cpioEntry = cpio.getNextCPIOEntry()) != null) {
+                    providedFiles.add(RpmInformations.normalize(cpioEntry.getName()));
+                }
             }
-            cpio.close();
         }
 
         // Remove provided files from the required list
