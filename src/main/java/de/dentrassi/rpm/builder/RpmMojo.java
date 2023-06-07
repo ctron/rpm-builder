@@ -54,10 +54,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.packager.rpm.Architecture;
-import org.eclipse.packager.rpm.HashAlgorithm;
 import org.eclipse.packager.rpm.OperatingSystem;
 import org.eclipse.packager.rpm.RpmLead;
 import org.eclipse.packager.rpm.RpmTag;
@@ -66,9 +65,7 @@ import org.eclipse.packager.rpm.build.*;
 import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packager.rpm.build.RpmBuilder.Version;
 import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
-import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
-import org.eclipse.packager.rpm.signature.RsaSignatureProcessor;
-import org.eclipse.packager.rpm.signature.SignatureProcessor;
+import org.eclipse.packager.rpm.signature.*;
 
 import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
@@ -76,6 +73,7 @@ import com.google.common.io.CharSource;
 import de.dentrassi.rpm.builder.Naming.Case;
 import de.dentrassi.rpm.builder.PackageEntry.Collector;
 import de.dentrassi.rpm.builder.signatures.SignatureConfiguration;
+import org.pgpainless.key.protection.SecretKeyRingProtector;
 
 /**
  * Build an RPM file
@@ -959,13 +957,14 @@ public class RpmMojo extends AbstractMojo {
     }
 
     private SignatureProcessor[] makeRsaSigners(final Signature signature) throws MojoExecutionException, MojoFailureException {
-        final PGPPrivateKey privateKey = SigningHelper.loadKey(signature, this.logger);
-        if (privateKey == null) {
+        final PGPSecretKeyRing secretKey = SigningHelper.loadKey(signature, this.logger);
+        if (secretKey == null) {
             return null;
         }
+        final SecretKeyRingProtector protector = SigningHelper.createProtector(secretKey, signature.getPassphrase());
         return new SignatureProcessor[]{
-                new RsaHeaderSignatureProcessor(privateKey, HashAlgorithm.from(signature.getHashAlgorithm())),
-                new RsaSignatureProcessor(privateKey, HashAlgorithm.from(signature.getHashAlgorithm()))
+                new PgpHeaderSignatureProcessor(secretKey, protector ),
+                new PgpSignatureProcessor(secretKey, protector)
         };
     }
 

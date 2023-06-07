@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2016, 2023 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
+ *     Red Hat, Inc - use pgpainless
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class Signature {
     private String keyId;
@@ -18,8 +20,6 @@ public class Signature {
     private File keyringFile;
 
     private String passphrase;
-
-    private String hashAlgorithm = "SHA512";
 
     private boolean skip;
 
@@ -45,14 +45,6 @@ public class Signature {
 
     public String getPassphrase() {
         return this.passphrase;
-    }
-
-    public void setHashAlgorithm(final String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
-    }
-
-    public String getHashAlgorithm() {
-        return this.hashAlgorithm;
     }
 
     public void setSkip(final boolean skip) {

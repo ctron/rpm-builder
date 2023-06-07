@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
- *     Red Hat Inc - upgrade to package drone 0.14.0
+ *     Red Hat Inc - upgrade to package drone 0.14.0, and more
  *     Bernd Warmuth - introduced skipDependencies property,
- only consider dependencies of type "rpm",
- fixed repodata creation for multiple rpm packages
+ *       only consider dependencies of type "rpm",
+ *       fixed repodata creation for multiple rpm packages
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -46,9 +46,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.eclipse.packager.io.FileSystemSpoolOutTarget;
-import org.eclipse.packager.rpm.HashAlgorithm;
 import org.eclipse.packager.rpm.info.RpmInformation;
 import org.eclipse.packager.rpm.info.RpmInformations;
 import org.eclipse.packager.rpm.parse.RpmInputStream;
@@ -56,7 +55,6 @@ import org.eclipse.packager.rpm.yum.RepositoryCreator;
 import org.eclipse.packager.rpm.yum.RepositoryCreator.Builder;
 import org.eclipse.packager.rpm.yum.RepositoryCreator.Context;
 import org.eclipse.packager.rpm.yum.RepositoryCreator.FileInformation;
-import org.eclipse.packager.security.pgp.SigningStream;
 
 import com.google.common.collect.Lists;
 
@@ -164,10 +162,9 @@ public class YumMojo extends AbstractMojo {
             builder.setTarget(new FileSystemSpoolOutTarget(this.outputDirectory.toPath()));
 
             if (!this.skipSigning) {
-                final PGPPrivateKey privateKey = SigningHelper.loadKey(this.signature, this.logger);
-                if (privateKey != null) {
-                    final int digestAlgorithm = HashAlgorithm.from(this.signature.getHashAlgorithm()).getValue();
-                    builder.setSigning(output -> new SigningStream(output, privateKey, digestAlgorithm, false, "RPM builder Mojo - de.dentrassi.maven:rpm"));
+                final PGPSecretKeyRing secretKey = SigningHelper.loadKey(this.signature, this.logger);
+                if (secretKey != null) {
+                    builder.setSigning(secretKey, SigningHelper.createProtector(secretKey, signature.getPassphrase()));
                 }
             }
 
@@ -191,7 +188,7 @@ public class YumMojo extends AbstractMojo {
             }
 
             if (this.files != null) {
-                paths.addAll(this.files.stream().map(f -> f.toPath()).collect(Collectors.toList()));
+                paths.addAll(this.files.stream().map(File::toPath).collect(Collectors.toList()));
             }
             if (this.directories != null) {
                 for (final File dir : this.directories) {

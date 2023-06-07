@@ -79,7 +79,6 @@
 								<keyId>${keyId}</keyId>
 								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
 								<passphrase>${passphrase}</passphrase>
-								<hashAlgorithm>SHA256</hashAlgorithm>
 								<skip>${skipSigning}</skip>
 							</signature>
 
