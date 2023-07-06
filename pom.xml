@@ -42,7 +42,7 @@
         <maven.version>3.3.9</maven.version>
 
         <org.bouncycastle.bcpg.version>1.72.2</org.bouncycastle.bcpg.version>
-        <org.bouncycastle.bcprov.version>1.72</org.bouncycastle.bcprov.version>
+        <org.bouncycastle.bcprov.version>1.74</org.bouncycastle.bcprov.version>
 
         <packager.version>0.19.0</packager.version>
     </properties>
