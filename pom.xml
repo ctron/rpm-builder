@@ -39,7 +39,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <maven.version>3.3.9</maven.version>
+        <maven.version>3.8.1</maven.version>
 
         <org.bouncycastle.bcpg.version>1.76</org.bouncycastle.bcpg.version>
         <org.bouncycastle.bcprov.version>1.76</org.bouncycastle.bcprov.version>
