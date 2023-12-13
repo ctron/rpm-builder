@@ -14,6 +14,7 @@
  *     Peter Wilkinson - add skip entry flag
  *     Daniel Singhal - Added primary artifact support
  *     Jarkko Sonninen - Added outputFileNameProperty
+ *     Fraunhofer-Institut fuer Optronik, Systemtechnik und Bildauswertung IOSB - apply rules to implicit created intermediate directories
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
@@ -1076,7 +1077,9 @@ public class RpmMojo extends AbstractMojo {
             return;
         }
 
-        final BuilderContext ctx = builder.newContext();
+        final ListenableBuilderContext ctx = new ListenableBuilderContext(builder.newContext());
+        final MissingDirectoryTracker missingDirectoryTracker = new MissingDirectoryTracker(this.prefixes);
+        ctx.registerListener(missingDirectoryTracker);
 
         this.logger.debug("Building payload:");
 
@@ -1091,6 +1094,9 @@ public class RpmMojo extends AbstractMojo {
                 fillFromEntry(ctx, entry);
             }
         }
+
+        ctx.removeListener(missingDirectoryTracker);
+        missingDirectoryTracker.addMissingIntermediateDirectoriesToContext(ctx);
     }
 
     private void customizeHeader(final RpmBuilder builder) {
@@ -1133,7 +1139,6 @@ public class RpmMojo extends AbstractMojo {
         this.logger.debug("    as file:");
         final Path source = entry.getFile().toPath().toAbsolutePath();
         this.logger.debug("      - source: %s", source);
-
         ctx.addFile(entry.getName(), source, makeProvider(entry, "      - "));
     }
 

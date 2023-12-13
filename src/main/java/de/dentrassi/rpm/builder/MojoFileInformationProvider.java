@@ -74,4 +74,24 @@ public class MojoFileInformationProvider implements FileInformationProvider<Obje
 
         return result;
     }
+
+    public RulesetEvaluator getRulesetEval() {
+        return rulesetEval;
+    }
+
+    public Consumer<String> getLogger() {
+        return logger;
+    }
+
+    public String getRuleId() {
+        return ruleId;
+    }
+
+    public PackageEntry getEntry() {
+        return entry;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
 }
