@@ -209,6 +209,28 @@ public class RpmMojo extends AbstractMojo {
     }
 
     /**
+     * Whether implicitly created intermediate directories should explicitly
+     * added to package.
+     * <p>
+     * If enabled, all from entries implicitly created intermediate directories
+     * are added as explicit entries to package. Also the rules with file
+     * information are applied to these directories.
+     * </p>
+     * <p>
+     * To exclude directories like {@code /usr} from being added, you have
+     * to add these as prefix property (see {@code prefixes}). Directories
+     * that match a whole prefix or a sub path of it, are not added.
+     * </p>
+     */
+    @Parameter(property = "rpm.generateIntermediateDirectories", defaultValue = "true")
+    boolean generateIntermediateDirectories = true;
+
+    public void setGenerateIntermediateDirectories(final boolean generateIntermediateDirectories) {
+        this.generateIntermediateDirectories = generateIntermediateDirectories;
+    }
+
+
+    /**
      * The prefix of the release if this is a snapshot build, will be suffixed
      * with the snapshot build id
      * <p>
@@ -1096,7 +1118,9 @@ public class RpmMojo extends AbstractMojo {
         }
 
         ctx.removeListener(missingDirectoryTracker);
-        missingDirectoryTracker.addMissingIntermediateDirectoriesToContext(ctx);
+        if (generateIntermediateDirectories) {
+            missingDirectoryTracker.addMissingIntermediateDirectoriesToContext(ctx);
+        }
     }
 
     private void customizeHeader(final RpmBuilder builder) {
