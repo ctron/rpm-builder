@@ -59,18 +59,37 @@ public class MissingDirectoryTracker implements BuilderContextListener {
         if (provider instanceof MojoFileInformationProvider) {
             MojoFileInformationProvider mojoProvider = (MojoFileInformationProvider) provider;
 
-            for (String intermediateDirectory : getIntermediateDirectories(targetName)) {
-                if (startsPathWithPrefix(intermediateDirectory) && !explicitAddedDirectories.contains(intermediateDirectory)) {
-                    missingDirectories.computeIfAbsent(intermediateDirectory,
-                            (String directory) -> new MojoFileInformationProvider(
-                                    mojoProvider.getRulesetEval(),
-                                    mojoProvider.getRuleId(),
-                                    null,
-                                    mojoProvider.getLogger(),
-                                    mojoProvider.getTimestamp()));
-                }
+            List<String> intermediateDirectories;
+            if (containsCollectEntry(mojoProvider)) {
+                // collect handles intermediate directories by themselves via flag 'directories'
+                // -> only use base directory (entry name of collect) as target path to calculate
+                // intermediate directories
+                targetName = mojoProvider.getEntry().getName();
+                intermediateDirectories = getIntermediateDirectoriesIncludingTarget(targetName);
+            } else {
+                intermediateDirectories = getIntermediateDirectories(targetName);
+            }
+
+            for (String intermediateDirectory : intermediateDirectories) {
+                addIfIsMissingDirectory(intermediateDirectory, mojoProvider);
             }
         }
+    }
+
+    private void addIfIsMissingDirectory(String intermediateDirectory, MojoFileInformationProvider mojoProvider) {
+        if (startsPathWithPrefix(intermediateDirectory) && !explicitAddedDirectories.contains(intermediateDirectory)) {
+            missingDirectories.computeIfAbsent(intermediateDirectory,
+                    (String directory) -> new MojoFileInformationProvider(
+                            mojoProvider.getRulesetEval(),
+                            mojoProvider.getRuleId(),
+                            null,
+                            mojoProvider.getLogger(),
+                            mojoProvider.getTimestamp()));
+        }
+    }
+
+    private boolean containsCollectEntry(MojoFileInformationProvider mojoProvider) {
+        return mojoProvider.getEntry().getCollect() != null;
     }
 
     private boolean startsPathWithPrefix(String directory) {
@@ -91,6 +110,13 @@ public class MissingDirectoryTracker implements BuilderContextListener {
             Path subPath = path.subpath(0, i);
             intermediateDirectories.add("/" + subPath);
         }
+
+        return intermediateDirectories;
+    }
+
+    private List<String> getIntermediateDirectoriesIncludingTarget(String targetName) {
+        List<String> intermediateDirectories = getIntermediateDirectories(targetName);
+        intermediateDirectories.add(targetName);
 
         return intermediateDirectories;
     }

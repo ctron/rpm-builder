@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.dentrassi.maven.rpm.test</groupId>
+	<artifactId>test19</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Test Package #19</name>
+	<description>
+	Test explicitly adding and applying rules for implicitly created intermediate directories with collect entries.
+	</description>
+
+	<url>http://dentrassi.de</url>
+
+	<organization>
+		<name>Jens Reimann</name>
+		<url>http://dentrassi.de</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Eclipse Public License - v 1.0</name>
+			<distribution>repo</distribution>
+			<url>https://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<skipSigning>true</skipSigning>
+		<!-- use a predictable timestamp -->
+		<project.build.outputTimestamp>2009-01-01T12:00:00+01:00</project.build.outputTimestamp>
+	</properties>
+
+	<build>
+
+		<plugins>
+			<plugin>
+				<groupId>de.dentrassi.maven</groupId>
+				<artifactId>rpm</artifactId>
+				<version>@project.version@</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+						<configuration>
+							<attach>false</attach>
+							<group>Application/Misc</group>
+
+							<signature>
+								<keyId>${keyId}</keyId>
+								<keyringFile>${user.home}/.gnupg/secring.gpg</keyringFile>
+								<passphrase>${passphrase}</passphrase>
+								<hashAlgorithm>SHA1</hashAlgorithm>
+								<skip>${skipSigning}</skip>
+							</signature>
+
+							<generateIntermediateDirectories>
+								<baseDirecotry>/opt/mycompany/myapp</baseDirecotry>
+							</generateIntermediateDirectories>
+
+							<rulesets>
+								<ruleset>
+									<id>my-default</id>
+									<rules>
+										<rule>
+											<when>
+												<prefix>/opt/mycompany</prefix>
+											</when>
+											<user>mygeneraluser</user>
+											<group>mygeneralgroup</group>
+											<mode>0111</mode>
+										</rule>
+										<rule>
+											<when>
+												<prefix>/opt/mycompany/myapp</prefix>
+											</when>
+											<user>myuser</user>
+											<group>mygroup</group>
+											<mode>0555</mode>
+										</rule>
+										<rule>
+											<when>
+												<prefix>/opt/mycompany/myapp</prefix>
+												<type>directory</type>
+											</when>
+											<mode>0777</mode>
+										</rule>
+									</rules>
+								</ruleset>
+							</rulesets>
+
+							<entries>
+								<entry>
+									<name>/opt/mycompany/myapp/a/b</name>
+									<collect>
+										<from>${project.basedir}/src/main/data</from>
+										<directories>false</directories> <!-- make explicit directories -->
+									</collect>
+									<ruleset>my-default</ruleset>
+								</entry>
+								<entry>
+									<name>/opt/mycompany/myapp/c/d</name>
+									<collect>
+										<from>${project.basedir}/src/main/data</from>
+										<directories>true</directories> <!-- make explicit directories -->
+									</collect>
+									<ruleset>my-default</ruleset>
+								</entry>
+							</entries>
+
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>sign</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skipSigning>false</skipSigning>
+			</properties>
+		</profile>
+	</profiles>
+
+</project>
