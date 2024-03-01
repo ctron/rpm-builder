@@ -39,12 +39,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <maven.version>3.3.9</maven.version>
+        <maven.version>3.8.3</maven.version>
 
-        <org.bouncycastle.bcpg.version>1.76</org.bouncycastle.bcpg.version>
-        <org.bouncycastle.bcprov.version>1.76</org.bouncycastle.bcprov.version>
+        <org.bouncycastle.bcpg.version>1.77</org.bouncycastle.bcpg.version>
+        <org.bouncycastle.bcprov.version>1.77</org.bouncycastle.bcprov.version>
 
-        <packager.version>0.19.0</packager.version>
+        <packager.version>0.20.0</packager.version>
     </properties>
 
     <prerequisites>
@@ -158,6 +158,16 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>1.26.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-archiver</artifactId>
+                <version>4.9.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.15.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -348,9 +358,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <configuration>
-                    <requirements>
-                        <maven>3.3</maven>
-                    </requirements>
+                    <requiredMavenVersion>3.8</requiredMavenVersion>
+                    <requiredJavaVersion>1.8</requiredJavaVersion>
                 </configuration>
             </plugin>
             <plugin>
