@@ -1,0 +1,3 @@
+FROM registry.access.redhat.com/ubi9/ubi:latest
+
+RUN dnf -y install java-11-openjdk-devel maven git
