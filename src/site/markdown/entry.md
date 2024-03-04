@@ -51,7 +51,10 @@ In order to walk through a directory tree and add all files use: `<collect>…</
 
 The collect elements requires one additional element: `<from>` which defines the base path. In addition
 there is the optional element `<directories>`, which can be set to `false` in order to not record
-directories explicitly. **Note:** the `<from>` directory itself will never be added as explicit directory. This can be done using an additional `<entry>` element.
+directories explicitly. **Note:** the `<from>` directory itself will never be added as explicit directory. 
+This can be done using an additional `<entry>` element. 
+Alternatively the general configuration for [generating intermediate directories](#generate-intermediate-directories)
+can be used to create intermediate directories when the package structure is built.
 
 **Note:** By default symbolic links in the file system will be ignored. Since not all platforms support
 symbolic links in the same way. It is recommended to create the manually using a `<linkTo>` style
@@ -144,3 +147,72 @@ In order to use explicit information use the following elements:
     </entry>
 
 Also see [payload entry information](payload_information.html) for a full list.
+
+## Generate intermediate directories
+
+Since version `1.11.1 (TODO: enter correct version)` there is an option to automatically generate and add intermediate directories
+explicitly for all paths added by `<entry>` elements.
+Therefore, it is not necessary to manually configure each sub path to have it added explicitly to the package.
+
+To configure this optional function, a list of base paths must be specified by the configuration (TODO, ggf configuration streichen) property
+`<generateIntermediateDirectories>`.
+For these given base directories, any intermediate directories created implicitly from `<entry>` elements are added to the package 
+as explicit entries.
+Sub paths of the base directories themselfs are not explicitly added to the package.
+
+**NOTE:** The [entry information](#entry-information) (explicit and ruleset) is applied to these intermediate directories as well.
+
+Example:
+
+    <generateIntermediateDirectories>
+        <baseDirecotry>/usr/lib/foo</baseDirecotry>
+        <baseDirecotry>/some/other/basedirectory</baseDirecotry>
+    </generateIntermediateDirectories>
+
+    <entries>
+        <entry>
+            <name>/usr/lib/foo/bar/</name>
+            <file>path/to/file/foobar.txt</file>
+        </entry>
+    </entries>
+
+Result:
+
+    /usr/lib/foo                  (dir  - added by generateIntermediateDirectories)
+    /usr/lib/foo/bar              (dir  - added by generateIntermediateDirectories)
+    /usr/lib/foo/bar/foobar.txt   (file - added by file entry)
+
+**Note**: In case of `<collect>` entries the feature of generating intermediate directories is only
+applied to directories outside of the collection.
+The behaviour of adding directories inside of `<collect>` is controlled independently by setting the
+`<directories>` flag (see [file system collector](#file-system-collector)).
+
+Collection Example:
+
+    <generateIntermediateDirectories>
+        <baseDirecotry>/usr/lib/foo</baseDirecotry>
+    </generateIntermediateDirectories>
+    
+    <entries>
+        <entry>
+            <name>/usr/lib/foo/bar</name>
+            <collect>
+                <from>${project.basedir}/src/main/data</from> <!-- contains only one file: /x/y/foobar.txt -->
+                <directories>...</directories> <!-- make explicit directories (true|false) -->
+            </collect>
+        </entry>
+    </entries>
+
+Result with `<directories>true</directories>`:
+
+    /usr/lib/foo                    (dir  - added by generateIntermediateDirectories)
+    /usr/lib/foo/bar                (dir  - added by generateIntermediateDirectories)
+    /usr/lib/foo/bar/x              (dir  - added by collect entry)
+    /usr/lib/foo/bar/x/y            (dir  - added by collect entry)
+    /usr/lib/foo/bar/x/y/foobar.txt (file - added by collect entry) 
+
+Result with `<directories>false</directories>`:
+
+    /usr/lib/foo                    (dir  - added by generateIntermediateDirectories)
+    /usr/lib/foo/bar                (dir  - added by generateIntermediateDirectories)
+    /usr/lib/foo/bar/x/y/foobar.txt (file - added by collect entry)
