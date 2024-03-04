@@ -368,7 +368,7 @@ public class RpmMojo extends AbstractMojo {
 
     /**
      * Base paths for which implicitly created intermediate directories should
-     * explicitly added to package.
+     * explicitly add to package.
      *
      * <pre>
      *       &lt;generateIntermediateDirectories&gt;
@@ -378,15 +378,17 @@ public class RpmMojo extends AbstractMojo {
      * </pre>
      *
      * <p>
-     * For given base directories, all from entries implicitly created
-     * intermediate directories are added as explicit entries to package.
-     * Also the rules with file information are applied to these added directories.
+     * For these given base directories, any intermediate directories created
+     * implicitly from {@code <entry>} elements are added to the package
+     * as explicit entries.
+     * The rules with file information are applied to these added directories as well.
      * </p>
      * <p>
-     * To exclude directories like {@code /usr} from being added, you have
-     * to add these as prefix property (see {@code prefixes}). Directories
-     * that match a whole prefix or a sub path of it, are not added.
+     * Note: In case of {@code <collect>} entries this feature is only applied to
+     * directories outside of the collection.
      * </p>
+     *
+     * @since 1.11.1  (TODO: enter correct version)
      */
     @Parameter(property = "rpm.generateIntermediateDirectories")
     List<String> generateIntermediateDirectories;
