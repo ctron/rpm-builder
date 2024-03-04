@@ -150,7 +150,7 @@ Also see [payload entry information](payload_information.html) for a full list.
 
 ## Generate intermediate directories
 
-Since version `1.11.1 (TODO: enter correct version)` there is an option to automatically generate and add intermediate directories
+Since version `1.11.0` there is an option to automatically generate and add intermediate directories
 explicitly for all paths added by `<entry>` elements.
 Therefore, it is not necessary to manually configure each sub path to have it added explicitly to the package.
 
