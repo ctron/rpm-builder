@@ -49,7 +49,7 @@ symbolic link points to. If this link to path is relative, then it is relative o
 
 In order to walk through a directory tree and add all files use: `<collect>…</collect>`.
 
-The collect elements requires one additional element: `<from>` which defines the base path. In addition
+The collect elements requires one additional element: `<from>` which defines the base path. In addition,
 there is the optional element `<directories>`, which can be set to `false` in order to not record
 directories explicitly. **Note:** the `<from>` directory itself will never be added as explicit directory. 
 This can be done using an additional `<entry>` element. 
@@ -57,8 +57,8 @@ Alternatively the general configuration for [generating intermediate directories
 can be used to create intermediate directories when the package structure is built.
 
 **Note:** By default symbolic links in the file system will be ignored. Since not all platforms support
-symbolic links in the same way. It is recommended to create the manually using a `<linkTo>` style
-entry. This behavior can be changed by changed by adding `<symbolicLinks>true</symbolicLinks>` to the
+symbolic links in the same way. It is recommended to create them manually using a `<linkTo>` style
+entry. This behavior can be changed by adding `<symbolicLinks>true</symbolicLinks>` to the
 collector configuration.  
 
 The target file names will be constructed out the entry name, as base prefix, and the relative
@@ -90,7 +90,7 @@ Will result in the following payload entries:
     /usr/lib/foo/dir2/foo3.txt   (file)
     /usr/lib/foo/dir2/foo4.txt   (file)
 
-As of version 1.0.0 it is also possible to use the standard Maven `includes`/`excludes` elements
+As of version `1.0.0` it is also possible to use the standard Maven `includes`/`excludes` elements
 which follow the standard Maven include/exclude pattern. For example:
 
     <entry>
