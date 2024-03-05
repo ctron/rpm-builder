@@ -388,7 +388,7 @@ public class RpmMojo extends AbstractMojo {
      * directories outside of the collection.
      * </p>
      *
-     * @since 1.11.0
+     * @since 1.12.0
      */
     @Parameter(property = "rpm.generateIntermediateDirectories")
     List<String> generateIntermediateDirectories;
