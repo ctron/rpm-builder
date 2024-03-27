@@ -98,13 +98,13 @@
 
 							<entries>
 								<entry>
-									<name>/opt/mycompany/myapp/a/b/c/foobar</name>
-									<file>${project.basedir}/src/main/data/foobar</file>
+									<name>/opt/mycompany/myapp</name>
+									<directory>true</directory>
 									<ruleset>my-default</ruleset>
 								</entry>
 								<entry>
-									<name>/opt/mycompany/myapp</name>
-									<directory>true</directory>
+									<name>/opt/mycompany/myapp/a/b/c/foobar</name>
+									<file>${project.basedir}/src/main/data/foobar</file>
 									<ruleset>my-default</ruleset>
 								</entry>
 								<entry>
