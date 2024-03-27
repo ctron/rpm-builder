@@ -11,51 +11,78 @@
 package de.dentrassi.rpm.builder;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.packager.rpm.build.BuilderContext;
 import org.eclipse.packager.rpm.build.FileInformationProvider;
 
-public class MissingDirectoryTracker implements BuilderContextListener {
+public class MissingDirectoryGeneratorInterceptor implements BuilderContext {
 
-    // keep track of explicit added directories
-    private final Set<String> explicitAddedDirectories;
-    // keep track of all missing directories which should be added after processing (without explicit added directories)
-    private final Map<String, FileInformationProvider<Object>> missingDirectories;
+    private final BuilderContext builderContext;
+
     // base directories (prefixes) for which the intermediate directories should be generated
     private final List<String> baseDirectories;
+    // keep track of explicit added directories
+    private final Set<String> explicitAddedDirectories;
+    // keep track of all additionally generated and added directories
+    private final Set<String> generatedDirectories;
 
-    public MissingDirectoryTracker(List<String> baseDirectories) {
-        this.explicitAddedDirectories = new HashSet<>();
-        this.missingDirectories = new HashMap<>();
+    public MissingDirectoryGeneratorInterceptor(BuilderContext builderContext, List<String> baseDirectories) {
+        this.builderContext = builderContext;
         this.baseDirectories = baseDirectories;
+        explicitAddedDirectories = new HashSet<>();
+        generatedDirectories = new HashSet<>();
     }
 
     @Override
-    public void notifyFileAdded(String targetName, FileInformationProvider<Object> provider) {
+    public void setDefaultInformationProvider(FileInformationProvider<Object> provider) {
+        builderContext.setDefaultInformationProvider(provider);
+    }
+
+    @Override
+    public FileInformationProvider<Object> getDefaultInformationProvider() {
+        return builderContext.getDefaultInformationProvider();
+    }
+
+    @Override
+    public void addFile(String targetName, Path source, FileInformationProvider<? super Path> provider) throws IOException {
         addMissingDirectoriesFromPath(targetName, provider);
+        builderContext.addFile(targetName, source, provider);
     }
 
     @Override
-    public void notifyDirectoryAdded(String targetName, FileInformationProvider<Object> provider) {
+    public void addFile(String targetName, InputStream source, FileInformationProvider<Object> provider) throws IOException {
+        addMissingDirectoriesFromPath(targetName, provider);
+        builderContext.addFile(targetName, source, provider);
+    }
+
+    @Override
+    public void addFile(String targetName, ByteBuffer source, FileInformationProvider<Object> provider) throws IOException {
+        addMissingDirectoriesFromPath(targetName, provider);
+        builderContext.addFile(targetName, source, provider);
+    }
+
+    @Override
+    public void addDirectory(String targetName, FileInformationProvider<? super Directory> provider) throws IOException {
+        addMissingDirectoriesFromPath(targetName, provider);
+        builderContext.addDirectory(targetName, provider);
         explicitAddedDirectories.add(targetName);
-        missingDirectories.remove(targetName);
-        addMissingDirectoriesFromPath(targetName, provider);
     }
 
     @Override
-    public void notifySymbolicLinkAdded(String targetName, FileInformationProvider<Object> provider) {
+    public void addSymbolicLink(String targetName, String linkTo, FileInformationProvider<? super SymbolicLink> provider) throws IOException {
         addMissingDirectoriesFromPath(targetName, provider);
+        builderContext.addSymbolicLink(targetName, linkTo, provider);
     }
 
-    private void addMissingDirectoriesFromPath(String targetName, FileInformationProvider<Object> provider) {
+    private void addMissingDirectoriesFromPath(String targetName, FileInformationProvider<?> provider) throws IOException {
         if (provider instanceof MojoFileInformationProvider) {
             MojoFileInformationProvider mojoProvider = (MojoFileInformationProvider) provider;
 
@@ -76,15 +103,17 @@ public class MissingDirectoryTracker implements BuilderContextListener {
         }
     }
 
-    private void addIfIsMissingDirectory(String intermediateDirectory, MojoFileInformationProvider mojoProvider) {
-        if (startsPathWithPrefix(intermediateDirectory) && !explicitAddedDirectories.contains(intermediateDirectory)) {
-            missingDirectories.computeIfAbsent(intermediateDirectory,
-                    (String directory) -> new MojoFileInformationProvider(
+    private void addIfIsMissingDirectory(String intermediateDirectory, MojoFileInformationProvider mojoProvider) throws IOException {
+        if (startsPathWithPrefix(intermediateDirectory)
+                && !explicitAddedDirectories.contains(intermediateDirectory)
+                && !generatedDirectories.contains(intermediateDirectory)) {
+            builderContext.addDirectory(intermediateDirectory, new MojoFileInformationProvider(
                             mojoProvider.getRulesetEval(),
                             mojoProvider.getRuleId(),
                             null,
                             mojoProvider.getLogger(),
                             mojoProvider.getTimestamp()));
+            generatedDirectories.add(intermediateDirectory);
         }
     }
 
@@ -94,12 +123,6 @@ public class MissingDirectoryTracker implements BuilderContextListener {
 
     private boolean startsPathWithPrefix(String directory) {
         return baseDirectories.stream().anyMatch(directory::startsWith);
-    }
-
-    public void addMissingIntermediateDirectoriesToContext(BuilderContext ctx) throws IOException {
-        for (Map.Entry<String, FileInformationProvider<Object>> missingEntry : missingDirectories.entrySet()) {
-            ctx.addDirectory(missingEntry.getKey(), missingEntry.getValue());
-        }
     }
 
     private List<String> getIntermediateDirectories(String targetName) {
