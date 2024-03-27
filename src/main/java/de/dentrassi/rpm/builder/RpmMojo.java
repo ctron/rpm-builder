@@ -1104,9 +1104,12 @@ public class RpmMojo extends AbstractMojo {
             return;
         }
 
-        final ListenableBuilderContext ctx = new ListenableBuilderContext(builder.newContext());
-        final MissingDirectoryTracker missingDirectoryTracker = new MissingDirectoryTracker(this.generateIntermediateDirectories);
-        ctx.registerListener(missingDirectoryTracker);
+        final BuilderContext ctx;
+        if (this.generateIntermediateDirectories.isEmpty()) {
+            ctx = builder.newContext();
+        } else {
+            ctx = new MissingDirectoryGeneratorInterceptor(builder.newContext(), this.generateIntermediateDirectories);;
+        }
 
         this.logger.debug("Building payload:");
 
@@ -1120,11 +1123,6 @@ public class RpmMojo extends AbstractMojo {
 
                 fillFromEntry(ctx, entry);
             }
-        }
-
-        ctx.removeListener(missingDirectoryTracker);
-        if (!generateIntermediateDirectories.isEmpty()) {
-            missingDirectoryTracker.addMissingIntermediateDirectoriesToContext(ctx);
         }
     }
 

@@ -1,24 +1,25 @@
-def dump() {
-    Process proc = ('rpm -q --dump -p ' + basedir + "/target/*.rpm").execute()
+def verifyFileInodes() {
+    Process proc = ['rpm', '-q', '--queryformat', '[%{FILEINODES} %{FILEMODES:perms} %{FILEUSERNAME} %{FILEGROUPNAME} %{FILENAMES}\n]', basedir.path + '/target/*.rpm'].execute() | 'sort -n'.execute()
+    proc.waitFor()
     return proc.in.getText().trim()
 }
 
-def actual = dump()
-println "Dump:\n" + actual
+def actual = verifyFileInodes()
+println "Verify file inodes:\n" + actual
 
 def expected = """\
-    /opt/mycompany/myapp 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/a 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/a/b 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/a/b/x/y/foobar 0 1230807600 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0100555 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/c 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/c/d 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/c/d/x 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/c/d/x/y 0 1230807600 0000000000000000000000000000000000000000000000000000000000000000 040777 myuser mygroup 0 0 0 X
-    /opt/mycompany/myapp/c/d/x/y/foobar 0 1230807600 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0100555 myuser mygroup 0 0 0 X""".stripIndent()
+    1 drwxrwxrwx myuser mygroup /opt/mycompany/myapp
+    2 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/a
+    3 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/a/b
+    4 -r-xr-xr-x myuser mygroup /opt/mycompany/myapp/a/b/x/y/foobar
+    5 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/c
+    6 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/c/d
+    7 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/c/d/x
+    8 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/c/d/x/y
+    9 -r-xr-xr-x myuser mygroup /opt/mycompany/myapp/c/d/x/y/foobar""".stripIndent()
 
 if (actual != expected) {
-    System.out.format("RPM dump doesn't match - actual:%n%s%nexpected:%n%s%n", actual, expected);
+    System.out.format("RPM file inodes doesn't match - actual:%n%s%nexpected:%n%s%n", actual, expected);
     return false;
 }
 
