@@ -11,11 +11,11 @@
 package de.dentrassi.rpm.builder;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
@@ -61,7 +61,7 @@ public class Script {
         }
 
         if (this.file != null) {
-            try (Reader reader = new InputStreamReader(new FileInputStream(this.file), StandardCharsets.UTF_8)) {
+            try (Reader reader = new InputStreamReader(Files.newInputStream(this.file.toPath()), StandardCharsets.UTF_8)) {
                 return CharStreams.toString(reader);
             }
         }
