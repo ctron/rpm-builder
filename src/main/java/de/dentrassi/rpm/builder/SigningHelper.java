@@ -10,9 +10,9 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,7 +46,7 @@ public final class SigningHelper {
             throw new MojoFailureException(signature, "'passphrase' parameter not set", "Signing requires the 'passphrase' parameter to be set.");
         }
 
-        try (InputStream input = new FileInputStream(signature.getKeyringFile())) {
+        try (InputStream input = Files.newInputStream(signature.getKeyringFile().toPath())) {
             final PGPPrivateKey privateKey = PgpHelper.loadPrivateKey(input, signature.getKeyId(), signature.getPassphrase());
             if (privateKey == null) {
                 throw new MojoFailureException(String.format("Unable to load GPG key '%s' from '%s'", signature.getKeyId(), signature.getKeyringFile()));

@@ -191,7 +191,7 @@ public class YumMojo extends AbstractMojo {
             }
 
             if (this.files != null) {
-                paths.addAll(this.files.stream().map(f -> f.toPath()).collect(Collectors.toList()));
+                paths.addAll(this.files.stream().map(File::toPath).collect(Collectors.toList()));
             }
             if (this.directories != null) {
                 for (final File dir : this.directories) {
@@ -245,7 +245,7 @@ public class YumMojo extends AbstractMojo {
 
             try (CpioArchiveInputStream cpio = ris.getCpioStream()) {
                 CpioArchiveEntry cpioEntry;
-                while ((cpioEntry = cpio.getNextCPIOEntry()) != null) {
+                while ((cpioEntry = cpio.getNextEntry()) != null) {
                     providedFiles.add(RpmInformations.normalize(cpioEntry.getName()));
                 }
             }

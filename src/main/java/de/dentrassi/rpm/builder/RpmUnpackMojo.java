@@ -10,7 +10,6 @@ package de.dentrassi.rpm.builder;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -171,15 +170,12 @@ public final class RpmUnpackMojo extends AbstractMojo {
         }
 
         try (final RpmInputStream in =
-                     new RpmInputStream(new BufferedInputStream(new FileInputStream(this.rpmFile)))) {
+                     new RpmInputStream(new BufferedInputStream(Files.newInputStream(this.rpmFile.toPath())))) {
             final InputHeader<RpmTag> header = in.getPayloadHeader();
-            header.getEntry(RpmTag.FILE_GROUPNAME);
-            header.getEntry(RpmTag.FILE_USERNAME);
-
             final CpioArchiveInputStream cpio = in.getCpioStream();
             CpioArchiveEntry entry;
 
-            while ((entry = cpio.getNextCPIOEntry()) != null) {
+            while ((entry = cpio.getNextEntry()) != null) {
                 unpackEntry(header, cpio, entry, targetDir);
             }
         } catch (final IllegalArgumentException | IllegalStateException e) {
