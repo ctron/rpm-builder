@@ -16,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.packager.rpm.build.FileInformation;
 import org.eclipse.packager.rpm.build.PayloadEntryType;
@@ -41,7 +40,7 @@ public class RulesetEvaluator {
 
         private void eval(final Object object, final PayloadEntryType type, final String targetName, final FileInformation info, final Set<String> knownSets) {
             if (knownSets.contains(this.id)) {
-                throw new IllegalStateException(String.format("Recursive calling of rulesets is not allowed- current: %s, previous: %s", this.id, knownSets.stream().collect(Collectors.joining(", "))));
+                throw new IllegalStateException(String.format("Recursive calling of rulesets is not allowed- current: %s, previous: %s", this.id, String.join(", ", knownSets)));
             }
 
             knownSets.add(this.id);

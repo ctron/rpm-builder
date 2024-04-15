@@ -11,6 +11,7 @@
 package de.dentrassi.rpm.builder;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class PackageEntry extends EntryDetails {
     public static class Collector {
@@ -66,7 +67,7 @@ public class PackageEntry extends EntryDetails {
 
         @Override
         public String toString() {
-            return String.format("[collector - from: %s,  directories: %s, symLinks: %s, includes: %s, excludes: %s]", this.from, this.directories, this.symbolicLinks, this.includes, this.excludes);
+            return String.format("[collector - from: %s,  directories: %s, symLinks: %s, includes: %s, excludes: %s]", this.from, this.directories, this.symbolicLinks, Arrays.toString(this.includes), Arrays.toString(this.excludes));
         }
     }
 
