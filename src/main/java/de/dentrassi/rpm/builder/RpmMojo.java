@@ -813,7 +813,7 @@ public class RpmMojo extends AbstractMojo {
             } catch (final FileAlreadyExistsException e) {
                 // silently ignore
             } catch (final IOException ioe) {
-                this.logger.debug("Unable to create target directory {}", targetDir);
+                this.logger.debug("Unable to create target directory %s", targetDir);
                 throw new MojoExecutionException("RPM build failed.", ioe);
 
             }
@@ -1108,7 +1108,7 @@ public class RpmMojo extends AbstractMojo {
         if (this.generateIntermediateDirectories.isEmpty()) {
             ctx = builder.newContext();
         } else {
-            ctx = new MissingDirectoryGeneratorInterceptor(builder.newContext(), this.generateIntermediateDirectories);;
+            ctx = new MissingDirectoryGeneratorInterceptor(builder.newContext(), this.generateIntermediateDirectories);
         }
 
         this.logger.debug("Building payload:");
@@ -1130,12 +1130,12 @@ public class RpmMojo extends AbstractMojo {
 
         builder.setHeaderCustomizer(rpmTagHeader -> {
             if (this.prefixes != null && !this.prefixes.isEmpty()) {
-                this.logger.debug("Building relocatable package: {}", this.prefixes);
+                this.logger.debug("Building relocatable package: %s", this.prefixes);
                 rpmTagHeader.putStringArray(RpmTag.PREFIXES, this.prefixes.toArray(new String[0]));
             }
 
             if (outputTimestampInstant != null) {
-                this.logger.debug("Overriding build time: {}", outputTimestampInstant);
+                this.logger.debug("Overriding build time: %s", outputTimestampInstant);
                 rpmTagHeader.putInt(RpmTag.BUILDTIME, (int) (outputTimestampInstant.toEpochMilli() / 1000));
             }
         });
