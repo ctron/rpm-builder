@@ -47,6 +47,7 @@
 							<goal>rpm</goal>
 						</goals>
 						<configuration>
+							<outputFileName>test1.rpm</outputFileName>
 							<attach>false</attach>
 							<group>Application/Misc</group>
 

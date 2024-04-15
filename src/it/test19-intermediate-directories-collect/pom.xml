@@ -49,6 +49,7 @@
 							<goal>rpm</goal>
 						</goals>
 						<configuration>
+							<outputFileName>test19.rpm</outputFileName>
 							<attach>false</attach>
 							<group>Application/Misc</group>
 

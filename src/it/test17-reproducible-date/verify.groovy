@@ -1,5 +1,7 @@
-def generateMD5(File file) {
-    def digest = java.security.MessageDigest.getInstance("MD5")
+import java.security.MessageDigest
+
+def static generateMD5(File file) {
+    def digest = MessageDigest.getInstance("MD5")
     file.eachByte(4096) { buffer, length ->
         digest.update(buffer, 0, length)
     }

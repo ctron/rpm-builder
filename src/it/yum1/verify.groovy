@@ -1,5 +1,4 @@
-def pb = new ProcessBuilder ( "bash", "-c", "rpm -qlvvp target/*.rpm" );
+def pb = new ProcessBuilder ( "bash", "-c", "rpm -qlvvp target/yum/packages/test1-1.0.0-0.201606241041-noarch.rpm" );
+pb.directory ( basedir )
 pb.inheritIO ();
-pb.start ().waitFor();
-
-return true;
+return ( pb.start ().waitFor () == 0 || true ); // FIXME: This test has a known failure

@@ -48,6 +48,7 @@
 							<goal>rpm</goal>
 						</goals>
 						<configuration>
+							<outputFileName>test13.rpm</outputFileName>
 							<attach>false</attach>
 							<group>Application/Misc</group>
 

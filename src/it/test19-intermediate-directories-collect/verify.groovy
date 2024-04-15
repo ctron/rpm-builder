@@ -1,5 +1,5 @@
 def verifyFileInodes() {
-    Process proc = ['rpm', '-q', '--queryformat', '[%{FILEINODES} %{FILEMODES:perms} %{FILEUSERNAME} %{FILEGROUPNAME} %{FILENAMES}\n]', basedir.path + '/target/*.rpm'].execute() | 'sort -n'.execute()
+    Process proc = ['rpm', '-q', '--queryformat', '[%{FILEINODES} %{FILEMODES:perms} %{FILEUSERNAME} %{FILEGROUPNAME} %{FILENAMES}\n]', basedir.toString().replace(File.separator, "/") + '/target/test19.rpm'].execute()
     proc.waitFor()
     return proc.in.getText().trim()
 }
