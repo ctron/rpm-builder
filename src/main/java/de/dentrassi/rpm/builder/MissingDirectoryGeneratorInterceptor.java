@@ -10,6 +10,7 @@
  *******************************************************************************/
 package de.dentrassi.rpm.builder;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -131,7 +132,7 @@ public class MissingDirectoryGeneratorInterceptor implements BuilderContext {
 
         for (int i = 1; i < path.getNameCount(); i++) {
             Path subPath = path.subpath(0, i);
-            intermediateDirectories.add("/" + subPath);
+            intermediateDirectories.add("/" + subPath.toString().replace(File.separatorChar, '/'));
         }
 
         return intermediateDirectories;
