@@ -1,5 +1,4 @@
-def pb = new ProcessBuilder ( "bash", "-c", "rpm -qlvvp target/*.rpm" );
+def pb = new ProcessBuilder ( "bash", "-c", "rpm -qlvvp target/test3.rpm" );
+pb.directory ( basedir )
 pb.inheritIO ();
-pb.start ().waitFor();
-
-return true;
+return ( pb.start ().waitFor () == 0 );

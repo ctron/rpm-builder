@@ -1,7 +1,7 @@
 def verifyFileInodes() {
-    Process proc = ['rpm', '-q', '--queryformat', '[%{FILEINODES} %{FILEMODES:perms} %-13{FILEUSERNAME} %-14{FILEGROUPNAME} %{FILENAMES}\n]', basedir.path + '/target/*.rpm'].execute() | 'sort -n'.execute()
+    Process proc = ['rpm', '-q', '--queryformat', '[%{FILEINODES} %{FILEMODES:perms} %-13{FILEUSERNAME} %-14{FILEGROUPNAME} %{FILENAMES}\n]', basedir.toString().replace(File.separator, "/") + '/target/test19.rpm'].execute()
     proc.waitFor()
-    return proc.in.getText().trim()
+    return proc.in.getText().split().sort()
 }
 
 def actual = verifyFileInodes()
@@ -15,7 +15,7 @@ def expected = """\
     5 -r-xr-xr-x myuser        mygroup        /opt/mycompany/myapp/a/b/c/foobar
     6 drwxr-xr-x root          root           /etc/mycompany/myapp
     7 drwxr-xr-x root          root           /etc/mycompany/myapp/defaults
-    8 ---x--x--x mygeneraluser mygeneralgroup /opt/mycompany/otherapp/a/b/c/foobar""".stripIndent()
+    8 ---x--x--x mygeneraluser mygeneralgroup /opt/mycompany/otherapp/a/b/c/foobar""".stripIndent().split().sort()
 
 if (actual != expected) {
     System.out.format("RPM file inodes doesn't match - actual:%n%s%nexpected:%n%s%n", actual, expected);

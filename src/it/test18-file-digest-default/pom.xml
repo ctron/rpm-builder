@@ -50,6 +50,7 @@
 							<goal>rpm</goal>
 						</goals>
 						<configuration>
+							<outputFileName>test18.rpm</outputFileName>
 							<group>Application/Misc</group>
 
 							<forceRelease>false</forceRelease>

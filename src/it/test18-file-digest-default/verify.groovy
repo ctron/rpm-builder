@@ -1,5 +1,5 @@
 def dump ( ) {
-	Process proc = ('rpm -q --dump -p ' + basedir + "/target/test18.rpm").execute()
+	Process proc = ('rpm -q --dump -p ' + basedir.toString().replace(File.separator, "/") + "/target/test18.rpm").execute()
 	return proc.in.getText().trim()
 }
 
