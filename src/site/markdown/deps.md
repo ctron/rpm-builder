@@ -64,13 +64,13 @@ Or using text operators in order to avoid XML escaping:
        other-package ge 1.0   <!-- same as &gt;= -->
     </dependency>
 
-| Operator | XML | Text alias | Description |
-| --- | --- | --- | --- |
-| =   | `=`   | `eq`  | Equal |
-| <   | `&lt;` | `lt`  | Less than |
-| >   | `&gt;` | `gt`  | Greater than |
-| <=  | `&lt;=` | `le`  | Less than or equal |
-| >=  | `&gt;=` | `ge`  | Greater than or equal |
+| Operator | XML     | Text alias | Description           |
+|----------|---------|------------|-----------------------|
+| =        | `=`     | `eq`       | Equal                 |
+| <        | `&lt;`  | `lt`       | Less than             |
+| >        | `&gt;`  | `gt`       | Greater than          |
+| <=       | `&lt;=` | `le`       | Less than or equal    |
+| >=       | `&gt;=` | `ge`       | Greater than or equal |
 
 **Note:** The whitespaces between the name and the operate are required. In other words `foo >= 1.0` works, while `foo>=1.0` _does not_! 
 
