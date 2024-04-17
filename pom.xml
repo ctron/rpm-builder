@@ -44,7 +44,12 @@
         <org.bouncycastle.bcpg.version>1.77</org.bouncycastle.bcpg.version>
         <org.bouncycastle.bcprov.version>1.77</org.bouncycastle.bcprov.version>
 
-        <packager.version>0.20.0</packager.version>
+        <packager.version>0.20.1-SNAPSHOT</packager.version>
+        <assertj.version>3.25.3</assertj.version>
+        <junit.version>5.10.2</junit.version>
+        <logback.version>1.5.5</logback.version>
+        <slf4j.version>2.0.13</slf4j.version>
+        <testcontainers.version>1.19.7</testcontainers.version>
     </properties>
 
     <prerequisites>
@@ -136,15 +141,35 @@
             <version>1.15</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
         <!-- EOTD -->
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -168,6 +193,34 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.15.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-bom</artifactId>
+                <version>${assertj.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-bom</artifactId>
+                <version>${slf4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -203,6 +256,12 @@
                     <groupId>org.codehaus.plexus</groupId>
                     <artifactId>plexus-component-metadata</artifactId>
                     <version>2.0.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.2.5</version>
                 </plugin>
 
                 <plugin>
@@ -430,7 +489,7 @@
                             <debug>true</debug>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <preBuildHookScript>setup</preBuildHookScript>
-                            <postBuildHookScript>verify</postBuildHookScript>
+                            <!--<postBuildHookScript>verify</postBuildHookScript>-->
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <profiles>
                                 <!-- <profile>sign</profile> -->
@@ -445,6 +504,18 @@
                             <execution>
                                 <goals>
                                     <goal>install</goal>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
