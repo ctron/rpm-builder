@@ -10,14 +10,14 @@ Also see
 
 The RPM builder current does support the following script types of RPM:
 
-| Type | Tag | Spec Name | Description |
-| ----- | ----- | ---------------- | ------------- |
-| Before Transaction | `<beforeTransaction>` | `%pretrans` | Run before the transaction |
-| Before Installation | `<beforeInstallation>` | `%pre` | Run before the installation of the package |
-| After Installation | `<afterInstallation>` | `%post` | Run after the installation of the package |
-| Before Removal | `<beforeRemoval>` | `%preun` | Run before the removal of the package |
-| After Removal | `<afterRemoval>` | `%postun` | Run after the removal of the package |
-| After Transaction | `<afterTransaction>` | `%posttrans ` | Run after the transaction |
+| Type                | Tag                    | Spec Name     | Description                                |
+|---------------------|------------------------|---------------|--------------------------------------------|
+| Before Transaction  | `<beforeTransaction>`  | `%pretrans`   | Run before the transaction                 |
+| Before Installation | `<beforeInstallation>` | `%pre`        | Run before the installation of the package |
+| After Installation  | `<afterInstallation>`  | `%post`       | Run after the installation of the package  |
+| Before Removal      | `<beforeRemoval>`      | `%preun`      | Run before the removal of the package      |
+| After Removal       | `<afterRemoval>`       | `%postun`     | Run after the removal of the package       |
+| After Transaction   | `<afterTransaction>`   | `%posttrans ` | Run after the transaction                  |
 
 Please note that RPM has a few things you might not expected from your scripts. For example is it possible
 to have multiple RPMs with the same package name, but different versions, installed. This will
