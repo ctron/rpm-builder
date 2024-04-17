@@ -2,22 +2,21 @@ package de.dentrassi.rpm.builder;
 
 import org.eclipse.packager.rpm.FileFlags;
 import org.eclipse.packager.rpm.build.FileInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class de.dentrassi.rpm.builder.EntryDetails.
  */
-public class EntryDetailsTest {
+class EntryDetailsTest {
     /**
      * Verify that empty {@link EntryDetails} result in empty set of  {@link FileFlags}.
      */
     @Test
-    public void applyEmpty() {
+    void applyEmpty() {
         final EntryDetails entryDetails = new EntryDetails();
         doTest(new FileFlags[]{}, false, entryDetails);
     }
@@ -26,7 +25,7 @@ public class EntryDetailsTest {
      * Verify that {@link EntryDetails#setReadme(java.lang.Boolean)} correctly controls {@link FileFlags#README}.
      */
     @Test
-    public void applyReadmeTrue() {
+    void applyReadmeTrue() {
         final EntryDetails entryDetails = new EntryDetails();
         entryDetails.setReadme(true);
         doTest(new FileFlags[]{FileFlags.README}, true, entryDetails);
@@ -36,7 +35,7 @@ public class EntryDetailsTest {
      * False negative? See https://github.com/ctron/rpm-builder/issues/42
      */
     @Test
-    public void applyReadmeFalse() {
+    void applyReadmeFalse() {
         final EntryDetails entryDetails = new EntryDetails();
         entryDetails.setReadme(false);
         doTest(new FileFlags[]{FileFlags.README}, true, entryDetails); // questionable
@@ -51,8 +50,9 @@ public class EntryDetailsTest {
      */
     private static void doTest(FileFlags[] expectedResult, boolean expectedApplied, final EntryDetails entryDetails) {
         final FileInformation fileInformation = new FileInformation();
-        assertEquals(expectedApplied, entryDetails.apply(fileInformation));
+        assertThat(entryDetails.apply(fileInformation)).isEqualTo(expectedApplied);
         final Set<FileFlags> fileFlags = fileInformation.getFileFlags();
-        assertArrayEquals(expectedResult, fileFlags.toArray());
+        assertThat(fileFlags.toArray()).isEqualTo(expectedResult);
     }
 }
+
