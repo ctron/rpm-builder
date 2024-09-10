@@ -3,7 +3,7 @@
 
     <groupId>de.dentrassi.maven</groupId>
     <artifactId>rpm</artifactId>
-    <version>1.13.0</version>
+    <version>1.12.1-SNAPSHOT</version>
 
     <packaging>maven-plugin</packaging>
 
@@ -27,7 +27,7 @@
         <url>https://github.com/ctron/rpm-builder</url>
         <connection>scm:git:git://github.com/ctron/rpm-builder.git</connection>
         <developerConnection>scm:git:git@github.com:ctron/rpm-builder.git</developerConnection>
-        <tag>rpm-1.13.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
@@ -42,7 +42,7 @@
         <maven.version>3.8.3</maven.version>
 
         <org.bouncycastle.bcpg.version>1.77</org.bouncycastle.bcpg.version>
-        <org.bouncycastle.bcprov.version>1.78</org.bouncycastle.bcprov.version>
+        <org.bouncycastle.bcprov.version>1.77</org.bouncycastle.bcprov.version>
 
         <packager.version>0.21.0</packager.version>
     </properties>
