@@ -2,8 +2,9 @@ package de.dentrassi.rpm.builder;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container.ExecResult;
@@ -51,57 +52,22 @@ class RpmIT {
         assertThat(result.getExitCode()).isZero();
     }
 
-    @Test
-    void test1() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test1/target/test1.rpm");
+    @ParameterizedTest
+    @ValueSource(strings = {"/test1/target/test1.rpm", "/test2/target/test2.rpm", "/test3/target/test3.rpm",
+            "/test4-lowercase/target/foo-bar*.rpm", "/test4-uppercase/target/Foo-Bar*.rpm",
+            "/test5-outname/target/my-foo-bar.abc.rpm",
+            "/test10-defaultname/target/test10-defaultname-1.0.0-1.noarch.rpm",
+            "/test10-legacyname/target/test10-legacyname-1.0.0-1-noarch.rpm",
+            "/test13-skipentry/target/test13.rpm"})
+    void testExitCode(String file) throws IOException, InterruptedException {
+        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", file);
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
+        assertThat(result.getStdout()).isNotBlank();
     }
 
     @Test
-    void test2() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test2/target/test2.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test3() throws IOException, InterruptedException {
-        String expected = "(contains no files)";
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test3/target/test3.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout()).isEqualToIgnoringNewLines(expected);
-    }
-
-    @Test
-    void test4Lowercase() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test4-lowercase/target/foo-bar*.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test4Uppercase() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test4-uppercase/target/Foo-Bar*.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test5() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test5-outname/target/my-foo-bar.abc.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test6Scanner() throws IOException, InterruptedException {
+    void testScanner() throws IOException, InterruptedException {
         String expected =
                 "/usr/share/test6/a.foo\t\n" +
                 "/usr/share/test6/include\tdirectory\n" +
@@ -114,8 +80,8 @@ class RpmIT {
     }
 
     @Test
-    void test7Nosrcpkg() throws IOException, InterruptedException {
-        String notExpected = "Source RPM  : test7-srcpkg-.*\\.rpm";
+    void testNosrcpkg() throws IOException, InterruptedException {
+        String notExpected = "Source RPM {2}: test7-srcpkg-.*\\.rpm";
         ExecResult result = CONTAINER.execInContainer( "rpm", "-qip", "/test7-nosrcpkg/target/test7.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
@@ -123,21 +89,21 @@ class RpmIT {
     }
 
     @Test
-    void test7Srcpkg() throws IOException, InterruptedException {
-        String expected = "Source RPM  : test7-srcpkg-.*\\.rpm";
+    void testSrcpkg() throws IOException, InterruptedException {
+        String expected = "Source RPM {2}: test7-srcpkg-.*\\.rpm";
         ExecResult result = CONTAINER.execInContainer( "rpm", "-qip", "/test7-srcpkg/target/test7.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
         assertThat(result.getStdout()).containsPattern(expected);
     }
 
-    @Disabled
-    void test7Srcpkg2() throws IOException, InterruptedException {
-        String notExpected = "foo.bar";
+    @Test
+    void testSrcpkg2() throws IOException, InterruptedException {
+        String expected = "Source RPM {2}: foo\\.bar";
         ExecResult result = CONTAINER.execInContainer( "rpm", "-qip", "/test7-srcpkg2/target/test7.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout()).doesNotContain(notExpected);
+        assertThat(result.getStdout()).containsPattern(expected);
     }
 
     private static String flagsForName(String name) throws IOException, InterruptedException {
@@ -147,7 +113,7 @@ class RpmIT {
     }
 
     @Test
-    void test8() throws IOException, InterruptedException {
+    void testFlags() throws IOException, InterruptedException {
         String suggests = flagsForName("suggests");
         LOGGER.info("Suggests: {}", suggests);
 
@@ -167,23 +133,7 @@ class RpmIT {
     }
 
     @Test
-    void test10Ddfaultname() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test10-defaultname/target/test10-defaultname-1.0.0-1.noarch.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test10Legacyname() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test10-legacyname/target/test10-legacyname-1.0.0-1-noarch.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test11Prefixes() throws IOException, InterruptedException {
+    void testPrefixes() throws IOException, InterruptedException {
         String expected = "/opt:/var/log:";
         ExecResult result = CONTAINER.execInContainer("rpm", "--qf", "[%{Prefixes}:]", "-qp", "/test11-prefixes/target/test11.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
@@ -192,50 +142,27 @@ class RpmIT {
     }
 
     @Test
-    void test12Disable() throws IOException, InterruptedException {
+    void testDisable() throws IOException, InterruptedException {
         ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/rpm12-disable/target/*.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
         assertThat(result.getStdout()).isEmpty();
     }
 
-    @Test
-    void test13Skipentry() throws IOException, InterruptedException {
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test13-skipentry/target/test13.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout().trim()).isNotEmpty();
-    }
-
-    @Test
-    void test14Forcerelease() throws IOException, InterruptedException {
+    @ParameterizedTest
+    @ValueSource(strings = {"/test14-forcerelease/target/test14-forcerelease-4.5.6-1.noarch.rpm",
+            "/test14-primaryname/target/test14-primaryname-1.0.0-*.noarch.rpm",
+            "/test14-snapshotname/target/test14-snapshotname-1.2.3-0.[0-9]*.noarch.rpm"})
+    void test14ContainsNoFiles(String file) throws IOException, InterruptedException {
         String expected = "(contains no files)";
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test14-forcerelease/target/test14-forcerelease-4.5.6-1.noarch.rpm");
+        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", file);
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
         assertThat(result.getStdout()).isEqualToIgnoringNewLines(expected);
     }
 
     @Test
-    void test14Primaryname() throws IOException, InterruptedException {
-        String expected = "(contains no files)";
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test14-primaryname/target/test14-primaryname-1.0.0-*.noarch.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout()).isEqualToIgnoringNewLines(expected);
-    }
-
-    @Test
-    void test14Snapshotname() throws IOException, InterruptedException {
-        String expected = "(contains no files)";
-        ExecResult result = CONTAINER.execInContainer("rpm", "-qlvvp", "/test14-snapshotname/target/test14-snapshotname-1.2.3-0.[0-9]*.noarch.rpm");
-        LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
-        assertThat(result.getExitCode()).isZero();
-        assertThat(result.getStdout()).isEqualToIgnoringNewLines(expected);
-    }
-
-    @Test
-    void test15Default() throws IOException, InterruptedException {
+    void testDefault() throws IOException, InterruptedException {
         ExecResult result = CONTAINER.execInContainer("rpm", "-Kv", "/test15-default/target/test15.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
@@ -246,7 +173,7 @@ class RpmIT {
     }
 
     @Test
-    void test15Md5only() throws IOException, InterruptedException {
+    void testMd5Only() throws IOException, InterruptedException {
         ExecResult result = CONTAINER.execInContainer("rpm", "-Kv", "/test15-md5-only/target/test15.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
@@ -261,7 +188,7 @@ class RpmIT {
     }
 
     @Test
-    void test16Ghost() throws IOException, InterruptedException {
+    void testGhost() throws IOException, InterruptedException {
         String allFiles = flagsForOptions("");
         LOGGER.info("All files: {}", allFiles);
 
@@ -280,7 +207,7 @@ class RpmIT {
     }
 
     @Test
-    void test17ReproducibleDate() throws IOException, InterruptedException {
+    void testReproducibleDate() throws IOException, InterruptedException {
         String file = "/test17-reproducible-date/target/test17-1.0.0-0.200901011100.noarch.rpm";
         String expected = "cd831b22be9f30db30eb69ab35ddb3c5";
         ExecResult result = CONTAINER.execInContainer("rpm", "-qilpv", "--dump", file);
@@ -291,7 +218,7 @@ class RpmIT {
     }
 
     @Test
-    void test17ReproducibleEpoch() throws IOException, InterruptedException {
+    void testReproducibleEpoch() throws IOException, InterruptedException {
         String file = "/test17-reproducible-epoch/target/test17-1.0.0-0.198001010000.noarch.rpm";
         String expected = "4accb0204c6be8838c05f6a77c97e320";
         ExecResult result = CONTAINER.execInContainer("rpm", "-qilpv", "--dump", file);
@@ -302,7 +229,7 @@ class RpmIT {
     }
 
     @Test
-    void test18FileDigestDefault() throws IOException, InterruptedException {
+    void testFileDigestDefault() throws IOException, InterruptedException {
         String expected = "/etc/test.txt 11 1230807600 a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e 0100600 root root 0 0 0 X";
         ExecResult result = CONTAINER.execInContainer("rpm", "-q", "--dump", "-p", "/test18-file-digest-default/target/test18.rpm");
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
@@ -311,7 +238,7 @@ class RpmIT {
     }
 
     @Test
-    void test18FileDigestMd5() throws IOException, InterruptedException {
+    void testFileDigestMd5() throws IOException, InterruptedException {
         String expected = "/etc/test.txt 11 1230807600 b10a8db164e0754105b7a99be72e3fe5 0100600 root root 0 0 0 X";
         ExecResult result = CONTAINER.execInContainer("rpm", "-q", "--dump", "-p", "/test18-file-digest-md5/target/test18.rpm");
                 LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
@@ -320,7 +247,7 @@ class RpmIT {
     }
 
     @Test
-    void test19IntermediateDirectories() throws IOException, InterruptedException {
+    void testIntermediateDirectories() throws IOException, InterruptedException {
         List<String> expected = Arrays.stream((
                 "1 drwxrwxrwx myuser        mygroup        /opt/mycompany/myapp\n" +
                 "2 drwxrwxrwx myuser        mygroup        /opt/mycompany/myapp/a\n" +
@@ -337,7 +264,7 @@ class RpmIT {
     }
 
     @Test
-    void test19IntermediateDirectoriesCollect() throws IOException, InterruptedException {
+    void testIntermediateDirectoriesCollect() throws IOException, InterruptedException {
         List<String> expected = Arrays.stream((
                 "1 drwxrwxrwx myuser mygroup /opt/mycompany/myapp\n" +
                 "2 drwxrwxrwx myuser mygroup /opt/mycompany/myapp/a\n" +
