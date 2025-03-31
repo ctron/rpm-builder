@@ -282,7 +282,7 @@ class RpmIT {
     @Test
     void test17ReproducibleDate() throws IOException, InterruptedException {
         String file = "/test17-reproducible-date/target/test17-1.0.0-0.200901011100.noarch.rpm";
-        String expected = "93ebadf3ba02fe04ed2365cbc13c489f";
+        String expected = "cd831b22be9f30db30eb69ab35ddb3c5";
         ExecResult result = CONTAINER.execInContainer("rpm", "-qilpv", "--dump", file);
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();
@@ -292,8 +292,8 @@ class RpmIT {
 
     @Test
     void test17ReproducibleEpoch() throws IOException, InterruptedException {
-        String file = "/test17-reproducible-epoch/target/test17-1.0.0-0.197001010000.noarch.rpm";
-        String expected = "11162ad70ef55851a3e1375222cd1a4a";
+        String file = "/test17-reproducible-epoch/target/test17-1.0.0-0.198001010000.noarch.rpm";
+        String expected = "4accb0204c6be8838c05f6a77c97e320";
         ExecResult result = CONTAINER.execInContainer("rpm", "-qilpv", "--dump", file);
         LOGGER.info("{}{}", System.lineSeparator(), result.getStdout());
         assertThat(result.getExitCode()).isZero();

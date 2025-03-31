@@ -44,7 +44,7 @@
         <org.bouncycastle.bcpg.version>1.80</org.bouncycastle.bcpg.version>
         <org.bouncycastle.bcprov.version>1.80</org.bouncycastle.bcprov.version>
 
-        <packager.version>0.21.0</packager.version>
+        <packager.version>0.21.1-SNAPSHOT</packager.version>
         <assertj.version>3.27.3</assertj.version>
         <junit.version>5.12.1</junit.version>
         <logback.version>1.5.18</logback.version>
