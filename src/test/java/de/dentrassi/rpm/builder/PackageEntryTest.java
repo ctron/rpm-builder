@@ -39,7 +39,7 @@ class PackageEntryTest {
     }
 
     @Test
-    public void testValidateGhostSource() {
+    void testValidateGhostSource() {
         final PackageEntry entry = new PackageEntry();
         entry.setName("some-entry");
         entry.setGhost(Boolean.TRUE);
