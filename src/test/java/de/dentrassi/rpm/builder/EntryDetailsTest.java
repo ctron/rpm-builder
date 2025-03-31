@@ -32,7 +32,8 @@ class EntryDetailsTest {
     }
 
     /**
-     * False negative? See https://github.com/ctron/rpm-builder/issues/42
+     * False negative? See
+     * <a href="https://github.com/ctron/rpm-builder/issues/42">https://github.com/ctron/rpm-builder/issues/42</a>.
      */
     @Test
     void applyReadmeFalse() {
@@ -42,7 +43,7 @@ class EntryDetailsTest {
     }
 
     /**
-     * invokes {@link EntryDetails#apply(org.eclipse.packager.rpm.build.FileInformation)}
+     * Invokes {@link EntryDetails#apply(org.eclipse.packager.rpm.build.FileInformation)}.
      *
      * @param expectedResult expected return value of {@link FileInformation#getFileFlags()}
      * @param expectedApplied expected return value of
@@ -55,4 +56,3 @@ class EntryDetailsTest {
         assertThat(fileFlags.toArray()).isEqualTo(expectedResult);
     }
 }
-
