@@ -31,8 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +69,8 @@ import org.eclipse.packager.rpm.build.*;
 import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packager.rpm.build.RpmBuilder.Version;
 import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
+import org.eclipse.packager.rpm.header.Header;
+import org.eclipse.packager.rpm.info.RpmInformation;
 import org.eclipse.packager.rpm.signature.RsaHeaderSignatureProcessor;
 import org.eclipse.packager.rpm.signature.RsaSignatureProcessor;
 import org.eclipse.packager.rpm.signature.SignatureProcessor;
@@ -437,6 +441,12 @@ public class RpmMojo extends AbstractMojo {
      */
     @Parameter
     String defaultRuleset;
+
+    /**
+     * A list of change-logs for this RPM
+     */
+    @Parameter
+    List<Changelog> changelogs = new LinkedList<>();
 
     private Logger logger;
 
@@ -1138,6 +1148,25 @@ public class RpmMojo extends AbstractMojo {
                 this.logger.debug("Overriding build time: %s", outputTimestampInstant);
                 rpmTagHeader.putInt(RpmTag.BUILDTIME, (int) (outputTimestampInstant.toEpochMilli() / 1000));
             }
+
+            if (changelogs != null && !changelogs.isEmpty()) {
+                List<String> authors = changelogs.stream().map(Changelog::getAuthor).collect(Collectors.toList());
+                List<String> text = changelogs.stream().map(Changelog::getText).collect(Collectors.toList());
+                List<Integer> dates = new ArrayList<>();
+
+                for (Changelog changelog : changelogs) {
+                    if (changelog.getDate() != null && !changelog.getDate().isEmpty()) {
+                        dates.add((int)OffsetDateTime.parse(changelog.getDate()).toEpochSecond());
+                    } else {
+                        dates.add((int)changelog.getTimestamp());
+                    }
+                }
+                this.logger.debug("Building changelog with authors %s and dates %s and text %s", authors, dates, text);
+
+                Header.putIntFields(rpmTagHeader, dates, RpmTag.CHANGELOG_TIMESTAMP, Integer::intValue);
+                rpmTagHeader.putStringArray(RpmTag.CHANGELOG_AUTHOR, authors.toArray(new String[0]));
+                rpmTagHeader.putStringArray(RpmTag.CHANGELOG_TEXT, text.toArray(new String[0]));
+            }
         });
     }
 
@@ -1423,4 +1452,13 @@ public class RpmMojo extends AbstractMojo {
         }
     }
 
+
+    public static class Changelog extends RpmInformation.Changelog {
+
+        private String date;
+
+        public String getDate() {
+            return date;
+        }
+    }
 }
