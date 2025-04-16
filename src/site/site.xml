@@ -22,6 +22,7 @@
             <item name="Naming" href="naming.html" />
             <item name="Lead information" href="lead.html" />
             <item name="Verification flags" href="verify.html" />
+            <item name="Changelogs" href="changelog.html" />
         </menu>
 
         <menu ref="reports" />
