@@ -12,17 +12,16 @@ package de.dentrassi.rpm.builder;
 
 import org.eclipse.packager.rpm.VerifyFlags;
 import org.eclipse.packager.rpm.build.FileInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertArrayEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * See https://github.com/ctron/rpm-builder/issues/41
  */
-public class VerifyDetailsTest {
+class VerifyDetailsTest {
     /**
      * Verify that empty {@link VerifyDetails} result in empty set of {@link VerifyFlags}.
      */
@@ -72,13 +71,13 @@ public class VerifyDetailsTest {
     public void noApply() {
         final FileInformation fileInformation = new FileInformation();
         final Set<VerifyFlags> verifyFlags = fileInformation.getVerifyFlags();
-        assertNull(verifyFlags);
+        assertThat(verifyFlags).isNull();
     }
 
     private static void doTest(VerifyFlags[] expectedResult, final VerifyDetails verifyDetails) {
         final FileInformation fileInformation = new FileInformation();
         verifyDetails.apply(fileInformation);
         final Set<VerifyFlags> verifyFlags = fileInformation.getVerifyFlags();
-        assertArrayEquals(expectedResult, verifyFlags.toArray());
+        assertThat(verifyFlags.toArray()).isEqualTo(expectedResult);
     }
 }

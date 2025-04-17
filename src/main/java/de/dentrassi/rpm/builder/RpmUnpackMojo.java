@@ -28,6 +28,7 @@ import java.nio.file.attribute.UserPrincipal;
 import java.nio.file.attribute.UserPrincipalLookupService;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -383,41 +384,31 @@ public final class RpmUnpackMojo extends AbstractMojo {
     }
 
     private static String getName(final InputHeader<RpmTag> payloadHeader, final RpmTag tag, final long id) {
-        final Object values =
-                payloadHeader.getEntry(tag)
-                        .orElseThrow(() -> new IllegalStateException("RPM lacks " + tag + " lookup table"))
-                        .getValue();
+        final List<String> names = payloadHeader.getStringList(tag);
 
-        if (!(values instanceof String[])) {
-            throw new IllegalStateException("RPM " + tag + " header is not a list of Strings, got " +
-                    values.getClass());
+        if (names == null) {
+            throw new IllegalStateException("RPM lacks " + tag + " lookup table");
         }
 
-        final String[] names = (String[]) values;
-        if (id < 0 || names.length <= id) {
-            throw new IllegalArgumentException("id out of range [0," + names.length + ']');
+        if (id < 0 || names.size() <= id) {
+            throw new IllegalArgumentException("id out of range [0," + names.size() + ']');
         }
 
-        return names[(int) id];
+        return names.get((int) id);
     }
 
     private static String getLinkTarget(final InputHeader<RpmTag> payloadHeader, final long inode) {
-        final Object values =
-                payloadHeader.getEntry(RpmTag.FILE_LINKTO)
-                        .orElseThrow(() ->
-                                new IllegalStateException("RPM contains symbolic link, but lacks linkTo header"))
-                        .getValue();
+        final List<String> linkTo = payloadHeader.getStringList(RpmTag.FILE_LINKTO);
 
-        if (!(values instanceof String[])) {
-            throw new IllegalStateException("RPM linkTo header is not a list of Strings, got " + values.getClass());
+        if (linkTo == null) {
+            throw new IllegalStateException("RPM contains symbolic link, but lacks linkTo header");
         }
 
-        final String[] linkTo = (String[]) values;
-        if (inode < 0 || linkTo.length <= inode) {
-            throw new IllegalArgumentException("Symbolic link inode out of range [0," + linkTo.length + ']');
+        if (inode < 0 || linkTo.size() <= inode) {
+            throw new IllegalArgumentException("Symbolic link inode out of range [0," + linkTo.size() + ']');
         }
 
-        return linkTo[(int) inode];
+        return linkTo.get((int) inode);
     }
 
     public void setRpmFile(final File rpmFile) {
