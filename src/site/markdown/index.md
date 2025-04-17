@@ -38,6 +38,22 @@ of `1.0.0-SNAPSHOT` will result in `1.0.0-0.201604250101` (depending on the actu
 The result of these rules are SNAPSHOT releases which is always lower than the final release.
 Unless you override using `forceRelease` or `snapshotBuildId`. 
 
+### Version Modification
+
+Beyond the above version specification, there is a facility to modify the version _within_ the RPM. This does not affect the file name of the produced RPM. This is useful if the Maven version is non-compliant with RPM versioning. For example if the Maven version is 1.1.rebuild-00001, the `-` could be replaced by `_` (See https://fedoraproject.org/wiki/PackagingDrafts/TildeVersioning#Basic_versioning_rules)
+
+~~~xml
+    <modifyVersion>true</modifyVersion>
+    <versionReplacements>
+        <versionReplacement>
+            <search>-</search>
+            <replace>_</replace>
+        </versionReplacement>
+    </versionReplacements>
+~~~
+
+Multiple version replacements may be specified and they will be applied in sequence.
+
 ## Contributing
 
 All contributions are welcome!
