@@ -68,6 +68,8 @@ import org.eclipse.packager.rpm.RpmVersion;
 import org.eclipse.packager.rpm.build.*;
 import org.eclipse.packager.rpm.build.RpmBuilder.PackageInformation;
 import org.eclipse.packager.rpm.build.RpmBuilder.Version;
+import org.eclipse.packager.rpm.coding.PayloadCoding;
+import org.eclipse.packager.rpm.coding.PayloadFlags;
 import org.eclipse.packager.rpm.deps.RpmDependencyFlags;
 import org.eclipse.packager.rpm.header.Header;
 import org.eclipse.packager.rpm.info.RpmInformation;
@@ -89,6 +91,10 @@ import de.dentrassi.rpm.builder.signatures.SignatureConfiguration;
  */
 @Mojo(name = "rpm", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true)
 public class RpmMojo extends AbstractMojo {
+    private static final PayloadCoding DEFAULT_PAYLOAD_CODING = PayloadCoding.gzip;
+
+    private static final String DEFAULT_PAYLOAD_FLAGS = "9";
+
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
     /**
@@ -612,6 +618,19 @@ public class RpmMojo extends AbstractMojo {
     Signature signature;
 
     /**
+     * Optional payload flags to use for compressing the payload of the final RPM.
+     * <p>
+     * The coding must be one of the names returned by {@link PayloadCoding#values()}.
+     * The default coding is {@link PayloadCoding#gzip}.
+     * The level must be a number.
+     * The default level is {@code 9}.
+     * <p>
+     * Also see <a href="payload_compression.html">Payload compression</a>
+     */
+    @Parameter(property = "rpm.payloadFlags")
+    PayloadFlags payloadFlags;
+
+    /**
      * Disable the mojo altogether.
      *
      * @since 1.1.1
@@ -852,9 +871,29 @@ public class RpmMojo extends AbstractMojo {
         testLeadFlags();
 
         final BuilderOptions options = new BuilderOptions();
-        DigestAlgorithm fileDigestAlgorithm = evalDigestAlgorithm(this.fileDigestAlgorithm);
+        final DigestAlgorithm fileDigestAlgorithm = evalDigestAlgorithm(this.fileDigestAlgorithm);
         this.logger.info("File Digest Algorithm: %s", fileDigestAlgorithm.getAlgorithm());
         options.setFileDigestAlgorithm(fileDigestAlgorithm);
+
+        final PayloadCoding payloadCoding;
+        if (this.payloadFlags.getCoding() != null) {
+            payloadCoding = PayloadCoding.valueOf(this.payloadFlags.getCoding());
+            this.logger.info("Payload Coding: %s", payloadCoding);
+        } else {
+            payloadCoding = DEFAULT_PAYLOAD_CODING;
+            this.logger.info("Using default Payload Coding: %s", payloadCoding);
+        }
+
+        options.setPayloadCoding(payloadCoding);
+
+        if (this.payloadFlags != null && !this.payloadFlags.toString().isEmpty()) {
+            this.logger.info("Payload Flags: %s", this.payloadFlags);
+        } else {
+            this.payloadFlags = new PayloadFlags(payloadCoding, DEFAULT_PAYLOAD_FLAGS);
+            this.logger.info("Using default Payload Flags: %s", this.payloadFlags);
+        }
+
+        options.setPayloadFlags(this.payloadFlags);
 
         // setup basic signature processors
 
