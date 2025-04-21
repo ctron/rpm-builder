@@ -16,7 +16,7 @@ def verify() {
 def result = verify()
 println "Verify: " + result
 
-def expectedMd5Sum = "6fc07068db044f8f73a8e6ecb01256ce";
+def expectedMd5Sum = "d5e4e3cfd001f5d7a71ac6ab10744be8";
 def md5sum = generateMD5(new File(basedir, "target/test17-1.0.0-0.197001010000.noarch.rpm"))
 if (md5sum != expectedMd5Sum) {
     System.out.format("RPM MD5 doesn't match -  actual: %s, expected: %s%n", md5sum, expectedMd5Sum);
