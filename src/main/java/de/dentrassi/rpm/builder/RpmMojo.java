@@ -309,7 +309,7 @@ public class RpmMojo extends AbstractMojo {
     /**
      * Whether the plugin should try to evaluate to hostname
      * <p>
-     * If set to {@code false}, then he build hostname {@code localhost} will be
+     * If set to {@code false}, then the build hostname {@code localhost} will be
      * used instead of the actual hostname
      * </p>
      */
@@ -793,6 +793,25 @@ public class RpmMojo extends AbstractMojo {
     @Parameter(defaultValue = "SHA-256", property = "rpm.fileDigestAlgorithm")
     String fileDigestAlgorithm;
 
+
+    /**
+     * Whether the plugin should modify internal RPM version for compliance.
+     * <p>
+     * If set to {@code true}, then any replacements specified in the {@code versionReplacements}
+     * property will be applied.
+     */
+    @Parameter(property = "rpm.modifyVersion", defaultValue = "false")
+    boolean modifyVersion = false;
+
+    /**
+     * A list of potential version substitutions to perform on the RPM internal version. This will
+     * not affect the filename; just the version inside the generated RPM. This allows a user
+     * to customise the version if the Maven version does not match RPM requirements e.g. it contains
+     * a '-' (which would need to be replaced by an '_'). The 'search' string is a regex.
+     */
+    @Parameter(property = "rpm.versionReplacements")
+    List<VersionSubstitution> versionReplacements = new ArrayList<>();
+
     private Instant outputTimestampInstant;
 
     @Component(role = SignatureConfiguration.class)
@@ -845,7 +864,7 @@ public class RpmMojo extends AbstractMojo {
         this.logger.debug("Default ruleset: %s", this.defaultRuleset);
 
         final String packageName = makePackageName();
-        final RpmVersion version = makeVersion();
+        final RpmVersion version = makeVersion(modifyVersion);
 
         this.logger.info("RPM base information - name: %s, version: %s, arch: %s", packageName, version, this.architecture);
 
@@ -951,9 +970,9 @@ public class RpmMojo extends AbstractMojo {
 
         if (outputFileName == null || outputFileName.isEmpty()) {
             if (this.naming.getDefaultFormat() == Naming.DefaultFormat.LEGACY) {
-                outputFileName = RpmFileNameProvider.LEGACY_FILENAME_PROVIDER.getRpmFileName(makePackageName(), makeVersion(), this.architecture);
+                outputFileName = RpmFileNameProvider.LEGACY_FILENAME_PROVIDER.getRpmFileName(makePackageName(), makeVersion(false), this.architecture);
             } else {
-                outputFileName = RpmFileNameProvider.DEFAULT_FILENAME_PROVIDER.getRpmFileName(makePackageName(), makeVersion(), this.architecture);
+                outputFileName = RpmFileNameProvider.DEFAULT_FILENAME_PROVIDER.getRpmFileName(makePackageName(), makeVersion(false), this.architecture);
             }
             this.logger.debug("Using generated file name - %s", outputFileName, outputFileName);
         }
@@ -1312,7 +1331,7 @@ public class RpmMojo extends AbstractMojo {
         }
     }
 
-    private RpmVersion makeVersion() {
+    private RpmVersion makeVersion(boolean modifyVersion) {
         if (!this.forceRelease && isSnapshotVersion()) {
             if (this.snapshotVersion != null && !this.snapshotVersion.isEmpty()) {
                 this.logger.info("Building with SNAPSHOT version from <snapshotVersion> parameter: %s", this.snapshotVersion);
@@ -1323,7 +1342,14 @@ public class RpmMojo extends AbstractMojo {
             this.logger.info("Building with SNAPSHOT version from project: %s", baseVersion);
             return new RpmVersion(this.epoch, baseVersion, makeSnapshotReleaseString());
         }
-        return new RpmVersion(this.epoch, this.version, this.release);
+        String version = this.version;
+        if (modifyVersion) {
+            for (VersionSubstitution versionSubstitution : versionReplacements) {
+                logger.info("For version %s looking for %s to replace with %s", version, versionSubstitution.search, versionSubstitution.replace);
+                version = version.replaceAll(versionSubstitution.search, versionSubstitution.replace);
+            }
+        }
+        return new RpmVersion(this.epoch, version, this.release);
     }
 
     private boolean isSnapshotVersion() {
@@ -1369,7 +1395,7 @@ public class RpmMojo extends AbstractMojo {
     }
 
     private String generateDefaultSourcePackageName() {
-        return RpmLead.toLeadName(makePackageName(), makeVersion()) + ".src.rpm";
+        return RpmLead.toLeadName(makePackageName(), makeVersion(modifyVersion)) + ".src.rpm";
     }
 
     private String makeVendor() {
@@ -1452,13 +1478,16 @@ public class RpmMojo extends AbstractMojo {
         }
     }
 
-
     public static class Changelog extends RpmInformation.Changelog {
-
         private String date;
 
         public String getDate() {
             return date;
         }
+    }
+
+    public static class VersionSubstitution {
+        private String search;
+        private String replace;
     }
 }
